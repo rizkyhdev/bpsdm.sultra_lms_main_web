@@ -12,3 +12,6 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('register_page.register');
 });
+Route::get('/modul', function () {
+    return view('users.modul');
+});
