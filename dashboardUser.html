@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+
+  <!-- Tailwind & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Favicon (Logo di tab browser) -->
+  <link rel="icon" href="image/LOGOGRAM SOBAT ASR.png" type="image/png">
+</head>
+
+
+<body class="bg-[#f7f2ee] font-sans shadow-md">
+  <!-- Top Bar -->
+  <div class="bg-[#2e4159] flex items-center justify-between px-6 py-3">
+    <div class="flex items-center gap-3">
+      <img src="image/LOGOGRAM SOBAT ASR.png" alt="logo" class="h-14">
+      <img src="image/LOGOFONT SOBAT ASR.png" alt="font logo" class="h-14">
+    </div>
+    <div class="flex gap-4 items-center relative">
+      <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+        <i class="fas fa-bell text-[#2e4159]"></i>
+      </div>
+      <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer" onclick="toggleDropdown()">
+        <i class="fas fa-user text-[#2e4159]"></i>
+      </div>
+      <!-- Dropdown menu -->
+      <div id="dropdown" class="absolute right-0 mt-4 top-12 w-60 bg-[#2e4159] text-white rounded-3xl shadow-2x1 hidden z-50">
+        <div class="p-4 border-b-4 border-white">
+          <div class="flex items-center gap-3">
+            <i class="fas fa-user-circle text-3xl"></i>
+            <div class="py-1">
+              <p class="font-semibold text-sm">Username</p>
+              <p class="text-xs text-[#72a3de]">Username@gmail.com</p>
+            </div>
+          </div>
+        </div>
+        <div class="menu-container mx-auto max-w-xs">
+          <ul class="text-sm">
+            <li><a href="#" id="profile" class="menu-item flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'profile.html')"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="#" id="review" class="menu-item flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'review.html')"><i class="fas fa-star"></i> Review</a></li>
+            <li><a href="#" id="setting" class="menu-item flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'setting.html')"><i class="fas fa-cog"></i> Setting</a></li>
+            <li class="border-t-4 border-white">
+              <a href="#" id="signout" class="menu-item flex items-center gap-2 px-6 py-4 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'signout.html')">
+                <i class="fas fa-power-off"></i> Sign Out
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bg-[#c8c3be] h-3"></div>
+  <!-- Username Bar dengan dua warna -->
+  <div class="w-full px-0 py-6 shadow-md text-white"
+     style="background: linear-gradient(to bottom, #f7f2ee 55%, #2e4159 45%);">
+        <div class="flex items-center gap-5 ml-28">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-[#2e4159] text-3xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-[#2e4159]">Username</h2>
+                <p class="text-sm text-white">@Username</p>
+            </div>
+        </div>
+    </div>
+  <!-- Content Area -->
+  <div class="flex flex-col lg:flex-row gap-6 p-6">
+    <!-- Sidebar -->
+    <div class="bg-[#2e4159] text-white rounded-xl p-6 w-full lg:w-[260px] flex-shrink-0 shadow-md ml-20">
+      <h3 class="text-lg font-bold mb-4">DASHBOARD</h3>
+      <ul class="space-y-0.5 text-sm">
+        <li>
+          <a href="dashboardUser.html" id="dashboard" class="menu-item flex items-center gap-2 px-3 py-2 rounded hover:bg-[#dce5f4] hover:text-[#2e4159]" onclick="changeColor(this, 'dashboard.html')">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="myProfile.html" id="my-profile" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'myProfile.html')">
+            <i class="fa-regular fa-user"></i> My Profile
+          </a>
+        </li>
+        <li>
+          <a href="enrolled.html" id="courses" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'courses.html')">
+            <i class="fas fa-book"></i> Enrolled Courses
+          </a>
+        </li>
+        <li>
+            <a href="wishlist.html" id="wishlist" class="menu-item group flex items-center gap-2 px-2 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'wishlist.html')">
+                <i data-lucide="bookmark" class="w-5 h-5 text-white group-hover:text-[#2e4159] transition-colors duration-200"></i>
+                Wishlist
+            </a>
+        </li>
+        <li>
+          <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
+            <i class="fas fa-star"></i> Reviews
+          </a>
+        </li>
+        <li>
+            <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
+                <i class="fa-solid fa-box"></i> My Quiz Attemps
+            </a>
+        </li>
+        <li>
+            <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
+                <i class="fa-solid fa-bag-shopping"></i> Order History
+            </a>
+        </li>
+        <li>
+            <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
+                <i class="fa-solid fa-pen-to-square"></i> Question & Answer
+            </a>
+        </li>
+        <li>
+            <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
+                <i class="fa-solid fa-calendar-days"></i> Calender
+            </a>
+        </li>
+      </ul>
+      <h3 class="text-lg font-bold mt-6 mb-4">STORE</h3>
+      <ul class="space-y-0.5 text-sm">
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-shopping-cart"></i> Order</a></li>
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-download"></i> Downloads</a></li>
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-map-marker-alt"></i> Edit Address</a></li>
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-map-marker-alt"></i> Edit Account</a></li>
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-map-marker-alt"></i> Payment</a></li>
+      </ul>
+      <h3 class="text-lg font-bold mt-6 mb-4">ACCOUNT SETTING</h3>
+      <ul class="space-y-0.5 text-sm">
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-edit"></i> Edit Profile</a></li>
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-shield-alt"></i> Security</a></li>
+        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="flex flex-col lg:flex-row gap-4 w-full mr-20">
+      <div class="bg-[#2e4159] text-white rounded-lg shadow-md px-6 py-4 flex-1 max-h-[110px] overflow-hidden">
+        <h4 class="text-sm">ENROLLED COURSES</h4>
+        <p class="text-3xl font-bold">2</p>
+      </div>
+      <div class="bg-[#2e4159] text-white rounded-lg shadow-md px-6 py-4 flex-1 max-h-[110px] overflow-hidden">
+        <h4 class="text-sm">ACTIVE COURSES</h4>
+        <p class="text-3xl font-bold">2</p>
+      </div>
+      <div class="bg-[#2e4159] text-white rounded-lg shadow-md px-6 py-4 flex-1 max-h-[110px] overflow-hidden">
+        <h4 class="text-sm">COMPLETED</h4>
+        <p class="text-3xl font-bold">0</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-4 text-sm text-[#2e4159] border-t border-[#2e4159]">
+    &copy; 2025 Sobat ASR. All Rights Reserved
+  </footer>
+
+  <script>
+    function toggleDropdown() {
+      const dropdown = document.getElementById('dropdown');
+      dropdown.classList.toggle('hidden');
+    }
+
+    function changeColor(element, url) {
+      let menuItems = document.querySelectorAll('.menu-item');
+      menuItems.forEach(item => {
+        item.classList.remove('bg-[#dce5f4]', 'text-[#2e4159]');
+      });
+      element.classList.add('bg-[#dce5f4]', 'text-[#2e4159]');
+      window.location.href = url;
+    }
+  </script>
+  <script>
+    function changeColor(element, url) {
+        // Menghapus 'bg-white' dan 'text-[#2e4159]' dari semua menu item
+        let menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.classList.remove('bg-[#dce5f4]', 'text-[#2e4159]');
+        });
+
+        // Menambahkan 'bg-white' dan 'text-[#2e4159]' pada item yang dipilih
+        element.classList.add('bg-[#dce5f4]', 'text-[#2e4159]');  // Memberi warna putih dan teks biru pada item yang dipilih
+
+        // Mengarahkan ke halaman sesuai dengan URL yang diklik
+        window.location.href = url;
+    }
+
+// Fungsi untuk menandai tombol yang sesuai dengan URL halaman saat ini
+    window.onload = function() {
+        let currentUrl = window.location.pathname;  // Ambil URL saat ini
+        let menuItems = document.querySelectorAll('.menu-item');  // Ambil semua item menu
+        
+        menuItems.forEach(item => {
+            let itemUrl = item.getAttribute('href');  // Ambil href dari setiap item
+            
+            if (currentUrl.includes(itemUrl)) {  // Jika URL saat ini mencocokkan href item
+                item.classList.add('bg-[#dce5f4]', 'text-[#2e4159]');  // Tandai item yang sesuai dengan URL sebagai aktif
+            }
+        });
+    }
+
+  </script>
+  <script>
+        lucide.createIcons();
+
+        // On page load, set active menu and change icon color
+        window.onload = function () {
+            const currentUrl = window.location.pathname;
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+            let itemUrl = item.getAttribute('href');
+            const icon = item.querySelector('[data-lucide]');
+            if (currentUrl.includes(itemUrl)) {
+                item.classList.add('bg-[#dce5f4]', 'text-[#2e4159]');
+                if (icon) icon.classList.replace('text-white', 'text-[#2e4159]');
+            }
+            });
+        };
+  </script>
+
+</body>
+
+</html>
