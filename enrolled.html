@@ -2,153 +2,192 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enrolled Courses</title>
-
-  <!-- Tailwind & FontAwesome -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Favicon (Logo di tab browser) -->
-  <link rel="icon" href="image/LOGOGRAM SOBAT ASR.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" href="/bpsdm.sultra_lms_main_web/image/LOGO AURA 1.png" type="image/png">
+  <style>
+    /* Custom shadow on the right side */
+    #sidebar {
+      box-shadow: 3px 0px 8px rgba(0, 0, 0, 0.2); /* Adds shadow only on the right side */
+    }
+  </style>
 </head>
 
-<body class="bg-[#f7f2ee] font-sans shadow-md">
-  <!-- Top Bar -->
-  <div class="bg-[#2e4159] flex items-center justify-between px-6 py-3">
-    <div class="flex items-center gap-3">
-      <img src="image/LOGOGRAM SOBAT ASR.png" alt="logo" class="h-14">
-      <img src="image/LOGOFONT SOBAT ASR.png" alt="font logo" class="h-14">
+<body class="bg-gray-50 flex flex-col min-h-screen">
+  <!-- Navbar -->
+  <header class="flex items-center justify-between px-8 py-2 bg-white shadow-xl">
+    <div class="flex items-center gap-5">
+      <img src="/bpsdm.sultra_lms_main_web/image/LOGO AURA.png" alt="Logo" class="h-14">
+      <img src="/bpsdm.sultra_lms_main_web/image/LOGO AURA 1.png" alt="Logo Font" class="h-14">
+      <button id="menu-toggle" class="ml-3">
+        <i class="fas fa-bars text-xl text-[#88d3e1]"></i>
+      </button>
     </div>
-    <div class="flex gap-4 items-center relative">
-      <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-        <i class="fas fa-bell text-[#2e4159]"></i>
+    <nav class="hidden lg:flex gap-6 py-6 font-semibold">
+      <a href="#" class="hover:text-blue-700">Home</a>
+      <a href="#" class="hover:text-blue-700">Course</a>
+      <a href="#" class="hover:text-blue-700">Article</a>
+      <a href="#" class="hover:text-blue-700">Contact</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Search.."
+          class="rounded px-5 py-1 text-sm focus:outline-none placeholder-[#88d3e1]"
+          style="color: #88d3e1; border: 3px solid #88d3e1; caret-color: #88d3e1; background-color: white;">
+        <i class="fas fa-search absolute right-3 top-2.5" style="color: #88d3e1;"></i>
       </div>
-      <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer" onclick="toggleDropdown()">
-        <i class="fas fa-user text-[#2e4159]"></i>
-      </div>
-      <!-- Dropdown menu -->
-      <div id="dropdown" class="absolute right-0 mt-4 top-12 w-60 bg-[#2e4159] text-white rounded-3xl shadow-2x1 hidden z-50">
-        <div class="p-4 border-b-4 border-white">
-          <div class="flex items-center gap-3">
-            <i class="fas fa-user-circle text-3xl"></i>
-            <div class="py-1">
-              <p class="font-semibold text-sm">Username</p>
-              <p class="text-xs text-[#72a3de]">Username@gmail.com</p>
-            </div>
+      <button class="w-10 h-10 bg-[#88d3e1] rounded-full flex items-center justify-center shadow hover:shadow-md hover:scale-105 transition">
+        <i class="far fa-bell text-xl text-bl"></i>
+      </button>
+      <div class="relative">
+        <button onclick="toggleDropdown()" class="w-10 h-10 bg-[#88d3e1] rounded-full flex items-center justify-center shadow">
+          <i class="far fa-user text-2xl text-black"></i>
+        </button>
+        <div id="dropdown" class="hidden absolute right-0 mt-2 w-60 bg-white shadow rounded-xl z-50">
+          <div class="p-4 border-b">
+            <p class="font-semibold text-sm">Username</p>
+            <p class="text-xs text-gray-500">Username@gmail.com</p>
           </div>
-        </div>
-        <div class="menu-container mx-auto max-w-xs">
           <ul class="text-sm">
-            <li><a href="#" id="profile" class="menu-item flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'profile.html')"><i class="fas fa-user"></i> Profile</a></li>
-            <li><a href="#" id="review" class="menu-item flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'review.html')"><i class="fas fa-star"></i> Review</a></li>
-            <li><a href="#" id="setting" class="menu-item flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'setting.html')"><i class="fas fa-cog"></i> Setting</a></li>
-            <li class="border-t-4 border-white">
-              <a href="#" id="signout" class="menu-item flex items-center gap-2 px-6 py-4 rounded-lg transition-all duration-300 hover:bg-[#dce5f4] hover:text-[#2e4159] hover:shadow-md" onclick="changeColor(this, 'signout.html')">
-                <i class="fas fa-power-off"></i> Sign Out
-              </a>
-            </li>
+            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile</a></li>
+            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Review</a></li>
+            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Setting</a></li>
+            <li><a href="#" class="block px-4 py-2 text-red-600 border-t hover:bg-gray-100">Sign Out</a></li>
           </ul>
         </div>
       </div>
     </div>
-  </div>
-  <div class="bg-[#c8c3be] h-3"></div>
-  <!-- Username Bar-->
-    <div class="w-full px-0 py-6 shadow-md text-white"
-     style="background: linear-gradient(to bottom, #f7f2ee 55%, #2e4159 45%);">
-        <div class="flex items-center gap-5 ml-28">
-            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                <i class="fas fa-user text-[#2e4159] text-3xl"></i>
-            </div>
-            <div>
-                <h2 class="text-xl font-semibold text-[#2e4159]">Username</h2>
-                <p class="text-sm text-white">@Username</p>
-            </div>
-        </div>
-    </div>
-  <!-- Content Area -->
-  <div class="flex flex-col lg:flex-row gap-6 p-6">
+  </header>
+
+  <div class="flex flex-1">
     <!-- Sidebar -->
-    <div class="bg-[#2e4159] text-white rounded-xl p-6 w-full lg:w-[260px] flex-shrink-0 shadow-md ml-20">
-      <h3 class="text-lg font-bold mb-4">DASHBOARD</h3>
-        <ul class="space-y-0.5 text-sm">
+    <aside id="sidebar" class="w-64 bg-[#88d3e1] text-white p-6 transition-all duration-300" style="display: block;">
+      <div class="flex items-center gap-2 mb-6">
+        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow">
+          <i class="far fa-user text-4xl text-black"></i>
+        </div>
+        <div>
+          <p class="text-black font-semibold leading-tight">Username</p>
+          <p class="text-xs">@Username</p>
+        </div>
+      </div>
+      <nav>
+        <h3 class="font-bold text-sm mb-1 ml-3">DASHBOARD</h3>
+        <ul class="space-y-1 text-sm mb-4 text-black">
+          <li>
+            <a href="dashboardUser.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-home text-black group-hover:text-white"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="myProfile.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="far fa-user text-black group-hover:text-white"></i> My Profile
+            </a>
+          </li>
+          <li>
+            <a href="enrolled.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-book text-black group-hover:text-white"></i> Enrolled Courses
+            </a>
+          </li>
+          <li>
+            <a href="wishlist.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-bookmark text-black group-hover:text-white"></i> Wishlist
+            </a>
+          </li>
+          <li>
+            <a href="reviews.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-star text-black group-hover:text-white"></i> Reviews
+            </a>
+          </li>
+          <li>
+            <a href="quiz.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-pen text-black group-hover:text-white"></i> My Quiz Attempts
+            </a>
+          </li>
+          <li>
+            <a href="orders.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-shopping-bag text-black group-hover:text-white"></i> Order History
+            </a>
+          </li>
+          <li>
+            <a href="qa.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-question-circle text-black group-hover:text-white"></i> Question & Answer
+            </a>
+          </li>
+          <li>
+            <a href="calendar.html" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-calendar text-black group-hover:text-white"></i> Calendar
+            </a>
+          </li>
+        </ul>
+        <h3 class="font-bold text-sm mb-1 ml-3">STORE</h3>
+        <ul class="space-y-1 text-sm mb-4 text-black">
+          <li>
+            <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-home text-black group-hover:text-white"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-shopping-cart text-black group-hover:text-white"></i> Order
+            </a>
+          </li>
+          <li>
+            <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-download text-black group-hover:text-white"></i> Downloads
+            </a>
+          </li>
+          <li>
+            <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-map-marker-alt text-black group-hover:text-white"></i> Edit Address
+            </a>
+          </li>
+          <li>
+            <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-user text-black group-hover:text-white"></i> Edit Account
+            </a>
+          </li>
+          <li>
+            <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+              <i class="fas fa-wallet text-black group-hover:text-white"></i> Payment
+            </a>
+          </li>
+        </ul>
+        <h3 class="font-bold text-sm mb-2 ml-3 text-white">ACCOUNT SETTING</h3>
+        <ul class="space-y-1 text-sm mb-4 text-black">
             <li>
-                <a href="dashboardUser.html" id="dashboard" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'dashboardUser.html')">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
+              <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+                <i class="fas fa-gear text-black group-hover:text-white"></i> Edit Profile
+              </a>
             </li>
             <li>
-                <a href="myProfile.html" id="my-profile" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'myProfile.html')">
-                    <i class="fa-regular fa-user"></i> My Profile
-                </a>
+              <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+                <i class="fa-regular fa-user text-black group-hover:text-white"></i> Security
+              </a>
             </li>
             <li>
-                <a href="enrolled.html" id="courses" class="menu-item flex items-center gap-2 px-3 py-2 rounded hover:bg-[#dce5f4] hover:text-[#2e4159]" onclick="changeColor(this, 'enfollcourse.html')">
-                    <i class="fas fa-book"></i> Enrolled Courses
-                </a>
-            </li>
-            <li>
-                <a href="wishlist.html" id="wishlist" class="menu-item group flex items-center gap-2 px-2 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'wishlist.html')">
-                    <i data-lucide="bookmark" class="w-5 h-5 text-white group-hover:text-[#2e4159] transition-colors duration-200"></i>
-                    Wishlist
-                </a>
-            </li>
-            <li>
-                <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-white hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
-                    <i class="fas fa-star"></i> Reviews
-                </a>
-            </li>
-            <li>
-                <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
-                    <i class="fa-solid fa-box"></i> My Quiz Attemps
-                </a>
-            </li>
-            <li>
-                <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
-                    <i class="fa-solid fa-bag-shopping"></i> Order History
-                </a>
-            </li>
-            <li>
-                <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
-                    <i class="fa-solid fa-pen-to-square"></i> Question & Answer
-                </a>
-            </li>
-            <li>
-                <a href="#" id="reviews" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded" onclick="changeColor(this, 'reviews.html')">
-                    <i class="fa-solid fa-calendar-days"></i> Calender
-                </a>
+              <a href="#" class="group flex items-center gap-2 px-3 py-2 rounded hover:bg-cyan-500 hover:text-white">
+                <i class="fas fa-download text-black group-hover:text-white"></i> Log Out
+              </a>
             </li>
         </ul>
-
-      <h3 class="text-lg font-bold mt-6 mb-4">STORE</h3>
-      <ul class="space-y-0.5 text-sm">
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-shopping-cart"></i> Order</a></li>
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-download"></i> Downloads</a></li>
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-map-marker-alt"></i> Edit Address</a></li>
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-map-marker-alt"></i> Edit Account</a></li>
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-map-marker-alt"></i> Payment</a></li>
-      </ul>
-      <h3 class="text-lg font-bold mt-6 mb-4">ACCOUNT SETTING</h3>
-      <ul class="space-y-0.5 text-sm">
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-edit"></i> Edit Profile</a></li>
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-shield-alt"></i> Security</a></li>
-        <li><a href="#" class="menu-item flex items-center gap-2 px-3 py-2 hover:bg-[#dce5f4] hover:text-[#2e4159] rounded"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-      </ul>
-    </div>
+      </nav>
+    </aside>
 
     <!-- Enrolled Courses Content -->
-    <div class="flex-1 flex flex-col mr-20">
+    <div class="flex-1 flex flex-col p-10">
         <!-- Title -->
-        <div class="bg-[#2e4159] text-white rounded-t-xl px-6 py-4 text-lg font-semibold">
+        <div class="bg-cyan-500 text-white rounded-t-xl px-6 py-4 text-lg font-semibold">
             ENROLLED COURSES
         </div>
 
         <!-- Tabs -->
-        <div class="bg-[#2e4159] text-white rounded-b-xl px-6 py-4 flex gap-6 mt-1">
+        <div class="bg-cyan-500 text-white rounded-b-xl px-6 py-4 flex gap-6 mt-1">
             <button class="tab-button px-4 py-2 rounded font-semibold transition duration-200" data-tab="enrolled">Enrolled Courses</button>
             <button class="tab-button px-4 py-2 rounded font-semibold transition duration-200" data-tab="active">Active Courses</button>
             <button class="tab-button px-4 py-2 rounded font-semibold transition duration-200" data-tab="complete">Complete Courses</button>
@@ -158,17 +197,17 @@
         <div class="tab-content enrolled mt-10 flex flex-wrap gap-6 px-2">
         <!-- Enrolled Course Card -->
             <a href="class-detail.html" class="block">
-                <div class="bg-white rounded-xl overflow-hidden shadow-md w-64 hover:shadow-lg transition-shadow duration-200">
-                    <div class="bg-[#315a8b] text-white px-4 py-6 font-semibold text-lg">Pelatihan Sertifikasi PBJ</div>
+                <div class="bg-white rounded-xl overflow-hidden shadow-md w-56 hover:shadow-lg transition-shadow duration-200">
+                    <div class="bg-[#0a7858] text-white px-4 py-6 font-semibold text-lg">Pelatihan Sertifikasi PBJ</div>
                     <div class="p-4">
                         <p class="font-semibold mb-2">Pelatihan Sertifikasi PBJ</p>
-                        <div class="flex items-center text-xs text-gray-500 mb-2 gap-2">
+                        <div class="flex items-center text-xs text-[#cca812] mb-2 gap-2">
                             <i class="fas fa-clock"></i> 2 hours <span>•</span> <span>Beginner</span>
                         </div>
-                        <div class="text-orange-400 text-sm">★★★★★ <span class="text-gray-400 text-xs">(1)</span></div>
+                        <div class="text-orange-400 text-sm">★★★★★ <span class="text-[#cca812] text-xs">(1)</span></div>
                     </div>
-                    <div class="border-t border-gray-300 px-4 py-2 flex items-center justify-between text-sm text-[#2e4159]">
-                        <div class="flex items-center gap-2">
+                    <div class="border-t border-[#cca812] px-4 py-4 flex items-center justify-between text-sm text-[#2e4159]">
+                        <div class="flex items-center gap-2 text-[#cca812]">
                             <i class="fas fa-user-circle"></i> <span>Username</span>
                         </div>
                         <i class="far fa-bookmark"></i>
@@ -178,17 +217,17 @@
 
             <!-- Course Card 2 -->
             <a href="class-detail.html" class="block">
-                <div class="bg-white rounded-xl overflow-hidden shadow-md w-64 hover:shadow-lg transition-shadow duration-200">
-                    <div class="bg-[#ff5c00] text-white px-4 py-6 font-semibold text-lg">Pelatihan Sertifikasi PBJ</div>
+                <div class="bg-white rounded-xl overflow-hidden shadow-md w-56 hover:shadow-lg transition-shadow duration-200">
+                    <div class="bg-[#cca812] text-white px-4 py-6 font-semibold text-lg">Pelatihan Sertifikasi PBJ</div>
                     <div class="p-4">
                         <p class="font-semibold mb-2">Pelatihan Sertifikasi PBJ</p>
-                        <div class="flex items-center text-xs text-gray-500 mb-2 gap-2">
+                        <div class="flex items-center text-xs text-[#cca812] mb-2 gap-2">
                             <i class="fas fa-clock"></i> 2 hours <span>•</span> <span>Beginner</span>
                         </div>
-                        <div class="text-orange-400 text-sm">★★★★★ <span class="text-gray-400 text-xs">(1)</span></div>
+                        <div class="text-orange-400 text-sm">★★★★★ <span class="text-[#cca812] text-xs">(1)</span></div>
                     </div>
-                    <div class="border-t border-gray-300 px-4 py-2 flex items-center justify-between text-sm text-[#2e4159]">
-                        <div class="flex items-center gap-2">
+                    <div class="border-t border-[#cca812] px-4 py-4 flex items-center justify-between text-sm text-[#2e4159]">
+                        <div class="flex items-center gap-2 text-[#cca812]">
                             <i class="fas fa-user-circle"></i> <span>Username</span>
                         </div>
                         <i class="far fa-bookmark"></i>
@@ -201,26 +240,25 @@
          <a href="active-class-detail.html" class="block">
             <div class="tab-content active hidden mt-10 px-2">
                 <div class="flex flex-wrap gap-6 justify-start">
-                    <div class="bg-white rounded-xl shadow-md w-64 hover:shadow-lg transition duration-200">
+                    <div class="bg-white rounded-xl shadow-md w-56 hover:shadow-lg transition duration-200">
                         <!-- Soft Blue Header -->
-                        <div class="bg-[#f08080] text-white px-4 py-6 font-semibold text-lg rounded-t-xl">
+                        <div class="bg-[#70ae74] text-white px-4 py-6 font-semibold text-lg rounded-t-xl">
                             Active Class: Leadership
                         </div>
             <!-- Description -->
                         <div class="p-4">
                             <p class="font-semibold mb-2 text-[#2e4159]">Leadership & Management</p>
-                            <div class="text-xs text-gray-500 mb-2">
-                                <i class="fas fa-clock"></i> 5 hours
+                            <div class="text-xs text-[#cca812] mb-2">
+                                <i class="fas fa-clock"></i> 5 hours <span>•</span> <span>Beginner</span>
                             </div>
-                            <div class="text-orange-400 text-sm">
-                                ★★★★★ <span class="text-gray-400 text-xs">(1)</span>
+                            <div class="text-orange-400 text-sm">★★★★★ <span class="text-[#cca812] text-xs">(1)</span>
                             </div>
                         </div>
             <!-- Footer -->
-                        <div class="border-t border-gray-300 px-4 py-2 flex items-center justify-between text-sm text-[#2e4159] rounded-b-xl">
-                            <div class="flex items-center gap-2">
+                        <div class="border-t border-gray-300 px-4 py-4 flex items-center justify-between text-sm text-[#2e4159] rounded-b-xl">
+                            <div class="flex items-center gap-2 text-[#cca812]">
                                 <i class="fas fa-user-circle"></i>
-                                <span>John Doe</span>
+                                <span>Username</span>
                             </div>
                             <i class="far fa-bookmark"></i>
                         </div>
@@ -232,25 +270,25 @@
         <!-- Complete Courses -->
         <a href="complete-class-detail.html" class="block">
             <div class="tab-content complete hidden mt-10 flex flex-wrap gap-6 px-2">
-                <div class="bg-white rounded-xl shadow-md w-64 hover:shadow-lg transition duration-200">
+                <div class="bg-white rounded-xl shadow-md w-56 hover:shadow-lg transition duration-200">
                 <!-- Header dengan hijau soft dan rounded atas -->
-                    <div class="bg-[#a3d9a5] text-[#2e4159] px-4 py-6 font-semibold text-lg rounded-t-xl">
+                    <div class="bg-[#26938f] text-white px-4 py-6 font-semibold text-lg rounded-t-xl">
                         Completed: Public Speaking
                     </div>
                 <!-- Isi konten -->
                     <div class="p-4">
                         <p class="font-semibold mb-2">Public Speaking Mastery</p>
-                        <div class="text-xs text-gray-500 mb-2">
-                            <i class="fas fa-clock"></i> 3 hours
+                        <div class="text-xs text-[#cca812] mb-2">
+                            <i class="fas fa-clock"></i> 3 hours <span>•</span> <span>Beginner</span>
                         </div>
                         <div class="text-orange-400 text-sm">
-                            ★★★★★ <span class="text-gray-400 text-xs">(1)</span>
+                            ★★★★★ <span class="text-[#cca812] text-xs">(1)</span>
                         </div>
                     </div>
                 <!-- Footer card -->
-                    <div class="border-t border-gray-300 px-4 py-2 flex items-center justify-between text-sm text-[#2e4159] rounded-b-xl">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-user-circle"></i><span>Jane Doe</span>
+                    <div class="border-t border-gray-300 px-4 py-4 flex items-center justify-between text-sm text-[#2e4159] rounded-b-xl">
+                        <div class="flex items-center gap-2 text-[#cca812]">
+                            <i class="fas fa-user-circle"></i><span>Username</span>
                         </div>
                         <i class="far fa-bookmark"></i>
                     </div>
@@ -258,91 +296,55 @@
             </div>
         </a>
     </div>
-</div>
+  </div>
 
-  <!-- Footer -->
-  <footer class="text-center py-4 text-sm text-[#2e4159] border-t border-[#2e4159]">
-    &copy; 2025 Sobat ASR. All Rights Reserved
+  <footer class="text-center text-sm text-gray-500 py-4 border-t mt-4">
+    Copyright © 2025 Sobat AURA | Powered by BPSDM Sultra
   </footer>
 
- <!--tampilkan dan sembunyikan dropdown di pojok atas--> 
   <script>
     function toggleDropdown() {
-      const dropdown = document.getElementById('dropdown');
-      dropdown.classList.toggle('hidden');
+      document.getElementById('dropdown').classList.toggle('hidden');
     }
 
-    function changeColor(element, url) {
-      let menuItems = document.querySelectorAll('.menu-item');
-      menuItems.forEach(item => {
-        item.classList.remove('bg-[#dce5f4]', 'text-[#2e4159]');
-      });
-      element.classList.add('bg-[#dce5f4]', 'text-[#2e4159]');
-      window.location.href = url;
-    }
-  </script>
-
-
-   <!--enandai menu sidebar/dropdown mana yang sedang aktif tanpa perlu klik manual-->
-   <script>
-        window.onload = function() {
-            let currentUrl = window.location.pathname;
-            let menuItems = document.querySelectorAll('.menu-item');
-            
-            menuItems.forEach(item => {
-                let itemUrl = item.getAttribute('href');
-                
-                if (currentUrl.includes(itemUrl)) {  
-                    item.classList.add('bg-[#dce5f4]', 'text-[#2e4159]');  
-                }
-            });
-        }
-    </script>
-
-  <!--mengatur tab yang aktif saat di klik, memberi dan menghapus gaya aktif pada tombol tab-->
-  <script>
-    const buttons = document.querySelectorAll('.tab-button');
-    const contents = document.querySelectorAll('.tab-content');
-
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-        // Reset active button styles
-        buttons.forEach(b => b.classList.remove('bg-[#dce5f4]', 'text-[#2e4159]', 'font-semibold'));
-        btn.classList.add('bg-[#dce5f4]', 'text-[#2e4159]', 'font-semibold');
-
-        // Get target tab name
-        const target = btn.getAttribute('data-tab');
-
-        // Show target content and hide others
-        contents.forEach(content => {
-            if (content.classList.contains(target)) {
-            content.classList.remove('hidden');
-            } else {
-            content.classList.add('hidden');
-            }
-        });
-        });
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+      document.getElementById('sidebar').classList.toggle('hidden');
     });
   </script>
-  <!--Menampilkan ikon dari Lucide dan memastikan ikon dalam sidebar berubah warna jika aktif.-->
-  <script>
-        lucide.createIcons();
 
-        // On page load, set active menu and change icon color
-        window.onload = function () {
-            const currentUrl = window.location.pathname;
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach(item => {
-            let itemUrl = item.getAttribute('href');
-            const icon = item.querySelector('[data-lucide]');
-            if (currentUrl.includes(itemUrl)) {
-                item.classList.add('bg-[#dce5f4]', 'text-[#2e4159]');
-                if (icon) icon.classList.replace('text-white', 'text-[#2e4159]');
-            }
-            });
-        };
+  <script>
+    window.onload = function () {
+      const current = window.location.pathname.split("/").pop();
+      const menuLinks = document.querySelectorAll("ul a");
+
+      menuLinks.forEach(link => {
+        const href = link.getAttribute("href");
+        const icon = link.querySelector("i");
+
+        if (href === current) {
+          link.classList.add("bg-cyan-500", "text-white");
+          if (icon) icon.classList.remove("text-black");
+          if (icon) icon.classList.add("text-white");
+        } else {
+          link.classList.remove("bg-cyan-500", "text-white");
+          if (icon) icon.classList.remove("text-white");
+          if (icon) icon.classList.add("text-black");
+        }
+      });
+    };
   </script>
-  <!--mengubah warna dan menampilkan tab Enrolled Courses secara default saat halaman dibuka tanpa klik -->
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('menu-toggle');
+
+    toggleBtn.addEventListener('click', () => {
+      if (sidebar.style.display === "none") {
+        sidebar.style.display = "block";
+      } else {
+        sidebar.style.display = "none";
+      }
+    });
+  </script>
   <script>
         document.addEventListener('DOMContentLoaded', () => {
             const buttons = document.querySelectorAll('.tab-button');
@@ -350,18 +352,18 @@
 
             buttons.forEach(button => {
                 // Tambahkan efek hover
-                button.classList.add('hover:bg-[#dce5f4]', 'hover:text-[#2e4159]');
+                button.classList.add('hover:bg-white', 'hover:text-black');
 
                 button.addEventListener('click', () => {
                     // Reset semua button
                     buttons.forEach(btn => {
-                        btn.classList.remove('bg-[#dce5f4]', 'text-[#2e4159]', 'font-semibold');
+                        btn.classList.remove('bg-white', 'text-black', 'font-semibold');
                         btn.classList.add('text-white');
                     });
 
                     // Aktifkan yang diklik
                     button.classList.remove('text-white');
-                    button.classList.add('bg-[#dce5f4]', 'text-[#2e4159]', 'font-semibold');
+                    button.classList.add('bg-white', 'text-black', 'font-semibold');
 
                     // Tampilkan konten sesuai tab
                     const target = button.getAttribute('data-tab');
