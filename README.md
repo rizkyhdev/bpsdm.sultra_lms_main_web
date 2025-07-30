@@ -10,37 +10,43 @@ Sistem LMS ini akan menjadi platform utama dalam mendukung pemenuhan kewajiban t
 
 ## Tujuan Pengembangan
 
-- Memfasilitasi pengembangan kompetensi teknis ASN Pemprov Sultra
-- Menyediakan akses belajar yang fleksibel tanpa batasan waktu dan tempat
-- Memenuhi kewajiban minimal 20 JP pengembangan kompetensi per tahun
-- Meningkatkan efisiensi dan efektivitas program pengembangan SDM
-- Mendukung terwujudnya Smart ASN di lingkungan Pemprov Sultra
+-   Memfasilitasi pengembangan kompetensi teknis ASN Pemprov Sultra
+-   Menyediakan akses belajar yang fleksibel tanpa batasan waktu dan tempat
+-   Memenuhi kewajiban minimal 20 JP pengembangan kompetensi per tahun
+-   Meningkatkan efisiensi dan efektivitas program pengembangan SDM
+-   Mendukung terwujudnya Smart ASN di lingkungan Pemprov Sultra
+
+## Spesifikasi Teknis
+
+-   PHP versi 8.3
+-   Composer version 2.8
+-   Laravel versi 5.16
 
 ## Spesifikasi Utama Sistem
 
 ### 1. Sistem Akses dan Keamanan
 
-- Akses Terbatas: Hanya pegawai Pemprov SULTRA yang telah divalidasi yang dapat mengakses sistem LMS
-- Autentikasi: Sistem login yang terintegrasi dengan database kepegawaian Pemprov Sultra
-- Verifikasi: Mekanisme validasi identitas pegawai untuk memastikan keamanan akses
+-   Akses Terbatas: Hanya pegawai Pemprov SULTRA yang telah divalidasi yang dapat mengakses sistem LMS
+-   Autentikasi: Sistem login yang terintegrasi dengan database kepegawaian Pemprov Sultra
+-   Verifikasi: Mekanisme validasi identitas pegawai untuk memastikan keamanan akses
 
 ### 2. Konten Pembelajaran
 
-- Fokus Konten: Materi kompetensi teknis untuk ASN Pemprov
-- Format Materi: File teks, file PDF, dan video pembelajaran
-- Struktur: Modul dan sub-modul pembelajaran yang terstruktur
+-   Fokus Konten: Materi kompetensi teknis untuk ASN Pemprov
+-   Format Materi: File teks, file PDF, dan video pembelajaran
+-   Struktur: Modul dan sub-modul pembelajaran yang terstruktur
 
 ### 3. Sistem Evaluasi
 
-- Kuis Evaluasi: Setiap sub-modul pembelajaran dilengkapi dengan kuis
-- Nilai Minimum: Penetapan nilai minimum kelulusan untuk setiap kuis
-- Remedial: Kesempatan mengulang kuis bagi yang belum memenuhi nilai minimum
+-   Kuis Evaluasi: Setiap sub-modul pembelajaran dilengkapi dengan kuis
+-   Nilai Minimum: Penetapan nilai minimum kelulusan untuk setiap kuis
+-   Remedial: Kesempatan mengulang kuis bagi yang belum memenuhi nilai minimum
 
 ### 4. Monitoring JP (Jam Pelajaran)
 
-- Tracking JP: Sistem pencatatan akumulasi JP yang telah ditempuh oleh setiap ASN
-- Target Minimal: 20 JP per tahun sesuai dengan ketentuan peraturan
-- Laporan: Sistem pelaporan capaian JP individu dan kolektif
+-   Tracking JP: Sistem pencatatan akumulasi JP yang telah ditempuh oleh setiap ASN
+-   Target Minimal: 20 JP per tahun sesuai dengan ketentuan peraturan
+-   Laporan: Sistem pelaporan capaian JP individu dan kolektif
 
 ## Fitur Utama
 
@@ -58,11 +64,11 @@ Sistem LMS ini akan menjadi platform utama dalam mendukung pemenuhan kewajiban t
 
 Sistem ini dikembangkan menggunakan platform MOODLE LMS, sebuah platform pembelajaran open source yang telah banyak digunakan oleh institusi pendidikan dan pelatihan di seluruh dunia dengan keunggulan:
 
-- Fleksibilitas dan kemudahan kustomisasi sesuai kebutuhan spesifik BPSDM Sultra
-- Dukungan berbagai format konten pembelajaran (teks, PDF, video, dll)
-- Sistem evaluasi dan penilaian yang komprehensif
-- Fitur pelacakan kemajuan belajar yang dapat disesuaikan dengan perhitungan JP
-- Komunitas pengguna yang luas dan dukungan dokumentasi yang lengkap
+-   Fleksibilitas dan kemudahan kustomisasi sesuai kebutuhan spesifik BPSDM Sultra
+-   Dukungan berbagai format konten pembelajaran (teks, PDF, video, dll)
+-   Sistem evaluasi dan penilaian yang komprehensif
+-   Fitur pelacakan kemajuan belajar yang dapat disesuaikan dengan perhitungan JP
+-   Komunitas pengguna yang luas dan dukungan dokumentasi yang lengkap
 
 ## Target Pengguna
 
