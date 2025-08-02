@@ -1,0 +1,21 @@
+/* resources/css/app.css */
+
+/* Mengimpor Bootstrap CSS */
+@import 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+
+/* Jika Anda menggunakan CDN, Anda bisa menggunakan cara berikut ini: */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css');
+
+/* Menambahkan source (jika diperlukan) */
+/*@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+/*@source '../**//**.blade.php';
+/*@source '../**//**.js';
+
+/* Menambahkan tema khusus */
+/* Menyusun tema menggunakan variabel CSS standar */
+:root {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 
+                 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+

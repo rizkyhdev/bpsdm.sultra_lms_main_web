@@ -1,0 +1,128 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.sidebar .nav-link.active {
+  background-color: #088;
+}
+/* CSS untuk Sidebar */
+#sidebar {
+  min-height: 100vh;
+  background-color: #88d4e1;
+  box-shadow: 3px 0px 8px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  padding: 1rem;
+  position: relative; /* default, biar tidak ikut terdorong footer */
+  z-index: 1;
+}
+/* Sidebar animation */
+#sidebar {
+  transition: all 0.3s ease;
+  transform: translateX(0); /* posisi default */
+}
+
+#sidebar.collapsed {
+  margin-left: -280px; /* Sembunyikan sidebar */
+}
+
+
+main.flex-fill {
+  padding: 1rem;
+}
+
+footer {
+  background-color: #eee;
+  padding: 1rem;
+  text-align: center;
+}
+
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-container {
+  flex: 1;
+  display: flex;
+}
+
+#sidebar {
+  height: 100%;
+  min-height: 100%;
+}
+
+
+/* Saat kursor menyentuh item sidebar (hover) */
+#sidebar .nav-item:hover {
+    background-color: #21b3ca; /* Biru muda */
+    color: black; /* Teks menjadi hitam */
+}
+
+/* Saat item sidebar dalam keadaan aktif (klik) */
+#sidebar .nav-item.active {
+    background-color: #21b3ca; /* Biru muda */
+    color: black; /* Teks menjadi hitam */
+}
+
+/* Saat item menu di sidebar dihover */
+#sidebar .nav-item .nav-link:hover {
+    background-color: #21b3ca; /* Biru muda */
+    color: black; /* Teks menjadi hitam */
+}
+
+/* Sidebar item yang diaktifkan */
+#sidebar .nav-item .nav-link.active {
+    background-color: #21b3ca; /* Biru muda */
+    color: black; /* Teks menjadi hitam */
+}
+#sidebar .nav-item {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect on sidebar item */
+#sidebar .nav-item:hover {
+  background-color: #21b3ca; /* Light blue */
+  color: white; /* Text turns white */
+}
+
+/* Active state for clicked sidebar item */
+#sidebar .nav-item.active {
+  background-color: #21b3ca; /* Light blue */
+  color: white; /* Text turns white */
+}
+
+/* Hover effect for sidebar link */
+#sidebar .nav-link:hover {
+  background-color: #21b3ca; /* Light blue */
+  color: white; /* Text turns white */
+}
+/* CSS untuk outline button dengan efek hover dan active state */
+.nav-link {
+    border-radius: 0.5rem;  /* Rounded button */
+    transition: background-color 0.3s ease, color 0.3s ease, font-weight 0.3s ease;  /* Smooth transition */
+}
+
+.nav-link:hover,
+.nav-link:active {
+    background-color: white;  /* Latar belakang putih saat hover atau aktif */
+    color: black !important;   /* Teks hitam saat hover atau aktif */
+    border-color: #0d6efd;    /* Border warna biru */
+    font-weight: 600;          /* Menambahkan font-weight lebih tebal */
+}
+
+.nav-link.active {
+    background-color: white;  /* Latar belakang putih saat aktif */
+    color: black !important;   /* Teks hitam saat aktif */
+    border-color: #0d6efd;    /* Border warna biru */
+    font-weight: 600;          /* Menambahkan font-weight lebih tebal */
+}
+
+/*animasi dropdown*/
+
+
