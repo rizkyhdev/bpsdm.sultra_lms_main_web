@@ -14,168 +14,12 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- custom css -->
-  <link href="{{ asset('./custom.css') }}" rel="stylesheet">
+  <link href="{{ asset('./css/custom.css') }}" rel="stylesheet">
+  <link href="{{ asset('./css/custom-style.css') }}" rel="stylesheet">
 
   <!-- Font Awesome for Icons (via CDN) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="icon" href="{{ asset('image/LOGO AURA 1.png') }}" type="image/png">
-
-  <style>
-    #sidebar {
-      box-shadow: 3px 0px 8px rgba(0, 0, 0, 0.2);
-      width: 280px !important; /* ← lebih lebar */
-    }
-    /* Hover effect on sidebar item */
-    #sidebar .nav-item:hover {
-      background-color: #88d3e1; /* Light blue */
-      color: white; /* Text turns white */
-    }
-
-    /* Active state for clicked sidebar item */
-    #sidebar .nav-item.active {
-      background-color: #88d3e1; /* Light blue */
-      color: white; /* Text turns white */
-    }
-    /* Hover & Active effect on sidebar item and link */
-    #sidebar .nav-item:hover,
-    #sidebar .nav-item.active {
-      background-color: #88d3e1;
-    }
-
-    #sidebar .nav-item:hover .nav-link,
-    #sidebar .nav-item.active .nav-link {
-      color: white !important;
-    }
-
-    #sidebar .nav-item:hover i,
-    #sidebar .nav-item.active i {
-      color: white !important;
-    }
-  </style>
-  <style>
-    .dropdown-item:hover,
-    .dropdown-item:focus,
-    .dropdown-item:active {
-      background-color: transparent !important;
-      box-shadow: none !important;
-    }
-
-    /* Hapus background bawaan form */
-    .dropdown-menu,
-    .dropdown-item {
-      background-color: white !important;
-      box-shadow: none !important;
-      border: none !important;
-    }
-
-    /* Untuk hover-bg biar background-nya sesuai keinginan */
-    .hover-bg:hover {
-      background-color: #b2e9f2 !important;
-      border-radius: 12px;
-    }
-
-    .dropdown-link {
-      color: #21b3ca !important;
-      display: flex;
-      align-items: center;
-      padding: 6px 10px;
-      text-decoration: none;
-      transition: background-color 0.2s ease;
-    }
-
-    .dropdown-link .hover-bg {
-      display: flex;
-      align-items: center;
-      padding: 10px 14px;
-      border-radius: 12px;
-      width: 100%;
-      transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .dropdown-link:hover .hover-bg {
-      background-color: #b2e9f2;
-      color: #000;
-    }
-
-    .dropdown-link:hover .hover-bg i {
-      color: #000;
-    }
-
-    .hover-bg i {
-      color: #21b3ca;
-      margin-right: 8px;
-      width: 20px;
-    }
-    .dropdown-item {
-    box-shadow: none !important;
-    }
-    button.dropdown-link {
-      background: none;
-      border: none;
-      width: 100%;
-      text-align: left;
-      padding: 6px 10px;
-    }
-
-    button.dropdown-link:hover .hover-bg {
-      background-color: #b2e9f2;
-      color: #000;
-    }
-
-    button.dropdown-link:hover .hover-bg i {
-      color: #000;
-    }
-    
-  </style>
-  <style>
-    #sidebar .nav-item {
-      border-radius: 0.5rem; /* Tambahan */
-      margin-bottom: 0.25rem;
-    }
-
-    #sidebar .nav-item:hover,
-    #sidebar .nav-item.active {
-      background-color: #21b3ca;
-      border-radius: 0.5rem; /* Tambahan */
-    }
-
-    #sidebar .nav-item:hover .nav-link,
-    #sidebar .nav-item.active .nav-link {
-      color: white !important;
-    }
-
-    #sidebar .nav-item:hover i,
-    #sidebar .nav-item.active i {
-      color: white !important;
-    }
-  </style>
-  <style>
-    body {
-      opacity: 0;
-      transition: opacity 0.1s ease-in-out;
-    }
-
-    body.page-loaded {
-      opacity: 1;
-    }
-
-    body.fade-out {
-      opacity: 0;
-    }
-  </style>
-  <style>
-    .dropdown-menu {
-      opacity: 0;
-      transform: scale(0.95);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .dropdown-menu.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-  </style>
-
 
 </head>
 
@@ -338,51 +182,14 @@
       @yield('content')
     </main>
   </div>
-  <footer class="text-center text-sm text-gray-500 py-4 border-t">
-    Copyright © 2025 Sobat AURA | Powered by BPSDM Sultra
-  </footer>
+  <footer class="bg-white border-top shadow-sm mt-auto py-4">
+  <div class="container text-center">
+    <Powered class="mb-1 fw-semibold text-dark">© 2025 Sobat AURA Powered by <a href="https://bpsdmsultra.go.id" class="text-info text-decoration-none fw-semibold">BPSDM Sultra</a></p>
+  </div>
+</footer>
 
-  <!-- JavaScript to Toggle Sidebar -->
-  <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('menu-toggle');
-
-    toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed');
-    });
-  </script>
-  <!--pindah halaman-->
-  <script>
-  // Saat halaman selesai dimuat, aktifkan fade-in
-    document.addEventListener("DOMContentLoaded", function () {
-      document.body.classList.add("page-loaded");
-    });
-
-    // Tangani transisi fade-out saat klik menu internal
-    document.querySelectorAll('a[href]').forEach(link => {
-      link.addEventListener('click', function (e) {
-        const target = this.getAttribute('href');
-
-        // Cek kalau link masih dalam domain & bukan blank
-        const isSameOrigin = this.hostname === window.location.hostname;
-        const isNotBlank = this.getAttribute('target') !== '_blank';
-        const isNotAnchor = !target.startsWith('#');
-
-        if (isSameOrigin && isNotBlank && isNotAnchor) {
-          e.preventDefault();
-
-          // Tambah efek fade-out
-          document.body.classList.remove("page-loaded");
-          document.body.classList.add("fade-out");
-
-          // Setelah transisi selesai, redirect ke halaman
-          setTimeout(() => {
-            window.location.href = target;
-          }, 100); // Waktu harus sesuai dengan CSS
-        }
-      });
-    });
-  </script>
-
+  <!-- JS files -->
+  <script src="{{ asset('./js/sidebar-toggle.js') }}"></script>
+  <script src="{{ asset('./js/page-transition.js') }}"></script>
 </body>
 </html>
