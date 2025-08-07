@@ -21,6 +21,7 @@ Sistem LMS ini akan menjadi platform utama dalam mendukung pemenuhan kewajiban t
 -   PHP versi 8.3
 -   Composer versi 2.8
 -   Laravel versi 5.16
+-   Frontend: Laravel UI dengan Bootstrap
 -   Node versi v20.19
 -   NPM versi 10.8
 
@@ -37,7 +38,7 @@ https://getcomposer.org/Composer-Setup.exe .
 Lalu ikuti arahan instalasi. Pastikan php yang digunakan mengacu pada direktori PHP yang baru saja di-install. Buka CMD baru untuk mencoba composer yang baru saja install dengan cara `composer --version`.
 
 3. Unggah kode dari github. Lalu masuk ke direktori tsb.
-`git clone [https://github.com/rizkyhdev/bpsdm.sultra_lms_main_web.git](https://github.com/rizkyhdev/bpsdm.sultra_lms_main_web.git)`
+`git clone https://github.com/rizkyhdev/bpsdm.sultra_lms_main_web.git`
 4. Install komponen composer yang dibutuhkan `composer install`
 5. Install komponen frontend yang dibutuhkan `npm install`
 6. Inisiasi database dengan `php artisan migrate`
