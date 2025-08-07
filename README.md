@@ -82,15 +82,7 @@ Lalu ikuti arahan instalasi. Pastikan php yang digunakan mengacu pada direktori 
 | Laporan dan Analitik   | Data statistik dan laporan mengenai aktivitas pembelajaran dan capaian JP                |
 | Integrasi Data         | Koneksi dengan database kepegawaian Pemprov Sultra                                       |
 
-## Implementasi Platform
 
-Sistem ini dikembangkan menggunakan platform MOODLE LMS, sebuah platform pembelajaran open source yang telah banyak digunakan oleh institusi pendidikan dan pelatihan di seluruh dunia dengan keunggulan:
-
--   Fleksibilitas dan kemudahan kustomisasi sesuai kebutuhan spesifik BPSDM Sultra
--   Dukungan berbagai format konten pembelajaran (teks, PDF, video, dll)
--   Sistem evaluasi dan penilaian yang komprehensif
--   Fitur pelacakan kemajuan belajar yang dapat disesuaikan dengan perhitungan JP
--   Komunitas pengguna yang luas dan dukungan dokumentasi yang lengkap
 
 ## Target Pengguna
 
