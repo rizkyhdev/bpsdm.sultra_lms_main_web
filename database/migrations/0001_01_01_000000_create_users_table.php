@@ -13,12 +13,23 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('nip')->unique();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->rememberToken();
+            $table->string('password');
+            $table->string('jabatan');
+            $table->string('unit_kerja');
+            $table->enum('role', ['admin', 'instructor', 'student', 'supervisor'])->default('student');
+            $table->boolean('is_validated')->default(false);
             $table->timestamps();
+            
+            // Add indexes for frequently searched columns
+            $table->index('nip');
+            $table->index('email');
+            $table->index('role');
+            $table->index('is_validated');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
