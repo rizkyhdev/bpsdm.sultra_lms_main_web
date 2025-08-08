@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -18,9 +19,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'nip',
         'name',
         'email',
         'password',
+        'jabatan',
+        'unit_kerja',
+        'role',
+        'is_validated',
     ];
 
     /**
@@ -43,6 +49,47 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_validated' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the user enrollments for the user.
+     */
+    public function userEnrollments(): HasMany
+    {
+        return $this->hasMany(UserEnrollment::class);
+    }
+
+    /**
+     * Get the user progress records for the user.
+     */
+    public function userProgress(): HasMany
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
+    /**
+     * Get the quiz attempts for the user.
+     */
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
+
+    /**
+     * Get the certificates for the user.
+     */
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /**
+     * Get the JP records for the user.
+     */
+    public function jpRecords(): HasMany
+    {
+        return $this->hasMany(JpRecord::class);
     }
 }
