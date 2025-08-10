@@ -1,370 +1,599 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Selamat Datang Peserta</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
-  @vite('resources/css/app.css')
-  <script src="https://unpkg.com/lucide@latest"></script>
+<!doctype html>
+<html lang="en">
+ <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
-  <style>
-    body {
-      font-family: "Montserrat", sans-serif;
-    }
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-    }
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-  </style>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" 
+          rel="stylesheet" 
+          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
+          crossorigin="anonymous">
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    <!-- Calendar Styling CSS  -->
+    <link rel="stylesheet" href="{{ asset('css/calendarstyling.css') }}">
+
+    {{-- Preload Styling CSS --}}
+     <link rel="stylesheet" href="{{ asset('css/preload.css') }}"> 
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" 
+          integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" 
+          integrity="sha512-pvVf9YqTQm1dNN1Ff6aM5AjlF6XK8u5GqZ1l3u1Z6r0QeN6cZsPZ4u8D1hZxS6H3c7hI3NkR6vH+G3BfQ4gBg==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" 
+          integrity="sha512-IE3fgyN2F9X+G2V8k7eI5uLf7t0zH+1MS7FvjSYZJ2L4G7+5JQ9G1nU6X4uK0zA6Zf9hZ3u8xFh+QKpYz6xOg==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Animate CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 
-<body class="font-sans">
-  <!-- Header -->
-  <header class="relative bg-cover bg-center pb-0" style="background-image: url('image/jemmbatan.png')">
-    <div class="absolute inset-0 bg-green-900 bg-opacity-60"></div>
+  <body style="padding-top:80px;">
+  {{-- Preload --}}
+     <div id="preloader">
+        <div class="preloader-logo">
+            <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" />
+        </div>
+    </div>
 
-   <div class="relative z-10 flex flex-col min-h-screen justify-start">
-      <!-- Logo & Nav -->
-      <nav class="flex justify-between items-center px-6 py-4 text-white">
-        <a href="index.html" class="flex gap-2 items-center">
-          <div class="flex gap-2 items-center">
-            <img src="image/LOGOGRAM SOBAT ASR.png" alt="Logo 1" class="h-20" />
-            <img src="image/LOGOFONT SOBAT ASR.png" alt="Logo 2" class="h-20" />
-          </div>
-        </a>
-        <ul class="flex gap-4 text-sm">
-          <li>
-            <a
-              href="index.html"
-              class="text-green-400 font-bold border-b-2 border-green-400"
-            >
-              Beranda
-            </a>
-          </li>
-          <li>
-            <a
-              href="/nurul/about.html"
-              class="hover:text-green-400 active:text-green-400 transition duration-300"
-            >
-              About
-            </a>
-          </li>
-          <li class="border-l border-white pl-4">
-            <a
-              href="#"
-              class="hover:text-green-400 active:text-green-400 transition duration-300"
-            >
-              Log In
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="hover:text-green-400 active:text-green-400 transition duration-300"
-            >
-              Sign Up
-            </a>
-          </li>
-        </ul>
-      </nav>
+{{-- Navbar --}}
+<nav class="navbar navbar-expand-lg fixed-top" style="background-color:#FFFFFF;  box-shadow: 0px 5px 5px rgba(0.2, 0.2, 0.2, 0.2);">
+  <div class="container">
+    <div class="navbar-start" href="#" style="" alt="logo">
+      <img src="{{ asset('image/LOGO_AURA.png') }}" alt="Logo" width="80" height="80" class="me-3 img-fluid" data-animate="animate__animated animate__zoomInDown">
+       <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" width="80" height="80" class="me-3 img-fluid" data-animate="animate__animated animate__zoomInDown"> 
+    </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+      </ul>
+      <div>
+        <a href="{{ url('/login') }}" class="btn btn-outline-primary me-2">Login</a>
+         <a href="{{ url('/register') }}" class="btn btn-primary">Register</a>
+      </div>
+    </div>
+  </div>
+</nav>
+{{-- Akhir Navbar --}}
 
-      <!-- Hero Section -->
-      <div class="flex flex-col justify-center items-center text-white pt-4 pb-4 px-4 grow">
-        <div class="text-left max-w-4xl">
-          <h1 class="text-7xl font-bold mb-4 tracking-tight leading-tight">Selamat Datang</h1>
-          <p class="text-2xl font-medium leading-snug">Sistem Informasi Bangkom Teknis<br />Aparatur Sigap Terintegrasi</p>
-          <div class="flex flex-col sm:flex-row justify-center gap-4">
-  <button class="relative group inline-block px-6 py-3 rounded-full bg-white text-black font-semibold overflow-hidden shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
-    <span class="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out"></span>
-    <span class="relative z-10 group-hover:text-white transition duration-300">SELAMAT DATANG DI WEBSITE</span>
+{{-- Hero Carousel --}}
+<div class="container-fluid px-5">
+<div id="heroCarousel" class="carousel slide mx-auto my-5 shadow" data-bs-ride="carousel" style="max-width: 1500px; border-radius: 20px; overflow: hidden;">
+  <div class="carousel-inner" style="height: 75vh;">
+
+    {{-- Slide 1 --}}
+    <div class="carousel-item active"  style="height: 100%; position: relative;">
+      <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0,0,0,0.5); z-index: 1;"></div>
+      <div class="d-flex align-items-center justify-content-center text-white position-relative"
+           style="background-image: url('{{ asset('image/slide1.jpeg') }}'); background-size: cover; background-position: center; height: 100%; z-index: 2;">
+        <div class="container text-center">
+          <h1 class="fw-bold mb-3 text-shadow" data-animate="animate__animated animate__fadeInDownBig">Selamat Datang</h1>
+          <h5 class="text-shadow">Sistem Informasi Bangkom Teknis<br>Aparatur Unggul Responsif Adaptif</h5>
+          <p class="mt-3 text-shadow">"Lorem ipsum dolor sit amet, consectetur adipiscing elit..."</p>
+          <a href="#" class="btn btn-gradient px-4 py-2 mt-3" data-animate="animate__animated animate__fadeInUp">Register</a>
+        </div>
+      </div>
+    </div>
+
+    {{-- Slide 2 --}}
+    <div class="carousel-item"  style="height: 100%;">
+      <div class="d-flex align-items-center justify-content-center text-black"
+           style="background-image: url('{{ asset('image/slide2.jpg') }}'); background-size: cover; background-position: center; height: 100%;">
+        <div class="container text-center">
+          <h1 class="fw-bold mb-3 animate__animated animate__fadeInDownBig">Pelatihan Terbaik</h1>
+          <p class="mt-3">"Pelatihan kami dirancang untuk ASN dengan pendekatan aplikatif."</p>
+          <a href="#" class="btn btn-info text-white mt-3">Lihat Kursus</a>
+        </div>
+      </div>
+    </div>
+
+    {{-- Slide 3 --}}
+    <div class="carousel-item"  style="height: 100%;">
+      <div class="d-flex align-items-center justify-content-center text-black"
+           style="background-image: url('{{ asset('image/slide3.jpg') }}'); background-size: cover; background-position: center; height: 100%;">
+        <div class="container text-center">
+          <h1 class="fw-bold mb-3 animate__animated animate__fadeInDownBig">Gabung Sekarang</h1>
+          <p class="mt-3">"Transformasi dimulai dari langkah pertama."</p>
+          <a href="#" class="btn btn-info text-white mt-3">Gabung</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {{-- Controls --}}
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
   </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
+  {{-- Indicators --}}
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+  </div>
 </div>
-        </div>
-      </div>
+</div>
+{{-- Akhir Hero Carousel --}}
 
-      <!-- Quotes -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-white px-10 pt-10 pb-20 text-sm">
-        <div>
-          <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..."</p>
-          <p>"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."</p>
-          <p>"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."</p>
-        </div>
-        <div>
-          <p>"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
-          <p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium."</p>
-          <p>"Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."</p>
-        </div>
-      </div>
-    </div>
-  </header>
 
-  <!-- Sambutan Section -->
-  <section class="relative flex flex-col lg:flex-row items-stretch justify-center pt-0 pb-0">
-    <div class="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center px-10 relative">
-      <img src="image/logo bpsdm.jpeg" alt="Logo BPSDM" class="w-[13rem] mb-0 mt-8" />
-      <img src="image/kepala-badan.jpg" alt="Kepala BPSDM" class="w-[18rem] rounded-b-full" />
-      <div class="mt-4">
-        <p class="font-bold text-green-700 text-lg text-center">Syahruddin Nurdin, SE</p>
-        <p class="text-sm text-green-700 text-center mb-12">Kepala BPSDM Sulawesi Tenggara</p>
-      </div>
-    </div>
-    <div class="w-full lg:w-1/2 bg-green-600 text-white p-10 pt-12 flex flex-col justify-start">
-      <h2 class="text-5xl font-bold mb-8">Sambutan<br />Kepala Badan</h2>
-      <p class="mb-8">
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..."
-      </p>
-      <p>
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-      </p>
-    </div>
-  </section>
 
-  <!-- Panduan Alur Sistem section -->
-  <section class="relative flex flex-col lg:flex-row items-stretch justify-center pt-0 pb-0">
-    <div class="w-full lg:w-2/2 bg-green-100 p-10 pt-12 flex flex-col justify-center">
-      <h2 class="text-3xl font-bold text-black mb-12">Panduan Alur Sistem</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Alur Cards -->
-        <div class="flex items-start gap-4"><div class="bg-green-700 text-white text-4xl font-bold px-5 py-2 rounded">1</div><p class="text-gray-800">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p></div>
-        <div class="flex items-start gap-4"><div class="bg-green-700 text-white text-4xl font-bold px-5 py-2 rounded">2</div><p class="text-gray-800">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p></div>
-        <div class="flex items-start gap-4"><div class="bg-green-700 text-white text-4xl font-bold px-5 py-2 rounded">3</div><p class="text-gray-800">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p></div>
-        <div class="flex items-start gap-4"><div class="bg-green-700 text-white text-4xl font-bold px-5 py-2 rounded">4</div><p class="text-gray-800">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p></div>
+{{-- About --}}
+<div class="about mb-4" id="about">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-10 mx-auto text-center mb-5 mt-5" data-aos="fade-down" data-aos-duration="1000">
+        <h2>Tentang Kami</h2>
       </div>
-    </div>
-    <div class="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center px-10">
-      <img src="image/asn.png" alt="Karakter Penjelas" class="w-64 lg:w-72" />
-    </div>
-  </section>
-  </head>
-
-  <!-- Kalender Pembelajaran dan Jadwal Pelatihan Section -->
-  <section class="flex w-full min-h-screen bg-cover bg-center" style="background-image: url('image/jemmbatan.png');">
-    <!-- Kiri: Kalender -->
-    <div class="w-full md:w-1/2 bg-green-300 bg-opacity-40 flex justify-center items-center p-10">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold text-green-800 mb-4">Kalender Pembelajaran</h2>
-        <div id="calendar" class="flatpickr-calendar shadow-lg"></div>
-      </div>
-    </div>
-
-    <!-- Kanan: Jadwal -->
-    <div class="w-full md:w-2/3 bg-green-900 bg-opacity-60 text-white p-10 pt-24">
-      <div id="jadwalContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <p class="text-sm opacity-70">Silakan klik tanggal pada kalender untuk melihat jadwal pelatihan.</p>
-      </div>
-    </div>
-  </section>
-
-  <body class="bg-green-200 bg-opacity-40 font-sans">
-  <!-- Struktur Organisasi -->
-  <section class="bg-green-100 py-20 px-6">
-      <h2 class="text-3xl font-bold text-center text-green-900 mb-12">Struktur Organisasi</h2>
-      <div class="swiper w-full px-6">
-        <div class="swiper-wrapper">
-          <!-- Slide 1 -->
-          <div class="swiper-slide bg-white rounded-2xl shadow-lg p-10 w-72 text-center">
-            <img src="image/kepala-badan.jpg" alt="Pejabat2" class="rounded-full w-40 h-41 mx-auto mb-4" />
-            <p class="font-bold text-green-700">Nama Pejabat 2</p>
-            <p class="text-sm text-gray-600">Jabatan</p>
+        <div class="col-12 col-md-10 mx-auto">
+          <div class="ratio ratio-16x9">
+              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/UxlcBiRu9p8" allowfullscreen></iframe>
           </div>
-          <!-- Slide 2 -->
-          <div class="swiper-slide bg-white rounded-2xl shadow-lg p-10 w-72 text-center">
-            <img src="image/kepala-badan.jpg" alt="Kepala BPSDM" class="rounded-full w-40 h-41 mx-auto mb-4" />
-            <p class="font-bold text-green-700">Syahruddin Nurdin, SE</p>
-            <p class="text-sm text-gray-600">Kepala BPSDM Provinsi Sulawesi Tenggara</p>
-          </div>
-          <!-- Slide 3 -->
-          <div class="swiper-slide bg-white rounded-2xl shadow-lg p-10 w-72 text-center">
-            <img src="image/kepala-badan.jpg" alt="Pejabat3" class="rounded-full w-40 h-41 mx-auto mb-4" />
-            <p class="font-bold text-green-700">Nama Pejabat 3</p>
-            <p class="text-sm text-gray-600">Jabatan</p>
+        </div>
+    </div>
+  </div>
+</div>
+{{-- Akhir About --}}
+<br><br>
+{{-- Panduan Alur Sistem --}}
+<div class="alur mb-8" id="alur">
+  <div class="container">
+    <!-- Judul -->
+    <div class="row mb-4">
+      <div class="col">
+        <h2 class="fw-bold text-center mb-5">Panduan Alur Sistem</h2>
+      </div>
+    </div>
+
+    <div class="row gx-5 align-items-center">
+      <!-- Ilustrasi (kiri) -->
+      <div class="col-lg-4 mb-4 mb-lg-0 d-flex justify-content-center">
+        <div class="position-relative" style="max-width:300px;">
+          <div style="background: linear-gradient(135deg,#6ec1e4,#f0f9ff); border-radius:16px; padding:1rem;">
+            <img 
+              src="{{ asset('image/asn.png') }}" 
+              alt="Ilustrasi panduan" 
+              class="img-fluid" 
+              style="position: relative; z-index:1; transform: translateY(-10px);">
           </div>
         </div>
       </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="bg-green-900 text-white py-10">
-    <div class="container mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+      <!-- Langkah-langkah (kanan) -->
+      <div class="col-lg-8">
+        <div class="row gy-4">
+          <!-- baris 1 -->
+          <div class="col-md-4">
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number flex-shrink-0 d-flex justify-content-center align-items-center rounded" data-aos="fade-down-left" data-aos-duration="1000"
+                   style="background:#0f4d1a; color:#fff; width:48px; height:48px; font-weight:600; font-size:1rem;">
+                1
+              </div>
+              <div>
+                <h6 class="mb-1">Langkah Pertama</h6>
+                <p class="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number flex-shrink-0 d-flex justify-content-center align-items-center rounded" data-aos="fade-down-left" data-aos-duration="1000"
+                   style="background:#0f4d1a; color:#fff; width:48px; height:48px; font-weight:600; font-size:1rem;">
+                2
+              </div>
+              <div>
+                <h6 class="mb-1">Langkah Kedua</h6>
+                <p class="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number flex-shrink-0 d-flex justify-content-center align-items-center rounded" data-aos="fade-down-left" data-aos-duration="1000"
+                   style="background:#0f4d1a; color:#fff; width:48px; height:48px; font-weight:600; font-size:1rem;">
+                3
+              </div>
+              <div>
+                <h6 class="mb-1">Langkah Ketiga</h6>
+                <p class="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              </div>
+            </div>
+          </div>
 
-      <!-- Kontak -->
-      <div class="flex flex-col gap-2">
-        <p class="font-bold text-base mb-2">📍 Alamat</p>
-        <div class="flex items-start gap-2">
-          <i data-lucide="map-pin" class="w-5 h-5"></i>
-          <span>Jalan Chairil Anwar No. 8 A Puwatu</span>
+          <!-- baris 2 -->
+          <div class="col-md-4">
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number flex-shrink-0 d-flex justify-content-center align-items-center rounded" data-aos="fade-down-left" data-aos-duration="1000"
+                   style="background:#0f4d1a; color:#fff; width:48px; height:48px; font-weight:600; font-size:1rem;">
+                4
+              </div>
+              <div>
+                <h6 class="mb-1">Langkah Keempat</h6>
+                <p class="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number flex-shrink-0 d-flex justify-content-center align-items-center rounded" data-aos="fade-down-left" data-aos-duration="1000"
+                   style="background:#0f4d1a; color:#fff; width:48px; height:48px; font-weight:600; font-size:1rem;">
+                5
+              </div>
+              <div>
+                <h6 class="mb-1">Langkah Kelima</h6>
+                <p class="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number flex-shrink-0 d-flex justify-content-center align-items-center rounded" data-aos="fade-down-left" data-aos-duration="1000"
+                   style="background:#0f4d1a; color:#fff; width:48px; height:48px; font-weight:600; font-size:1rem;">
+                6
+              </div>
+              <div>
+                <h6 class="mb-1">Langkah Keenam</h6>
+                <p class="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="flex items-start gap-2">
-          <i data-lucide="phone" class="w-5 h-5"></i>
-          <span>Tlp. 3124061 Fax. 312595</span>
-        </div>
-        <div class="flex items-start gap-2">
-          <i data-lucide="mail" class="w-5 h-5"></i>
-          <span>bpsdmprovsultra@gmail.com</span>
-        </div>
-      </div>
-
-      <!-- Quotes -->
-      <div class="flex flex-col gap-4">
-        <p class="font-bold text-base mb-2">📖 Quotes</p>
-        <p>“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam...”</p>
-        <p>“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam...”</p>
-      </div>
-
-      <!-- Sosial Media -->
-      <div class="flex flex-col gap-2">
-        <p class="font-bold text-base mb-2">🌐 Sosial Media</p>
-        <a href="https://facebook.com/" target="_blank" class="flex items-center gap-2 hover:text-green-400">
-          <i data-lucide="facebook" class="w-5 h-5"></i> Facebook
-        </a>
-        <a href="https://instagram.com/" target="_blank" class="flex items-center gap-2 hover:text-green-400">
-          <i data-lucide="instagram" class="w-5 h-5"></i> Instagram
-        </a>
-        <a href="https://tiktok.com/" target="_blank" class="flex items-center gap-2 hover:text-green-400">
-          <i data-lucide="music" class="w-5 h-5"></i> TikTok
-        </a>
-        <a href="https://youtube.com/" target="_blank" class="flex items-center gap-2 hover:text-green-400">
-          <i data-lucide="youtube" class="w-5 h-5"></i> YouTube
-        </a>
-        <a href="https://wa.me/628123456789" target="_blank" class="flex items-center gap-2 hover:text-green-400">
-          <i data-lucide="phone" class="w-5 h-5"></i> 0812 3456 789
-        </a>
       </div>
     </div>
+  </div>
+</div>
+{{-- Akhir Panduan Alur Sistem--}}
+{{-- Article --}}
+<div class="article py-5" id="article">
+  <div class="container">
+    <h1 class="text-center mb-5">Artikel</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+      {{-- Card 1 --}}
+      <div class="col">
+        <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease-in-out;"
+  onmouseover="this.style.transform='scale(1.05)'"
+  onmouseout="this.style.transform='scale(1)'">
+          <img src="{{ asset('image/image1.jpg') }}" class="card-img-top" alt="Artikel 1">
+          <div class="card-body">
+            <h5 class="card-title">Rapat Perdana Team Sobat Aura</h5>
+            <p class="card-text">Tim Pengembang Sobat Aura Menggelar Rapat Perdana bersama Kabid Teknis Umum dan Fungsional</p>
+          </div>
+          <div class="card-footer bg-white border-top-0">
+            <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
+          </div>
+        </div>
+      </div>
+
+      {{-- Card 2 --}}
+      <div class="col">
+        <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease-in-out;"
+  onmouseover="this.style.transform='scale(1.05)'"
+  onmouseout="this.style.transform='scale(1)'">
+          <img src="{{ asset('image/image2.jpg') }}" class="card-img-top" alt="Artikel 2">
+          <div class="card-body">
+            <h5 class="card-title">Hasil Rapat Perdana Team Sobat Aura</h5>
+            <p class="card-text">Hasil Rapat Perdana Team Sobat Aura tentang fitur yang digunakan dalam sistem dan Deadline Pengerjaan Sistem</p>
+          </div>
+          <div class="card-footer bg-white border-top-0">
+            <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
+          </div>
+        </div>
+      </div>
+
+      {{-- Card 3 --}}
+      <div class="col">
+        <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease-in-out;"
+  onmouseover="this.style.transform='scale(1.05)'"
+  onmouseout="this.style.transform='scale(1)'">
+          <img src="{{ asset('image/image3.jpg') }}" class="card-img-top" alt="Artikel 3">
+          <div class="card-body">
+            <h5 class="card-title">Rizky Leader Falling in Love ♡</h5>
+            <p class="card-text">Rizky Leader Jatuh Cinta pada Rekrutan Anggota Terbaru</p>
+          </div>
+          <div class="card-footer bg-white border-top-0">
+            <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{{-- Akhir Article --}}
+
+
+{{-- Kalender Pembelajaran --}}
+<section class="ftco-section"><div class="container my-4">
+    <div class="row">
+        <!-- Kolom Kiri: Kalender -->
+        <div class="col-md-12 col-lg-4">
+            <div class="elegant-calencar">
+                <div class="wrap-header d-flex align-items-center">
+                    <p id="reset" class="me-2 btn btn-sm btn-outline-secondary">Date</p>
+                    <div id="header" class="p-0 w-100 d-flex justify-content-between">
+                        <div class="pre-button"><i class="fa fa-chevron-left"></i></div>
+                        <div class="head-info text-center">
+                            <div class="head-day"></div>
+                            <div class="head-month"></div>
+                        </div>
+                        <div class="next-button"><i class="fa fa-chevron-right"></i></div>
+                    </div>
+                </div>
+                <div class="calendar-wrap">
+                    <table id="calendar" class="text-center">
+                        <thead>
+                            <tr>
+                                <th>Sun</th>
+                                <th>Mon</th>
+                                <th>Tue</th>
+                                <th>Wed</th>
+                                <th>Thu</th>
+                                <th>Fri</th>
+                                <th>Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for ($i = 0; $i < 6; $i++)
+                                <tr>
+                                    @for ($j = 0; $j < 7; $j++)
+                                        <td class="calendar-day" data-date=""></td>
+                                    @endfor
+                                </tr>
+                            @endfor
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kolom Kanan: Card Pelatihan -->
+        <div class="col-md-8">
+            <h4 class="mb-3">Daftar Pelatihan</h4>
+            <div id="pelatihan-list" class="row g-3">
+                <p class="text-muted">Klik tanggal di kalender untuk melihat pelatihan.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+	</section>
+  <script>
+    // Data pelatihan dari Laravel
+    const pelatihanData = @json($pelatihan); 
+
+    // Event klik tanggal
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("calendar-day") && e.target.dataset.date) {
+            const selectedDate = e.target.dataset.date;
+            renderPelatihan(selectedDate);
+        }
+    });
+
+    // Fungsi render card pelatihan
+    function renderPelatihan(date) {
+        const container = document.getElementById("pelatihan-list");
+        container.innerHTML = ""; // Bersihkan
+
+        const filtered = pelatihanData.filter(item => item.date === date);
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="col-12"><p class="text-muted">Tidak ada pelatihan di tanggal ini.</p></div>`;
+            return;
+        }
+
+        filtered.forEach(item => {
+            container.innerHTML += `
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.title}</h5>
+                            <p class="card-text">${item.description}</p>
+                            <p class="mb-1"><i class="fa fa-clock"></i> ${item.duration}</p>
+                            <p class="mb-2"><i class="fa fa-signal"></i> ${item.level}</p>
+                            <a href="${item.url}" class="btn btn-warning btn-sm">Start Learning</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+</script>
+{{-- Kalender Pembelajaran --}}
+
+
+<!--  Struktur Organisasi -->
+    <section class="meet-our-team py-5 py-lg-11 py-xl-12">
+      <div class="container">
+        <div class="d-flex flex-column gap-5 gap-xl-11">
+          <div class="row">
+        <div class="col-12">
+          <div class="text-center" data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000">
+            <h2 class="mb-5">Meet our team</h2>
+          </div>
+        </div>
+      </div>
+          <div class="row">
+            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0">
+              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="100"
+                data-aos-duration="1000">
+                <div class="meet-team-img position-relative overflow-hidden">
+                  <img src="{{ asset('image/kepala-badan.jpg') }}" alt="team-img" class="img-fluid w-100">
+                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
+                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="meet-team-details">
+                  <h4 class="mb-0">kepala-badan</h4>
+                  <p class="mb-0">kepala-badan</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0">
+              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="200"
+                data-aos-duration="1000">
+                <div class="meet-team-img position-relative overflow-hidden">
+                  <img src="{{ asset('image/kaban.JPG') }}" alt="team-img" class="img-fluid w-100">
+                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
+                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="meet-team-details">
+                  <h4 class="mb-0">kaban</h4>
+                  <p class="mb-0">kaban</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0">
+              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="300"
+                data-aos-duration="1000">
+                <div class="meet-team-img position-relative overflow-hidden">
+                  <img src="{{ asset('image/sekban.png') }}" alt="team-img" class="img-fluid w-100">
+                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
+                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="meet-team-details">
+                  <h4 class="mb-0">sekban</h4>
+                  <p class="mb-0">sekban</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0">
+              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="400"
+                data-aos-duration="1000">
+                <div class="meet-team-img position-relative overflow-hidden">
+                  <img src="{{ asset('image/kadis.png') }}" alt="team-img" class="img-fluid w-100">
+                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
+                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
+                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="meet-team-details">
+                  <h4 class="mb-0">kadis</h4>
+                  <p class="mb-0">kadis</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+{{-- Akhir Section Struktur Organisasi --}}
+
+ <!-- Footer -->
+  <footer
+          class="text-center text-lg-start text-black"
+          style="background-color: #88d3e1"
+          >
+    <div class="container p-4 pb-0">
+  <!-- Section: Links -->
+  <section class="">
+    <!--Grid row-->
+    <div class="row">
+      <!-- Grid column: Maps -->
+      <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+        <h6 class="text-uppercase mb-4 font-weight-bold">
+          Lokasi Kantor
+        </h6>
+        <div class="ratio ratio-4x3">
+         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1990.124375520206!2d122.46603083858034!3d-3.9691188990011566!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2d98f3b6f79f5443%3A0x1abd21e5a25d0c41!2sBPSDM%20Propinsi%20Sulawesi%20Tenggara!5e0!3m2!1sid!2sid!4v1754266822957!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+      <!-- Grid column -->
+
+      <hr class="w-100 clearfix d-md-none" />
+
+      <!-- Grid column: Contact -->
+      <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+        <h6 class="text-uppercase mb-4 font-weight-bold">Kontak dan Alamat</h6>
+        <p><i class="fas fa-home mr-3"></i>Jalan Chairil Anwar No. 8 A Puuwatu</p>
+        <p><i class="fas fa-envelope mr-3"></i>email: BPSDMPROVSULTRA@gmail.com</p>
+        <p><i class="fas fa-phone mr-3"></i>Telp: 3124061</p>
+        <p><i class="fas fa-print mr-3"></i>Fax: 312595</p>
+      </div>
+      <!-- Grid column -->
+    </div>
+    <!--Grid row-->
+  </section>
+  <!-- Section: Links -->
+
+  <hr class="my-3">
+
+  <!-- Section: Copyright -->
+  <section class="p-3 pt-0">
+    <div class="row d-flex align-items-center">
+      <div class="col-md-7 col-lg-8 text-center text-md-start">
+        <div class="p-3">
+          © SOBAT AURA 2025
+          <a class="text-white" href="http://bpsdmprovsultra.home.blog/">BPSDM PEMPROV SULTRA</a>
+        </div>
+      </div>
+
+      <div class="col-md-5 col-lg-4 text-center text-md-end">
+        <a class="btn btn-outline-light btn-floating m-1" role="button"><i class="fab fa-facebook-f" href="https://www.facebook.com/bpsdm.sultra.3"></i></a>
+        <a class="btn btn-outline-light btn-floating m-1" role="button"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </section>
+  <!-- Section: Copyright -->
+</div>
+<!-- Grid container -->
   </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-/xUj+QAT/7rjG5Qbqseb3CidRub9pzQZAlPfMwVz6I6+w4n1vCtbmZh9rqx8uxFZ" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-YlHf5yZ5QZ4VdHz6YQFQFQJwQeN5e8sZ/6IDdnh3oX1N1pAVccahJgN9zeps2sonMSKcwV5Y8ZndKyVwU9g0Fg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
   <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        let direction = 'next';
+    window.pelatihanData = @json($pelatihan);
+</script>
+  <script src="{{asset('js/jquery.min.js')}}"></script>
+  <script src="{{asset('js/bootstrap.min.js')}}"></script>
+  <script src="{{asset('js/main.js')}}"></script>
+  <script src="{{asset('js/popper.js')}}"></script>
+   <script src="{{asset('js/preload.js')}}"></script>
 
-        const swiper = new Swiper(".swiper", {
-          effect: "coverflow",
-          grabCursor: true,
-          centeredSlides: true,
-          slidesPerView: "auto",
-          coverflowEffect: {
-            rotate: 30,
-            stretch: 0,
-            depth: 200,
-            modifier: 1,
-            slideShadows: true,
-          },
-          loop: false, // loop dinonaktifkan supaya bisa bolak-balik manual
-        });
-
-        // Fungsi autoplay manual bolak-balik
-        function autoPlaySwipe() {
-          if (direction === 'next') {
-            if (swiper.isEnd) {
-              direction = 'prev';
-              swiper.slidePrev();
-            } else {
-              swiper.slideNext();
-            }
-          } else {
-            if (swiper.isBeginning) {
-              direction = 'next';
-              swiper.slideNext();
-            } else {
-              swiper.slidePrev();
-            }
-          }
-        }
-
-        // Jalankan autoplay manual setiap 3 detik
-        setInterval(autoPlaySwipe, 3000);
-      });
-  </script>
-  <!-- Tambahkan (Kalender) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const jadwal = {
-          "2025-07-07": [
-            {
-              judul: "Pelatihan Sertifikasi Pengadaan Barang dan Jasa",
-              deskripsi: "Pelatihan tentang proses pengadaan barang dan jasa secara profesional."
-            },
-            {
-              judul: "Pelatihan Sertifikasi Pengadaan Barang dan Jasa",
-              deskripsi: "Pelatihan tentang proses pengadaan barang dan jasa secara profesional."
-            },
-            {
-              judul: "Pelatihan Sertifikasi Pengadaan Barang dan Jasa",
-              deskripsi: "Pelatihan tentang proses pengadaan barang dan jasa secara profesional."
-            },
-            {
-              judul: "Pelatihan Sertifikasi Pengadaan Barang dan Jasa",
-              deskripsi: "Pelatihan tentang proses pengadaan barang dan jasa secara profesional."
-            }
-          ],
-          "2025-07-08": [
-            {
-              judul: "Pelatihan Dasar ASN",
-              deskripsi: "Pembekalan nilai-nilai dasar ASN dan peran dalam birokrasi."
-            },
-            {
-              judul: "Pelatihan Manajemen ASN",
-              deskripsi: "Meningkatkan kemampuan kepemimpinan dan tata kelola pegawai negeri."
-            },
-            {
-              judul: "Pelatihan Dasar ASN",
-              deskripsi: "Pembekalan nilai-nilai dasar ASN dan peran dalam birokrasi."
-            },
-            {
-              judul: "Pelatihan Dasar ASN",
-              deskripsi: "Pembekalan nilai-nilai dasar ASN dan peran dalam birokrasi."
-            }
-          ]
-        };
-
-        flatpickr("#calendar", {
-          inline: true,
-          defaultDate: "today",
-          onChange: function (selectedDates, dateStr, instance) {
-            tampilkanJadwal(dateStr);
-          }
-        });
-
-        function tampilkanJadwal(tanggal) {
-          const container = document.getElementById("jadwalContainer");
-          container.innerHTML = "";
-
-          if (jadwal[tanggal]) {
-            jadwal[tanggal].forEach(item => {
-              const card = document.createElement("div");
-              card.className = "bg-green-600 text-white p-6 rounded-lg shadow-md";
-              card.innerHTML = `
-                <h3 class="text-xl font-bold mb-2">${item.judul}</h3>
-                <p class="text-sm">${item.deskripsi}</p>
-              `;
-              container.appendChild(card);
-            });
-          } else {
-            const kosong = document.createElement("p");
-            kosong.className = "text-gray-600 text-sm col-span-2 text-center";
-            kosong.innerText = "Tidak ada pelatihan terjadwal untuk tanggal ini.";
-            container.appendChild(kosong);
-          }
-        }
-
-        const today = new Date().toISOString().split('T')[0];
-        tampilkanJadwal(today);
-      });
+    AOS.init();
   </script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-      lucide.createIcons();
-  </script>
-
-</body>
+  </body>
 </html>

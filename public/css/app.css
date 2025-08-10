@@ -1,0 +1,49 @@
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+.meet-team-img {
+  position: relative;
+  overflow: hidden;
+}
+.meet-team-img::before {
+  content: "";
+  display: block;
+  padding-top: 120%;
+}
+.meet-team-img > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.meet-team-img:hover .meet-team-overlay {
+  visibility: visible;
+  transform: translateY(0);
+}
+.meet-team-img .meet-team-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  transform: translateY(100%);
+  transition: all 0.4s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.meet-team-img .meet-team-overlay .social .btn:hover {
+  background-color: var(--bs-primary) !important;
+}
+
+/* .hero {
+  background-image: url('/image/hero.jpeg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+} */
