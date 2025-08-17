@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 class StudentCourseController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -24,7 +24,7 @@ class StudentCourseController extends Controller
     }
 
     /**
-     * Display a listing of all available courses.
+     * Menampilkan daftar semua kursus yang tersedia.
      */
     public function index(Request $request): View
     {
@@ -32,12 +32,12 @@ class StudentCourseController extends Controller
             $query->where('user_id', Auth::id());
         }]);
 
-        // Filter by bidang kompetensi if provided
+        // Filter berdasarkan bidang kompetensi jika disediakan
         if ($request->has('bidang_kompetensi') && $request->bidang_kompetensi !== '') {
             $query->where('bidang_kompetensi', $request->bidang_kompetensi);
         }
 
-        // Search by title or description
+        // Pencarian berdasarkan judul atau deskripsi
         if ($request->has('search') && $request->search !== '') {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -46,7 +46,7 @@ class StudentCourseController extends Controller
             });
         }
 
-        // Sort options
+        // Opsi pengurutan
         $sortBy = $request->get('sort_by', 'judul');
         $sortOrder = $request->get('sort_order', 'asc');
         
@@ -61,18 +61,18 @@ class StudentCourseController extends Controller
     }
 
     /**
-     * Display the specified course.
+     * Menampilkan kursus tertentu.
      */
     public function show(Course $course): View
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Periksa apakah user sudah terdaftar
         $enrollment = $user->userEnrollments()
             ->where('course_id', $course->id)
             ->first();
 
-        // Get course modules with sub-modules
+        // Mendapatkan modul kursus dengan sub-modul
         $modules = $course->modules()
             ->with(['subModules' => function ($query) {
                 $query->orderBy('urutan');
@@ -80,7 +80,7 @@ class StudentCourseController extends Controller
             ->orderBy('urutan')
             ->get();
 
-        // Calculate progress for each module
+        // Menghitung progress untuk setiap modul
         $moduleProgress = [];
         foreach ($modules as $module) {
             $totalSubModules = $module->subModules->count();
@@ -104,7 +104,7 @@ class StudentCourseController extends Controller
             ];
         }
 
-        // Get course statistics
+        // Mendapatkan statistik kursus
         $totalStudents = $course->userEnrollments()->count();
         $completedStudents = $course->userEnrollments()->whereNotNull('completed_at')->count();
         $averageScore = $course->certificates()->avg('score') ?? 0;
@@ -121,13 +121,13 @@ class StudentCourseController extends Controller
     }
 
     /**
-     * Enroll the authenticated user in a course.
+     * Mendaftarkan user yang terautentikasi ke dalam kursus.
      */
     public function enroll(Course $course): JsonResponse
     {
         $user = Auth::user();
 
-        // Check if already enrolled
+        // Periksa apakah sudah terdaftar
         $existingEnrollment = $user->userEnrollments()
             ->where('course_id', $course->id)
             ->first();
@@ -150,7 +150,7 @@ class StudentCourseController extends Controller
             DB::beginTransaction();
 
             if ($existingEnrollment) {
-                // Reactivate enrollment
+                // Mengaktifkan kembali pendaftaran
                 $existingEnrollment->update([
                     'status' => 'active',
                     'enrollment_date' => now(),
@@ -158,7 +158,7 @@ class StudentCourseController extends Controller
                 ]);
                 $enrollment = $existingEnrollment;
             } else {
-                // Create new enrollment
+                // Membuat pendaftaran baru
                 $enrollment = $user->userEnrollments()->create([
                     'course_id' => $course->id,
                     'enrollment_date' => now(),
@@ -166,7 +166,7 @@ class StudentCourseController extends Controller
                 ]);
             }
 
-            // Initialize progress records for all sub-modules
+            // Inisialisasi record progress untuk semua sub-modul
             foreach ($course->modules as $module) {
                 foreach ($module->subModules as $subModule) {
                     UserProgress::firstOrCreate([
@@ -198,7 +198,7 @@ class StudentCourseController extends Controller
     }
 
     /**
-     * Display the user's enrolled courses (my learning).
+     * Menampilkan kursus yang diikuti oleh user (pembelajaran saya).
      */
     public function myLearning(Request $request): View
     {
@@ -208,12 +208,12 @@ class StudentCourseController extends Controller
                 $query->where('user_id', $user->id);
             }]);
 
-        // Filter by status
+        // Filter berdasarkan status
         if ($request->has('status') && $request->status !== '') {
             $query->where('status', $request->status);
         }
 
-        // Filter by completion
+        // Filter berdasarkan penyelesaian
         if ($request->has('completion') && $request->completion !== '') {
             if ($request->completion === 'completed') {
                 $query->whereNotNull('completed_at');
@@ -224,7 +224,7 @@ class StudentCourseController extends Controller
 
         $enrollments = $query->orderBy('enrollment_date', 'desc')->paginate(10);
 
-        // Calculate progress for each enrollment
+        // Menghitung progress untuk setiap pendaftaran
         $enrollmentProgress = [];
         foreach ($enrollments as $enrollment) {
             $course = $enrollment->course;
@@ -256,13 +256,13 @@ class StudentCourseController extends Controller
     }
 
     /**
-     * Track learning progress for a specific course.
+     * Melacak progress pembelajaran untuk kursus tertentu.
      */
     public function trackProgress(Course $course): JsonResponse
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Periksa apakah user sudah terdaftar
         $enrollment = $user->userEnrollments()
             ->where('course_id', $course->id)
             ->first();
@@ -274,7 +274,7 @@ class StudentCourseController extends Controller
             ], 404);
         }
 
-        // Get detailed progress
+        // Mendapatkan progress detail
         $modules = $course->modules()
             ->with(['subModules.userProgress' => function ($query) use ($user) {
                 $query->where('user_id', $user->id);
@@ -300,7 +300,7 @@ class StudentCourseController extends Controller
                 
                 if ($progress && $progress->is_completed) {
                     $completedSubModules++;
-                    $totalJpEarned += $course->jp_value / $totalSubModules; // Proportional JP
+                    $totalJpEarned += $course->jp_value / $totalSubModules; // JP proporsional
                 }
 
                 $moduleProgress['sub_modules'][] = [
@@ -318,7 +318,7 @@ class StudentCourseController extends Controller
 
         $overallProgress = $totalSubModules > 0 ? round(($completedSubModules / $totalSubModules) * 100, 2) : 0;
 
-        // Check if course is completed
+        // Periksa apakah kursus sudah selesai
         if ($overallProgress >= 100 && $enrollment->status !== 'completed') {
             $enrollment->update([
                 'status' => 'completed',

@@ -14,7 +14,7 @@ use Illuminate\Http\JsonResponse;
 class StudentModuleController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -23,13 +23,13 @@ class StudentModuleController extends Controller
     }
 
     /**
-     * Display the specified module.
+     * Menampilkan modul tertentu.
      */
     public function show(Module $module): View
     {
         $user = Auth::user();
         
-        // Check if user is enrolled in the course
+        // Periksa apakah user sudah terdaftar dalam kursus
         $enrollment = $user->userEnrollments()
             ->where('course_id', $module->course_id)
             ->where('status', 'active')
@@ -39,14 +39,14 @@ class StudentModuleController extends Controller
             abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses modul.');
         }
 
-        // Get module with sub-modules and user progress
+        // Mendapatkan modul dengan sub-modul dan progress user
         $module->load(['subModules' => function ($query) {
             $query->orderBy('urutan');
         }, 'subModules.userProgress' => function ($query) use ($user) {
             $query->where('user_id', $user->id);
         }]);
 
-        // Calculate module progress
+        // Menghitung progress modul
         $totalSubModules = $module->subModules->count();
         $completedSubModules = 0;
         $moduleProgress = 0;
@@ -66,7 +66,7 @@ class StudentModuleController extends Controller
         $overallProgress = $totalSubModules > 0 ? round($moduleProgress / $totalSubModules, 2) : 0;
         $completionPercentage = $totalSubModules > 0 ? round(($completedSubModules / $totalSubModules) * 100, 2) : 0;
 
-        // Get next and previous modules
+        // Mendapatkan modul berikutnya dan sebelumnya
         $nextModule = Module::where('course_id', $module->course_id)
             ->where('urutan', '>', $module->urutan)
             ->orderBy('urutan')
@@ -77,7 +77,7 @@ class StudentModuleController extends Controller
             ->orderBy('urutan', 'desc')
             ->first();
 
-        // Check if module is accessible (previous module completed or first module)
+        // Periksa apakah modul dapat diakses (modul sebelumnya selesai atau modul pertama)
         $isAccessible = $module->urutan === 1 || $previousModule === null;
         
         if (!$isAccessible && $previousModule) {

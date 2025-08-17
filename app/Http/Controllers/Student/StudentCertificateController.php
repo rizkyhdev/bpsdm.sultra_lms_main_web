@@ -15,7 +15,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class StudentCertificateController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -24,7 +24,7 @@ class StudentCertificateController extends Controller
     }
 
     /**
-     * Display a listing of all earned certificates.
+     * Menampilkan daftar semua sertifikat yang diperoleh.
      */
     public function index(Request $request): View
     {
@@ -34,19 +34,19 @@ class StudentCertificateController extends Controller
             ->with(['course', 'user'])
             ->orderBy('created_at', 'desc');
 
-        // Filter by year if provided
+        // Filter berdasarkan tahun jika disediakan
         if ($request->has('year') && $request->year !== '') {
             $query->whereYear('created_at', $request->year);
         }
 
-        // Filter by course if provided
+        // Filter berdasarkan kursus jika disediakan
         if ($request->has('course_id') && $request->course_id !== '') {
             $query->where('course_id', $request->course_id);
         }
 
         $certificates = $query->paginate(12);
         
-        // Get available years for filtering
+        // Mendapatkan tahun yang tersedia untuk filtering
         $availableYears = $user->certificates()
             ->selectRaw('YEAR(created_at) as year')
             ->distinct()
@@ -54,7 +54,7 @@ class StudentCertificateController extends Controller
             ->sort()
             ->reverse();
 
-        // Get available courses for filtering
+        // Mendapatkan kursus yang tersedia untuk filtering
         $availableCourses = $user->certificates()
             ->with('course:id,judul')
             ->get()
@@ -62,7 +62,7 @@ class StudentCertificateController extends Controller
             ->unique('id')
             ->filter();
 
-        // Get certificate statistics
+        // Mendapatkan statistik sertifikat
         $totalCertificates = $user->certificates()->count();
         $totalJpEarned = $user->certificates()->sum('jp_value');
         $certificatesThisYear = $user->certificates()

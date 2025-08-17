@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 class StudentQuizController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -25,7 +25,7 @@ class StudentQuizController extends Controller
     }
 
     /**
-     * Display a listing of quizzes for a sub-module.
+     * Menampilkan daftar quiz untuk sub-modul.
      */
     public function index(Request $request): View
     {
@@ -36,7 +36,7 @@ class StudentQuizController extends Controller
             abort(400, 'Sub-module ID diperlukan.');
         }
 
-        // Check if user is enrolled in the course
+        // Periksa apakah user sudah terdaftar dalam kursus
         $subModule = \App\Models\SubModule::with('module.course')->find($subModuleId);
         if (!$subModule) {
             abort(404, 'Sub-module tidak ditemukan.');
@@ -51,12 +51,12 @@ class StudentQuizController extends Controller
             abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses quiz.');
         }
 
-        // Get quizzes for the sub-module
+        // Mendapatkan quiz untuk sub-modul
         $quizzes = Quiz::where('sub_module_id', $subModuleId)
             ->with(['subModule.module.course'])
             ->get();
 
-        // Get user's quiz attempts for this sub-module
+        // Mendapatkan percobaan quiz user untuk sub-modul ini
         $quizAttempts = $user->quizAttempts()
             ->whereIn('quiz_id', $quizzes->pluck('id'))
             ->with('quiz')
