@@ -70,24 +70,24 @@
                 <small class="text-muted" style="font-size: 12px;">{{ auth()->user()->email }}</small>
               @endauth
               @guest
-                <p class="mb-0 fw-bold" style="font-size: 14px;">Guest</p>
-                <small class="text-primary" style="font-size: 12px;">Please log in</small>
+                <p class="mb-0 fw-bold" style="font-size: 14px;">Nama Pengguna</p>
+                <small class="text-primary" style="font-size: 12px;">NamaPengguna</small>
               @endguest
             </div>
           </div>
           <a class="dropdown-item dropdown-link" href="{{ route('profile') }}">
             <div class="hover-bg">
-              <i class="far fa-user me-2"></i> Profile
+              <i class="far fa-user me-2"></i> Profil
             </div>
           </a>
           <a class="dropdown-item dropdown-link" href="{{ route('review') }}">
             <div class="hover-bg">
-              <i class="far fa-star me-2"></i> Review
+              <i class="far fa-star me-2"></i> Ulasan
             </div>
           </a>
           <a class="dropdown-item dropdown-link" href="{{ route('settings') }}">
             <div class="hover-bg">
-              <i class="fas fa-cog me-2"></i> Setting
+              <i class="fas fa-cog me-2"></i> Pengaturan
             </div>
           </a>
           <!-- Divider -->
@@ -97,7 +97,7 @@
             @csrf
             <button type="submit" class="dropdown-item dropdown-link">
               <div class="hover-bg">
-                <i class="fas fa-power-off me-2"></i> Sign Out
+                <i class="fas fa-power-off me-2"></i> Keluar
               </div>
             </button>
           </form>
@@ -118,22 +118,22 @@
               <p class="mb-0 fw-bold">{{ auth()->user()->name }}</p>
               <small class="text-info">{{ auth()->user()->email }}</small>
           @else
-              <p class="mb-0 fw-bold">Guest</p>
-              <small class="text-white">Please log in</small>
+              <p class="mb-0 fw-bold">NamaPengguna</p>
+              <small class="text-white">NamaPengguna</small>
           @endauth
         </div>
       </div>
       <nav>
-        <h6 class="fw-bold text-uppercase text-white">Dashboard</h6>
+        <h6 class="fw-bold text-uppercase text-white">Dasbor</h6>
         <ul class="nav flex-column mb-4">
           <li class="nav-item {{ Route::is('dashboard') ? 'active' : '' }}">
               <a class="nav-link text-black" href="{{ route('dashboard') }}">
-                  <i class="fas fa-home me-2"></i>Dashboard
+                  <i class="fas fa-home me-2"></i>Dasbor
               </a>
           </li>
           <li class="nav-item {{ Route::is('profile') ? 'active' : '' }}">
               <a class="nav-link text-black" href="{{ route('profile') }}">
-                  <i class="far fa-user me-2"></i>Profile
+                  <i class="far fa-user me-2"></i>Profil Saya
               </a>
           </li>
           @php
@@ -143,37 +143,37 @@
               <a class="nav-link {{ $isEnrolledActive ? 'text-white' : 'text-black' }}" 
                 style="{{ $isEnrolledActive ? 'background-color: #21b3ca;' : '' }}" 
                 href="{{ route('enrolled') }}">
-                  <i class="fas fa-book me-2"></i>Enrolled Courses
+                  <i class="fas fa-book me-2"></i>Daftar Pelatihan
               </a>
           </li>
           <li class="nav-item {{ Route::is('wishlist') ? 'active' : '' }}">
               <a class="nav-link text-black fw-semibold" href="{{ route('wishlist') }}">
-                  <i class="fas fa-bookmark me-2"></i> Wishlist
+                  <i class="fas fa-bookmark me-2"></i> Daftar Keinginan
               </a>
           </li>
           <li class="nav-item {{ Route::is('reviews') ? 'active' : '' }}">
               <a class="nav-link text-black fw-semibold" href="{{ route('reviews') }}">
-                  <i class="fas fa-star me-2"></i>Reviews
+                  <i class="fas fa-star me-2"></i>Ulasan
               </a>
           </li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-pen me-2"></i>My Quiz Attempts</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-shopping-bag me-2"></i>Order History</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Question & Answer</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-calendar me-2"></i>Calendar</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-pen me-2"></i>Kuis Saya</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-shopping-bag me-2"></i>Riwayat Pesanan</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Tanya Jawab</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-calendar me-2"></i>Kalender</a></li>
         </ul>
-        <h6 class="fw-bold text-uppercase text-white">Store</h6>
+        <h6 class="fw-bold text-uppercase text-white">Toko</h6>
         <ul class="nav flex-column mb-4">
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-shopping-cart me-2"></i>Order</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-download me-2"></i>Downloads</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-map-marker-alt me-2"></i>Edit Address</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-user me-2"></i>Edit Account</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-wallet me-2"></i>Payment</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-shopping-cart me-2"></i>Dasbor</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-download me-2"></i>Pesanan</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-map-marker-alt me-2"></i>Unduhan</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-user me-2"></i>Ubah Akun</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-wallet me-2"></i>Pembayaran</a></li>
         </ul>
-        <h6 class="fw-bold text-uppercase text-white">Account Setting</h6>
+        <h6 class="fw-bold text-uppercase text-white">Pengaturan Akun</h6>
         <ul class="nav flex-column">
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-gear me-2"></i>Edit Profile</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="far fa-user me-2"></i>Security</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-gear me-2"></i>Ubah Profil</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="far fa-user me-2"></i>Keamanan</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a></li>
         </ul>
       </nav>
     </aside>

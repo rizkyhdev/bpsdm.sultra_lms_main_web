@@ -15,6 +15,13 @@ body {
   position: relative; /* default, biar tidak ikut terdorong footer */
   z-index: 1;
 }
+
+#sidebar {
+  width: 2600px;
+  min-width: 260px;
+  flex-shrink: 0;
+}
+
 /* Sidebar animation */
 #sidebar {
   transition: all 0.3s ease;
@@ -23,6 +30,11 @@ body {
 
 #sidebar.collapsed {
   margin-left: -280px; /* Sembunyikan sidebar */
+}
+
+.content-wrapper {
+  margin-left: 260px; /* sama dengan lebar sidebar */
+  padding: 20px;
 }
 
 
@@ -123,6 +135,5 @@ body {
     font-weight: 600;          /* Menambahkan font-weight lebih tebal */
 }
 
-/*animasi dropdown*/
 
 
