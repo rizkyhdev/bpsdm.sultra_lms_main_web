@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CheckRole
 {
     /**
-     * Handle an incoming request.
+     * Menangani permintaan yang masuk.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
@@ -22,7 +22,7 @@ class CheckRole
 
         $user = Auth::user();
         
-        // Check if user has the required role
+        // Periksa apakah user memiliki role yang diperlukan
         if ($user->role !== $role) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }

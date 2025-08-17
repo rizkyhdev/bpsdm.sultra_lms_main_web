@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 trait StudentControllerTrait
 {
     /**
-     * Get the authenticated user.
+     * Mendapatkan user yang terautentikasi.
      */
     protected function getCurrentUser(): User
     {
@@ -17,7 +17,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Check if user is enrolled in a course.
+     * Periksa apakah user sudah terdaftar dalam kursus.
      */
     protected function isUserEnrolled(int $courseId): bool
     {
@@ -30,7 +30,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Get user enrollment for a course.
+     * Mendapatkan pendaftaran user untuk kursus.
      */
     protected function getUserEnrollment(int $courseId): ?UserEnrollment
     {
@@ -43,7 +43,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Check if user has completed a course.
+     * Periksa apakah user sudah menyelesaikan kursus.
      */
     protected function hasUserCompletedCourse(int $courseId): bool
     {
@@ -56,7 +56,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Get user's JP accumulated for a specific year.
+     * Mendapatkan JP user yang terkumpul untuk tahun tertentu.
      */
     protected function getUserJpForYear(int $year): int
     {
@@ -68,7 +68,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Get user's total JP earned.
+     * Mendapatkan total JP user yang diperoleh.
      */
     protected function getUserTotalJp(): int
     {
@@ -78,24 +78,24 @@ trait StudentControllerTrait
     }
 
     /**
-     * Check if user can access a module based on completion of previous modules.
+     * Periksa apakah user dapat mengakses modul berdasarkan penyelesaian modul sebelumnya.
      */
     protected function canAccessModule(int $moduleId): bool
     {
         $user = $this->getCurrentUser();
         
-        // Get the module
+        // Mendapatkan modul
         $module = \App\Models\Module::find($moduleId);
         if (!$module) {
             return false;
         }
 
-        // First module is always accessible
+        // Modul pertama selalu dapat diakses
         if ($module->urutan === 1) {
             return true;
         }
 
-        // Get previous module
+        // Mendapatkan modul sebelumnya
         $previousModule = \App\Models\Module::where('course_id', $module->course_id)
             ->where('urutan', '<', $module->urutan)
             ->orderBy('urutan', 'desc')
@@ -105,7 +105,7 @@ trait StudentControllerTrait
             return true;
         }
 
-        // Check if previous module is completed
+        // Periksa apakah modul sebelumnya sudah selesai
         $totalSubModules = $previousModule->subModules()->count();
         $completedSubModules = $previousModule->subModules()
             ->whereHas('userProgress', function ($query) use ($user) {
@@ -117,24 +117,24 @@ trait StudentControllerTrait
     }
 
     /**
-     * Check if user can access a sub-module based on completion of previous sub-modules.
+     * Periksa apakah user dapat mengakses sub-modul berdasarkan penyelesaian sub-modul sebelumnya.
      */
     protected function canAccessSubModule(int $subModuleId): bool
     {
         $user = $this->getCurrentUser();
         
-        // Get the sub-module
+        // Mendapatkan sub-modul
         $subModule = \App\Models\SubModule::find($subModuleId);
         if (!$subModule) {
             return false;
         }
 
-        // First sub-module is always accessible
+        // Sub-modul pertama selalu dapat diakses
         if ($subModule->urutan === 1) {
             return true;
         }
 
-        // Get previous sub-module
+        // Mendapatkan sub-modul sebelumnya
         $previousSubModule = \App\Models\SubModule::where('module_id', $subModule->module_id)
             ->where('urutan', '<', $subModule->urutan)
             ->orderBy('urutan', 'desc')
@@ -144,7 +144,7 @@ trait StudentControllerTrait
             return true;
         }
 
-        // Check if previous sub-module is completed
+        // Periksa apakah sub-modul sebelumnya sudah selesai
         $progress = $previousSubModule->userProgress()
             ->where('user_id', $user->id)
             ->where('is_completed', true)
@@ -154,24 +154,24 @@ trait StudentControllerTrait
     }
 
     /**
-     * Check if user can access content based on completion of previous content.
+     * Periksa apakah user dapat mengakses konten berdasarkan penyelesaian konten sebelumnya.
      */
     protected function canAccessContent(int $contentId): bool
     {
         $user = $this->getCurrentUser();
         
-        // Get the content
+        // Mendapatkan konten
         $content = \App\Models\Content::find($contentId);
         if (!$content) {
             return false;
         }
 
-        // First content is always accessible
+        // Konten pertama selalu dapat diakses
         if ($content->urutan === 1) {
             return true;
         }
 
-        // Get previous content
+        // Mendapatkan konten sebelumnya
         $previousContent = \App\Models\Content::where('sub_module_id', $content->sub_module_id)
             ->where('urutan', '<', $content->urutan)
             ->orderBy('urutan', 'desc')
@@ -181,7 +181,7 @@ trait StudentControllerTrait
             return true;
         }
 
-        // Check if previous content is completed
+        // Periksa apakah konten sebelumnya sudah selesai
         $progress = $previousContent->userProgress()
             ->where('user_id', $user->id)
             ->where('is_completed', true)
@@ -191,7 +191,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Get user's course progress percentage.
+     * Mendapatkan persentase progress kursus user.
      */
     protected function getUserCourseProgress(int $courseId): float
     {
@@ -223,7 +223,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Get user's module progress percentage.
+     * Mendapatkan persentase progress modul user.
      */
     protected function getUserModuleProgress(int $moduleId): float
     {
@@ -245,7 +245,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Get user's sub-module progress percentage.
+     * Mendapatkan persentase progress sub-modul user.
      */
     protected function getUserSubModuleProgress(int $subModuleId): float
     {
@@ -267,7 +267,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Check if user can take a quiz.
+     * Periksa apakah user dapat mengambil quiz.
      */
     protected function canTakeQuiz(int $quizId): bool
     {
@@ -278,7 +278,7 @@ trait StudentControllerTrait
             return false;
         }
 
-        // Check if user has reached max attempts
+        // Periksa apakah user sudah mencapai maksimal percobaan
         $attemptCount = $user->quizAttempts()
             ->where('quiz_id', $quizId)
             ->where('status', '!=', 'in_progress')
@@ -288,31 +288,31 @@ trait StudentControllerTrait
             return false;
         }
 
-        // Check if user has active attempt
+        // Periksa apakah user memiliki percobaan aktif
         $activeAttempt = $user->quizAttempts()
             ->where('quiz_id', $quizId)
             ->where('status', 'in_progress')
             ->first();
 
         if ($activeAttempt) {
-            return true; // Can continue existing attempt
+            return true; // Dapat melanjutkan percobaan yang ada
         }
 
-        // Check if user has passed the quiz
+        // Periksa apakah user sudah lulus quiz
         $passedAttempt = $user->quizAttempts()
             ->where('quiz_id', $quizId)
             ->where('status', 'passed')
             ->first();
 
         if ($passedAttempt) {
-            return false; // Already passed
+            return false; // Sudah lulus
         }
 
         return true;
     }
 
     /**
-     * Format JP value with proper formatting.
+     * Memformat nilai JP dengan format yang tepat.
      */
     protected function formatJpValue(int $jpValue): string
     {
@@ -320,7 +320,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Format percentage with proper formatting.
+     * Memformat persentase dengan format yang tepat.
      */
     protected function formatPercentage(float $percentage): string
     {
@@ -328,7 +328,7 @@ trait StudentControllerTrait
     }
 
     /**
-     * Get user's learning statistics.
+     * Mendapatkan statistik pembelajaran user.
      */
     protected function getUserLearningStats(): array
     {

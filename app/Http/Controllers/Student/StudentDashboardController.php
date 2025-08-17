@@ -15,7 +15,7 @@ use Illuminate\View\View;
 class StudentDashboardController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -24,14 +24,14 @@ class StudentDashboardController extends Controller
     }
 
     /**
-     * Display the student dashboard.
+     * Menampilkan dashboard siswa.
      */
     public function index(): View
     {
         $user = Auth::user();
         $currentYear = now()->year;
 
-        // Get enrolled courses with progress
+        // Mendapatkan kursus yang diikuti dengan progress
         $enrolledCourses = $user->userEnrollments()
             ->with(['course.modules.subModules', 'course.modules.subModules.userProgress' => function ($query) use ($user) {
                 $query->where('user_id', $user->id);
@@ -39,7 +39,7 @@ class StudentDashboardController extends Controller
             ->where('status', 'active')
             ->get();
 
-        // Calculate learning progress for each course
+        // Menghitung progress pembelajaran untuk setiap kursus
         $courseProgress = [];
         foreach ($enrolledCourses as $enrollment) {
             $course = $enrollment->course;
@@ -68,12 +68,12 @@ class StudentDashboardController extends Controller
             ];
         }
 
-        // Get JP accumulated for current year
+        // Mendapatkan JP yang terkumpul untuk tahun berjalan
         $jpAccumulated = $user->jpRecords()
             ->whereYear('created_at', $currentYear)
             ->sum('jp_value');
 
-        // Get upcoming quizzes (not yet attempted or failed attempts)
+        // Mendapatkan quiz yang akan datang (belum diikuti atau gagal)
         $upcomingQuizzes = Quiz::whereHas('subModule.module.course', function ($query) use ($user) {
             $query->whereHas('userEnrollments', function ($q) use ($user) {
                 $q->where('user_id', $user->id)->where('status', 'active');
@@ -83,22 +83,22 @@ class StudentDashboardController extends Controller
         })->with(['subModule.module.course'])
         ->get();
 
-        // Get recent activities (last 10 progress updates)
+        // Mendapatkan aktivitas terbaru (10 update progress terakhir)
         $recentActivities = $user->userProgress()
             ->with(['subModule.module.course'])
             ->orderBy('updated_at', 'desc')
             ->limit(10)
             ->get();
 
-        // Get total JP earned
+        // Mendapatkan total JP yang diperoleh
         $totalJpEarned = $user->jpRecords()->sum('jp_value');
 
-        // Get courses in progress (started but not completed)
+        // Mendapatkan kursus yang sedang berlangsung (dimulai tapi belum selesai)
         $coursesInProgress = $enrolledCourses->filter(function ($enrollment) {
             return $enrollment->completed_at === null;
         });
 
-        // Get completed courses
+        // Mendapatkan kursus yang sudah selesai
         $completedCourses = $enrolledCourses->filter(function ($enrollment) {
             return $enrollment->completed_at !== null;
         });
@@ -116,21 +116,21 @@ class StudentDashboardController extends Controller
     }
 
     /**
-     * Get dashboard data for AJAX requests.
+     * Mendapatkan data dashboard untuk permintaan AJAX.
      */
     public function getDashboardData(Request $request)
     {
         $user = Auth::user();
         $currentYear = $request->get('year', now()->year);
 
-        // Get JP records for the specified year
+        // Mendapatkan record JP untuk tahun yang ditentukan
         $jpRecords = $user->jpRecords()
             ->whereYear('created_at', $currentYear)
             ->with('course')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Get monthly JP summary
+        // Mendapatkan ringkasan JP bulanan
         $monthlyJp = [];
         for ($month = 1; $month <= 12; $month++) {
             $monthlyJp[$month] = $user->jpRecords()
@@ -147,35 +147,35 @@ class StudentDashboardController extends Controller
     }
 
     /**
-     * Get learning statistics.
+     * Mendapatkan statistik pembelajaran.
      */
     public function getLearningStats()
     {
         $user = Auth::user();
         $currentYear = now()->year;
 
-        // Get total courses enrolled
+        // Mendapatkan total kursus yang diikuti
         $totalCourses = $user->userEnrollments()->count();
 
-        // Get completed courses this year
+        // Mendapatkan kursus yang selesai tahun ini
         $completedCoursesThisYear = $user->userEnrollments()
             ->whereYear('completed_at', $currentYear)
             ->count();
 
-        // Get total JP earned this year
+        // Mendapatkan total JP yang diperoleh tahun ini
         $jpThisYear = $user->jpRecords()
             ->whereYear('created_at', $currentYear)
             ->sum('jp_value');
 
-        // Get average quiz score
+        // Mendapatkan rata-rata skor quiz
         $averageQuizScore = $user->quizAttempts()
             ->where('status', 'completed')
             ->avg('score');
 
-        // Get total study time (estimated from progress records)
+        // Mendapatkan total waktu belajar (diperkirakan dari record progress)
         $totalStudyTime = $user->userProgress()
             ->where('is_completed', true)
-            ->count() * 30; // Assuming 30 minutes per completed sub-module
+            ->count() * 30; // Mengasumsikan 30 menit per sub-modul yang selesai
 
         return response()->json([
             'totalCourses' => $totalCourses,

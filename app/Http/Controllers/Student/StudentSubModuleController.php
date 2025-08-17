@@ -14,7 +14,7 @@ use Illuminate\Http\JsonResponse;
 class StudentSubModuleController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -23,13 +23,13 @@ class StudentSubModuleController extends Controller
     }
 
     /**
-     * Display the specified sub-module.
+     * Menampilkan sub-modul tertentu.
      */
     public function show(SubModule $subModule): View
     {
         $user = Auth::user();
         
-        // Check if user is enrolled in the course
+        // Periksa apakah user sudah terdaftar dalam kursus
         $enrollment = $user->userEnrollments()
             ->where('course_id', $subModule->module->course_id)
             ->where('status', 'active')
@@ -39,25 +39,25 @@ class StudentSubModuleController extends Controller
             abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses sub-modul.');
         }
 
-        // Check if previous sub-modules are completed
+        // Periksa apakah sub-modul sebelumnya sudah selesai
         $isAccessible = $this->isSubModuleAccessible($user, $subModule);
         
         if (!$isAccessible) {
             abort(403, 'Anda harus menyelesaikan sub-modul sebelumnya terlebih dahulu.');
         }
 
-        // Get sub-module with contents and user progress
+        // Mendapatkan sub-modul dengan konten dan progress user
         $subModule->load(['contents' => function ($query) {
             $query->orderBy('urutan');
         }, 'contents.userProgress' => function ($query) use ($user) {
             $query->where('user_id', $user->id);
         }]);
 
-        // Get user progress for this sub-module
+        // Mendapatkan progress user untuk sub-modul ini
         $progress = $subModule->userProgress()->where('user_id', $user->id)->first();
         
         if (!$progress) {
-            // Initialize progress if not exists
+            // Inisialisasi progress jika tidak ada
             $progress = $subModule->userProgress()->create([
                 'user_id' => $user->id,
                 'is_completed' => false,
@@ -66,7 +66,7 @@ class StudentSubModuleController extends Controller
             ]);
         }
 
-        // Calculate content progress
+        // Menghitung progress konten
         $totalContents = $subModule->contents->count();
         $completedContents = 0;
         $contentProgress = 0;
@@ -86,7 +86,7 @@ class StudentSubModuleController extends Controller
         $overallProgress = $totalContents > 0 ? round($contentProgress / $totalContents, 2) : 0;
         $completionPercentage = $totalContents > 0 ? round(($completedContents / $totalContents) * 100, 2) : 0;
 
-        // Get next and previous sub-modules
+        // Mendapatkan sub-modul berikutnya dan sebelumnya
         $nextSubModule = SubModule::where('module_id', $subModule->module_id)
             ->where('urutan', '>', $subModule->urutan)
             ->orderBy('urutan')
@@ -97,11 +97,11 @@ class StudentSubModuleController extends Controller
             ->orderBy('urutan', 'desc')
             ->first();
 
-        // Get module and course info
+        // Mendapatkan info modul dan kursus
         $module = $subModule->module;
         $course = $module->course;
 
-        // Check if sub-module can be marked as completed
+        // Periksa apakah sub-modul dapat ditandai sebagai selesai
         $canMarkComplete = $totalContents > 0 && $completedContents >= $totalContents;
 
         return view('student.sub-modules.show', compact(

@@ -15,7 +15,7 @@ use Illuminate\Http\Response;
 class StudentContentController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -24,13 +24,13 @@ class StudentContentController extends Controller
     }
 
     /**
-     * Display the specified content.
+     * Menampilkan konten tertentu.
      */
     public function show(Content $content): View
     {
         $user = Auth::user();
         
-        // Check if user is enrolled in the course
+        // Periksa apakah user sudah terdaftar dalam kursus
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
             ->where('status', 'active')
@@ -40,18 +40,18 @@ class StudentContentController extends Controller
             abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses konten.');
         }
 
-        // Check if previous contents are completed
+        // Periksa apakah konten sebelumnya sudah selesai
         $isAccessible = $this->isContentAccessible($user, $content);
         
         if (!$isAccessible) {
             abort(403, 'Anda harus menyelesaikan konten sebelumnya terlebih dahulu.');
         }
 
-        // Get user progress for this content
+        // Mendapatkan progress user untuk konten ini
         $progress = $content->userProgress()->where('user_id', $user->id)->first();
         
         if (!$progress) {
-            // Initialize progress if not exists
+            // Inisialisasi progress jika tidak ada
             $progress = $content->userProgress()->create([
                 'user_id' => $user->id,
                 'is_completed' => false,
@@ -60,10 +60,10 @@ class StudentContentController extends Controller
             ]);
         }
 
-        // Get content with sub-module, module, and course info
+        // Mendapatkan konten dengan info sub-modul, modul, dan kursus
         $content->load(['subModule.module.course']);
 
-        // Get next and previous contents
+        // Mendapatkan konten berikutnya dan sebelumnya
         $nextContent = Content::where('sub_module_id', $content->sub_module_id)
             ->where('urutan', '>', $content->urutan)
             ->orderBy('urutan')
@@ -74,10 +74,10 @@ class StudentContentController extends Controller
             ->orderBy('urutan', 'desc')
             ->first();
 
-        // Get sub-module progress
+        // Mendapatkan progress sub-modul
         $subModuleProgress = $content->subModule->userProgress()->where('user_id', $user->id)->first();
 
-        // Check if content can be marked as completed
+        // Periksa apakah konten dapat ditandai sebagai selesai
         $canMarkComplete = $progress->progress_percentage >= 100;
 
         return view('student.contents.show', compact(

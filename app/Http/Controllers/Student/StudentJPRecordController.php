@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 class StudentJPRecordController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -23,7 +23,7 @@ class StudentJPRecordController extends Controller
     }
 
     /**
-     * Display a listing of all JP records.
+     * Menampilkan daftar semua record JP.
      */
     public function index(Request $request): View
     {
@@ -33,17 +33,17 @@ class StudentJPRecordController extends Controller
             ->with(['course'])
             ->orderBy('created_at', 'desc');
 
-        // Filter by year if provided
+        // Filter berdasarkan tahun jika disediakan
         if ($request->has('year') && $request->year !== '') {
             $query->whereYear('created_at', $request->year);
         }
 
-        // Filter by course if provided
+        // Filter berdasarkan kursus jika disediakan
         if ($request->has('course_id') && $request->course_id !== '') {
             $query->where('course_id', $request->course_id);
         }
 
-        // Filter by bidang kompetensi if provided
+        // Filter berdasarkan bidang kompetensi jika disediakan
         if ($request->has('bidang_kompetensi') && $request->bidang_kompetensi !== '') {
             $query->whereHas('course', function ($q) use ($request) {
                 $q->where('bidang_kompetensi', $request->bidang_kompetensi);
@@ -52,7 +52,7 @@ class StudentJPRecordController extends Controller
 
         $jpRecords = $query->paginate(15);
         
-        // Get available years for filtering
+        // Mendapatkan tahun yang tersedia untuk filtering
         $availableYears = $user->jpRecords()
             ->selectRaw('YEAR(created_at) as year')
             ->distinct()
@@ -60,7 +60,7 @@ class StudentJPRecordController extends Controller
             ->sort()
             ->reverse();
 
-        // Get available courses for filtering
+        // Mendapatkan kursus yang tersedia untuk filtering
         $availableCourses = $user->jpRecords()
             ->with('course:id,judul,bidang_kompetensi')
             ->get()
@@ -68,7 +68,7 @@ class StudentJPRecordController extends Controller
             ->unique('id')
             ->filter();
 
-        // Get available bidang kompetensi for filtering
+        // Mendapatkan bidang kompetensi yang tersedia untuk filtering
         $availableBidangKompetensi = $user->jpRecords()
             ->with('course:id,bidang_kompetensi')
             ->get()
@@ -76,7 +76,7 @@ class StudentJPRecordController extends Controller
             ->unique()
             ->filter();
 
-        // Get JP statistics
+        // Mendapatkan statistik JP
         $totalJpEarned = $user->jpRecords()->sum('jp_value');
         $jpThisYear = $user->jpRecords()
             ->whereYear('created_at', now()->year)
