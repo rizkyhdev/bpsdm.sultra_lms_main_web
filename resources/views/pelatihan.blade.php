@@ -6,7 +6,6 @@
         <section class="hero">
             <h1>Pelatihan Sertifikasi PBJ</h1>
         </section>
-
         <section class="content">
         <div class="left-column">  
         <div class="left-card">
