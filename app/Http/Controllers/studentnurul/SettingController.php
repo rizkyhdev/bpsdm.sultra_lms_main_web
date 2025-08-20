@@ -9,7 +9,7 @@ class SettingController extends Controller
 {
     public function index()
     {
-        return view('student.settings');  // Mengembalikan view 'settings'
+        return view('settings');  // Mengembalikan view 'settings'
     }
 }
 
