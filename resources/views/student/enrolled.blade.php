@@ -38,7 +38,7 @@
               </div>
               <div class="card-body p-3">
                 <p class="mb-1 fw-semibold text-dark" style="font-size:0.9rem;">
-                  Pelatihan Sertifikasi PBJ
+                  <a href="{{ route ("enroled-course") }}">Pelatihan Sertifikasi PBJ</a>
                 </p>
                 <p class="text-muted mb-1" style="font-size:0.8rem;">
                   <i class="bi bi-clock me-1"></i>2 Jam 

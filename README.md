@@ -9,7 +9,6 @@ Berdasarkan Peraturan Pemerintah Nomor 11 Tahun 2017 yang telah diubah dengan Pe
 Sistem LMS ini akan menjadi platform utama dalam mendukung pemenuhan kewajiban tersebut serta mewujudkan konsep Smart ASN yang memiliki integritas, profesionalisme, wawasan global, dan kemampuan memanfaatkan teknologi informasi.
 
 ## Tujuan Pengembangan
-
 -   Memfasilitasi pengembangan kompetensi teknis ASN Pemprov Sultra
 -   Menyediakan akses belajar yang fleksibel tanpa batasan waktu dan tempat
 -   Memenuhi kewajiban minimal 20 JP pengembangan kompetensi per tahun

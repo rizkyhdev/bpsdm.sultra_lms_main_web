@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Student\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\studentnurul\ProfileController;   
 use App\Http\Controllers\studentnurul\ReviewController;
@@ -22,29 +23,35 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 // Route untuk Landing Page (Halaman Utama)
 Route::get('/landing', function () {
-    return view('landing');
+    return view('student.landing');
 })->name('landing');
 
 // Route untuk Halaman Dashboard
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('student.dashboard');
 })->name('dashboard');
+
 
 // Route untuk Halaman Course
 Route::get('/course', function () {
-    return view('course');
+    return view('student.course');
 })->name('course');
+
+Route::get('/enroled-course', function(){
+    return view('student.pelatihan');
+})->name('enroled-course');
 
 
 // Route untuk Halaman Article
 Route::get('/article', function () {
-    return view('article');
+    return view('student.article');
 })->name('article');
 
 // Route untuk Halaman Contact
 Route::get('/contact', function () {
-    return view('contact');
+    return view('student.contact');
 })->name('contact');
+
 
 // Route untuk Halaman Profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
@@ -60,6 +67,8 @@ Route::get('/active', [EnrolleActiveController::class, 'index'])->name('active')
 Route::get('/complete', [EnrolleCompleteController::class, 'index'])->name('complete');
 
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+
+
 
 // Route untuk Halaman Review
 Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews');
