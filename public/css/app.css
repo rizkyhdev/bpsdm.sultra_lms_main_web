@@ -2,6 +2,331 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+.hero-overlay {
+  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none; /* Tidak menghalangi klik */
+}
+
+.text-shadow {
+  text-shadow: 0 4px 10px rgba(0,0,0,0.7);
+}
+
+.btn-gradient {
+  background: linear-gradient(45deg, #6dd5ed, #2193b0); /* Biru muda ke biru tua */
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 0.75rem 2rem;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+.btn-gradient:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.btn-outline-info {
+  border-radius: 20px;
+}
+
+
+/* Efek teks keren */
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 
+    0 0 8px rgba(173, 216, 230, 0.9),  /* Glow lembut biru muda */
+    0 0 16px rgba(173, 216, 230, 0.8), /* Glow kedua */
+    0 4px 20px rgba(0,0,0,0.8);        /* Shadow gelap agar kontras */
+  animation: glowPulseBlue 2s infinite alternate ease-in-out;
+}
+
+.hero-sub {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #e0f7fa;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  letter-spacing: 1px;
+}
+
+/* Animasi glow biru berdenyut */
+@keyframes glowPulseBlue {
+  from {
+    text-shadow:
+      0 0 5px #fff,
+      0 0 10px #6dd5ed,
+      0 0 20px #6dd5ed,
+      0 0 40px #6dd5ed;
+  }
+  to {
+    text-shadow:
+      0 0 10px #fff,
+      0 0 20px #2193b0,
+      0 0 30px #2193b0,
+      0 0 50px #2193b0;
+  }
+}
+
+.splitting .char{
+  opacity:0;
+  transform:translateY(14px) scale(.98);
+  will-change: transform, opacity;
+}
+
+
+.carousel-item.animate-in .splitting .char{
+  animation: charIn .55s ease-out forwards;
+  animation-delay: calc(var(--char-index) * 45ms);
+}
+
+
+.carousel-item.animate-in .hero-title .char{
+  text-shadow:
+    0 0 6px rgba(173,216,230,.95),
+    0 0 14px rgba(173,216,230,.7),
+    0 6px 18px rgba(0,0,0,.65);
+}
+
+@keyframes charIn{
+  from{opacity:0; transform:translateY(16px) scale(.98)}
+  to  {opacity:1; transform:none}
+}
+
+
+.about-section {
+  background: linear-gradient(180deg, #f0faff 0%, #ffffff 100%);
+}
+
+.about-title {
+  font-size: 2rem;
+  font-weight: 700;
+  position: relative;
+}
+
+.about-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: #00aaff;
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+.video-wrapper {
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+}
+
+.video-wrapper:hover {
+  transform: scale(1.02);
+}
+
+/* Box Ilustrasi */
+.illustration-box {
+  background: linear-gradient(135deg, #6dd5ed, #2193b0);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.illustration-box img {
+  transform: translateY(-10px);
+}
+
+/* Step Container & Connecting Lines */
+.steps-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  width: 2px;
+  height: 100%;
+  background: rgba(109, 213, 237, 0.3);
+}
+@media (min-width: 768px) {
+  .steps-container::before {
+    display: none; /* Garis vertikal hanya untuk mobile */
+  }
+}
+
+/* Step Item */
+.step-item {
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.step-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Step Number */
+.step-number {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6dd5ed, #2193b0);
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.step-item:hover .step-number {
+  transform: scale(1.15);
+  box-shadow: 0 8px 25px rgba(33,147,176,0.6);
+}
+
+/* Title step */
+.step-item h6 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* Description step */
+.step-item p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+/* Animasi Fade + Scale */
+[data-aos="fade-up"] {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition-property: transform, opacity;
+}
+[data-aos="fade-up"].aos-animate {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+
+.mySwiper {
+    padding-bottom: 50px;
+    position: relative;
+}
+/* Pastikan tombol prev/next keluar dari card */
+.swiper-button-prev,
+.swiper-button-next {
+  color: rgba(255, 255, 255, 0.8); /* Putih transparan */
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Efek glow agar terlihat di blur */
+    transition: color 0.3s, transform 0.3s;
+}
+
+/* Geser tombol keluar area card */
+.swiper-button-prev {
+  left: -60px; /* keluar ke kiri */
+}
+
+.swiper-button-next {
+  right: -60px; /* keluar ke kanan */
+}
+
+/* Hover effect */
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+ color: #ffffff; /* Putih solid saat hover */
+    transform: scale(1.1); /* Sedikit membesar saat hover */
+}
+
+.swiper-pagination {
+  margin-top: 20px;
+  position: relative !important;
+  text-align: center;
+}
+
+.mySwiper .swiper-slide-active .card {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transition: box-shadow 0.3s ease;
+}
+
+.mySwiper .card img {
+    transition: transform 0.6s ease;
+     width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+.mySwiper .swiper-slide-active .card img {
+    transform: scale(1.05); /* Sedikit zoom pas aktif */
+}
+.mySwiper .card {
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.mySwiper .card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+.mySwiper .swiper-slide-active .card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+}
+
+.calendar-section-wrapper {
+  background-color: #D8F6FF; /* warna biru muda */
+  border-radius: 1.5rem; /* sudut membulat */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Kalender */
+.elegant-calencar {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+/* Card Kalender */
+.cardCalendar {
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cardCalendar:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.cardCalendar-header {
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+.cardCalendar-body {
+  padding: 1rem;
+}
+
+/* Tombol dalam Card Kalender */
+.cardCalendar-body .btn-outline-warning {
+  transition: all 0.25s ease;
+}
+
+.cardCalendar-body .btn-outline-warning:hover {
+  background-color: #ffc107;
+  color: #000;
+  box-shadow: 0 0 12px rgba(255, 193, 7, 0.6);
+  transform: scale(1.05);
+}
+
+
 .meet-team-img {
   position: relative;
   overflow: hidden;
@@ -18,10 +343,24 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
+  transition: transform 0.4s ease;
+}
+.meet-team-img:hover > img {
+  transform: scale(1.05);
+}
+.meet-team-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.4s ease-in-out;
 }
 .meet-team-img:hover .meet-team-overlay {
+  opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: scale(1);
 }
 .meet-team-img .meet-team-overlay {
   position: absolute;
@@ -37,6 +376,52 @@
 .meet-team-img .meet-team-overlay .social .btn:hover {
   background-color: var(--bs-primary) !important;
 }
+.meet-team-details h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.meet-team-details p {
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.footer-custom {
+  background-color: #d2f5ff; /* biru muda sesuai gambar */
+  color: #000; /* teks hitam */
+}
+
+.footer-map iframe {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.footer-social {
+  display: flex;
+  gap: 10px;
+}
+
+.footer-social .social-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #000; /* border hitam */
+  border-radius: 50%;
+  color: #000; /* ikon hitam */
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.footer-social .social-icon:hover {
+  background-color: #000; /* hover jadi hitam */
+  color: #fff; /* ikon jadi putih saat hover */
+}
+
+
 
 /* .hero {
   background-image: url('/image/hero.jpeg');

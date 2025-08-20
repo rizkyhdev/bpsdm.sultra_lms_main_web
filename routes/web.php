@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PelatihanController;
+use App\Http\Controllers\RegisterController;
 Route::get('/', [PelatihanController::class, 'index']);
-
+Route::get('/register', [RegisterController::class, 'showForm'])->name('register.show');
+Route::post('/register', [RegisterController::class, 'submitForm'])->name('register.submit');
 
 Route::get('/login', function () {
     return view('login_register_page.login');

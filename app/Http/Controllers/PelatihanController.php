@@ -24,7 +24,24 @@ class PelatihanController extends Controller
                 'duration' => '3 hours',
                 'level' => 'Intermediate',
                 'url' => '#'
+            ],
+            [
+                'title' => 'Pelatihan Manajemen Bencana',
+                'description' => 'Pelatihan Manajemen Bencana Lever Dasar',
+                'date' => '2025-08-17',
+                'duration' => '2 hours',
+                'level' => 'Beginner',
+                'url' => '#'
+            ],
+             [
+                'title' => 'Pelatihan Sertifikasi PBJ',
+                'description' => 'Pelatihan Sertifikasi PBJ untuk pemula',
+                'date' => '2025-08-17',
+                'duration' => '2 hours',
+                'level' => 'Beginner',
+                'url' => '#'
             ]
+            
         ];
 
         return view('welcome', compact('pelatihan'));
