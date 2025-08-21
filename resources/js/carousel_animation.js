@@ -24,13 +24,13 @@ document.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(() => playFor(first));
   });
 
-  // Bersihkan saat mulai slide
+
   carouselEl.addEventListener('slide.bs.carousel', () => {
     carouselEl.querySelectorAll('.carousel-item')
       .forEach(s => s.classList.remove('animate-in'));
   });
 
-  // Mainkan animasi setelah slide berpindah
+ 
   carouselEl.addEventListener('slid.bs.carousel', (e) => {
     playFor(e.relatedTarget);
   });
