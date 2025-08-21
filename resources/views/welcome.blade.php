@@ -13,19 +13,10 @@
           rel="stylesheet" 
           integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
           crossorigin="anonymous">
-
-    <!-- App CSS -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-
+ 
     <!-- Vite  -->
     @vite(['resources/js/app.js', 'resources/css/app.css'])
   
-    <!-- Calendar Styling CSS  -->
-    <link rel="stylesheet" href="{{ asset('css/calendarstyling.css') }}">
-
-    {{-- Preload Styling CSS --}}
-     <link rel="stylesheet" href="{{ asset('css/preload.css') }}"> 
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" 
           integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" 
@@ -582,10 +573,5 @@ function renderPelatihan(date) {
   <script>
     window.pelatihanData = @json($pelatihan);
 </script>
-  <script src="{{asset('js/jquery.min.js')}}"></script>
-  <script src="{{asset('js/bootstrap.min.js')}}"></script>
-  <script src="{{asset('js/main.js')}}"></script>
-  <script src="{{asset('js/popper.js')}}"></script>
-  <script src="{{asset('js/preload.js')}}"></script>
   </body>
 </html>
