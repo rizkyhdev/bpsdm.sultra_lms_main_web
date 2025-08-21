@@ -1,13 +1,8 @@
+@import './preload.css';
+@import './landingpage_styling.css';
+@import './calendar_styling.css';
+
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-/* .hero {
-  background-image: url('/image/hero.jpeg');
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
-  min-height: 600px;
-  display: flex;
-  align-items: center;
-} */
