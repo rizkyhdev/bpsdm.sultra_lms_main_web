@@ -6,7 +6,6 @@
     <title>Bootstrap demo</title>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Bootstrap CSS -->
@@ -18,6 +17,9 @@
     <!-- App CSS -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
+    <!-- Vite  -->
+    @vite(['resources/js/app.js', 'resources/css/app.css'])
+  
     <!-- Calendar Styling CSS  -->
     <link rel="stylesheet" href="{{ asset('css/calendarstyling.css') }}">
 
@@ -29,20 +31,6 @@
           integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" 
           crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    {{-- Splitting.JS --}}
-    <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css" />
-    <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css" />
-    
-    {{-- Swiper.JS --}}
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-    />
-    <!-- Animate CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
-    <!-- AOS CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 
   <body style="padding-top:80px;">
@@ -149,46 +137,6 @@
     </div>
   </div>
 </div>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  // Inisialisasi Splitting untuk semua elemen di carousel
-  if (typeof Splitting === 'function') {
-    Splitting({ target: '#heroCarousel [data-splitting]', by: 'chars' });
-  }
-
-  const carouselEl = document.getElementById('heroCarousel');
-
-  const playFor = (slide) => {
-    if (!slide) return;
-    // reset
-    carouselEl.querySelectorAll('.carousel-item')
-      .forEach(s => s.classList.remove('animate-in'));
-
-    // paksa reflow agar animasi bisa diulang
-    void slide.offsetWidth;
-
-    slide.classList.add('animate-in');
-  };
-
-  // Pastikan animasi slide-1 jalan setelah Splitting benar-benar selesai dan layout settle
-  const first = carouselEl.querySelector('.carousel-item.active');
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => playFor(first));
-  });
-
-  // Bersihkan saat mulai slide
-  carouselEl.addEventListener('slide.bs.carousel', () => {
-    carouselEl.querySelectorAll('.carousel-item')
-      .forEach(s => s.classList.remove('animate-in'));
-  });
-
-  // Mainkan animasi setelah slide berpindah
-  carouselEl.addEventListener('slid.bs.carousel', (e) => {
-    playFor(e.relatedTarget);
-  });
-});
-</script>
-
 {{-- Akhir Hero Carousel --}}
 
 
@@ -631,22 +579,13 @@ function renderPelatihan(date) {
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-/xUj+QAT/7rjG5Qbqseb3CidRub9pzQZAlPfMwVz6I6+w4n1vCtbmZh9rqx8uxFZ" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
   <script>
     window.pelatihanData = @json($pelatihan);
 </script>
-<script src="{{asset('js/swiper.js')}}"></script>
   <script src="{{asset('js/jquery.min.js')}}"></script>
   <script src="{{asset('js/bootstrap.min.js')}}"></script>
   <script src="{{asset('js/main.js')}}"></script>
   <script src="{{asset('js/popper.js')}}"></script>
   <script src="{{asset('js/preload.js')}}"></script>
-  <script src="{{asset('js/gsap_animation.js')}}"></script>
-  <script>
-    AOS.init();
-  </script>
   </body>
 </html>
