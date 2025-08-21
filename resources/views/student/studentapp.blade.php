@@ -16,6 +16,7 @@
   <!-- custom css -->
   <link href="{{ asset('./css/custom.css') }}" rel="stylesheet">
   <link href="{{ asset('./css/custom-style.css') }}" rel="stylesheet">
+  <link href="{{ asset('./css/pelatihan.css') }}" rel="stylesheet">
 
   <!-- Font Awesome for Icons (via CDN) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -61,8 +62,8 @@
           font-family: sans-serif; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important; z-index: 1055;">
           <!-- Header -->
           <div class="border-bottom p-3 d-flex align-items-center gap-2">
-            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: #21b3ca;">
-              <i class="far fa-user text-black"></i>
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: #21b3ca; flex-shrink:0;">
+              <i class="far fa-user text-black" style="line-height: 1; font-size:18px;"></i>
             </div>
             <div>
               @auth
@@ -191,5 +192,6 @@
   <!-- JS files -->
   <script src="{{ asset('./js/sidebar-toggle.js') }}"></script>
   <script src="{{ asset('./js/page-transition.js') }}"></script>
+  <script src="{{ asset('./js/tabs.js') }}"></script>
 </body>
 </html>
