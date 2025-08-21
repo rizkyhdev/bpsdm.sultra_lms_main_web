@@ -60,7 +60,7 @@ function animateNavbar() {
         stagger: 0.2
     });
 
-    // Hover effect untuk semua logo-navbar
+    // Hover effect untuk logo-navbar
     document.querySelectorAll(".logo-navbar").forEach(logo => {
         logo.addEventListener("mouseenter", () => {
             gsap.to(logo, { scale: 1.1, rotation: 5, duration: 0.3, ease: "power1.out" });
