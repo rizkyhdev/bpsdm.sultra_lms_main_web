@@ -1,9 +1,14 @@
+import './preload.js';
+import './calendar_function.js';
+import './carousel_animation.js';
+import './gsap_animation.js';
+
 // Animate.CSS
 import 'animate.css';
 
 // AOS
 import AOS from 'aos';
-import 'aos/dist/aos.css'; // You can also use <link> for styles
+import 'aos/dist/aos.css'; 
 // ..
 AOS.init();
 
@@ -71,6 +76,5 @@ const swiper = new Swiper(".mySwiper",{
         }
     });
 
-// GSAP 
-import './carousel_animation.js';
-import './gsap_animation.js';
+
+
