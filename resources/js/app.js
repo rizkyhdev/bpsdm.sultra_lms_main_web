@@ -2,6 +2,7 @@ import './preload.js';
 import './calendar_function.js';
 import './carousel_animation.js';
 import './gsap_animation.js';
+import './hide_password.js'
 
 // Animate.CSS
 import 'animate.css';
@@ -75,6 +76,37 @@ const swiper = new Swiper(".mySwiper",{
             }
         }
     });
+
+
+import Typed from 'typed.js';
+document.addEventListener('DOMContentLoaded', function () {
+    const headerElement = document.getElementById('typed-header');
+
+    function startAnimation() {
+       
+        headerElement.textContent = '';
+
+        new Typed('#typed-header', {
+            strings: ["Selamat Datang di Sistem Informasi BANGKOM AURA"],
+            typeSpeed: 80,
+            showCursor: false,
+            onComplete: function () {
+               
+                setTimeout(() => {
+                    headerElement.style.transition = "opacity 2s";
+                    headerElement.style.opacity = 0;
+
+                    setTimeout(() => {
+                        headerElement.style.opacity = 1;
+                        startAnimation(); // Ulangi animasi
+                    }, 2000); 
+                }, 10000); 
+            }
+        });
+    }
+
+    startAnimation();
+});
 
 
 
