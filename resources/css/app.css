@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+@import './preload.css';
+@import './landingpage_styling.css';
+@import './calendar_styling.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
