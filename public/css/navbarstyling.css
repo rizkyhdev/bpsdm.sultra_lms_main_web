@@ -1,0 +1,145 @@
+/* styling pada navbar */
+#sidebar {
+      box-shadow: 3px 0px 8px rgba(0, 0, 0, 0.2);
+      width: 280px !important; /* ← lebih lebar */
+    }
+    /* Hover effect on sidebar item */
+    #sidebar .nav-item:hover {
+      background-color: #88d3e1; /* Light blue */
+      color: white; /* Text turns white */
+    }
+
+    /* Active state for clicked sidebar item */
+    #sidebar .nav-item.active {
+      background-color: #88d3e1; /* Light blue */
+      color: white; /* Text turns white */
+    }
+    /* Hover & Active effect on sidebar item and link */
+    #sidebar .nav-item:hover,
+    #sidebar .nav-item.active {
+      background-color: #88d3e1;
+    }
+
+    #sidebar .nav-item:hover .nav-link,
+    #sidebar .nav-item.active .nav-link {
+      color: white !important;
+    }
+
+    #sidebar .nav-item:hover i,
+    #sidebar .nav-item.active i {
+      color: white !important;
+    }
+.dropdown-item:hover,
+    .dropdown-item:focus,
+    .dropdown-item:active {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    /* Hapus background bawaan form */
+    .dropdown-menu,
+    .dropdown-item {
+      background-color: white !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
+    /* Untuk hover-bg biar background-nya sesuai keinginan */
+    .hover-bg:hover {
+      background-color: #b2e9f2 !important;
+      border-radius: 12px;
+    }
+
+    .dropdown-link {
+      color: #21b3ca !important;
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .dropdown-link .hover-bg {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      width: 100%;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .dropdown-link:hover .hover-bg {
+      background-color: #b2e9f2;
+      color: #000;
+    }
+
+    .dropdown-link:hover .hover-bg i {
+      color: #000;
+    }
+
+    .hover-bg i {
+      color: #21b3ca;
+      margin-right: 8px;
+      width: 20px;
+    }
+    .dropdown-item {
+    box-shadow: none !important;
+    }
+    button.dropdown-link {
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      padding: 6px 10px;
+    }
+
+    button.dropdown-link:hover .hover-bg {
+      background-color: #b2e9f2;
+      color: #000;
+    }
+
+    button.dropdown-link:hover .hover-bg i {
+      color: #000;
+    }
+     body {
+      opacity: 0;
+      transition: opacity 0.1s ease-in-out;
+    }
+
+    body.page-loaded {
+      opacity: 1;
+    }
+
+    body.fade-out {
+      opacity: 0;
+    }
+     #sidebar .nav-item {
+      border-radius: 0.5rem; /* Tambahan */
+      margin-bottom: 0.25rem;
+    }
+
+    #sidebar .nav-item:hover,
+    #sidebar .nav-item.active {
+      background-color: #21b3ca;
+      border-radius: 0.5rem; /* Tambahan */
+    }
+
+    #sidebar .nav-item:hover .nav-link,
+    #sidebar .nav-item.active .nav-link {
+      color: white !important;
+    }
+
+    #sidebar .nav-item:hover i,
+    #sidebar .nav-item.active i {
+      color: white !important;
+    }
+     .dropdown-menu {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .dropdown-menu.show {
+      opacity: 1;
+      transform: scale(1);
+    }

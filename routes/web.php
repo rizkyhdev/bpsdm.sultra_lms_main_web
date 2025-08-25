@@ -11,6 +11,8 @@ use App\Http\Controllers\studentnurul\WishlistController;
 use App\Http\Controllers\studentnurul\ReviewsController;   
 use App\Http\Controllers\studentnurul\SettingController;  
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PelatihanController;
+use App\Http\Controllers\RegisterController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -83,7 +85,7 @@ Route::post('/logout', function () {
 
 
 // Isnan
-Route::get('/home2', [PelatihanController::class, 'index']);
+Route::get('/', [PelatihanController::class, 'index']);
 Route::get('/register2', [RegisterController::class, 'showForm'])->name('register.show');
 Route::post('/register2', [RegisterController::class, 'submitForm'])->name('register.submit');
 
