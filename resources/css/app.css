@@ -1,6 +1,8 @@
 @import './preload.css';
 @import './landingpage_styling.css';
 @import './calendar_styling.css';
+@import './login_styling.css';
+
 
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
