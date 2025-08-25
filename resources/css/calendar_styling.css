@@ -1,0 +1,148 @@
+
+/* Container utama kalender */
+.elegant-calencar {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+/* Header kalender */
+.wrap-header {
+    background-color: #28a745;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+
+.wrap-header .head-day {
+    font-size: 50px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.wrap-header .head-month {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Tombol navigasi */
+.pre-button, .next-button {
+    cursor: pointer;
+    color: #fff;
+    font-size: 18px;
+    padding: 5px 10px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+#reset {
+    font-size: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 3px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Table kalender */
+.calendar-wrap {
+    padding: 10px 15px;
+    overflow-x: auto;
+    background: #fff;
+}
+
+#calendar {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#calendar th {
+    text-align: center;
+    padding: 8px 0;
+    font-weight: bold;
+    background: #f7f7f7;
+    color: #333;
+}
+
+#calendar td {
+    text-align: center;
+    padding: 12px 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+
+#calendar td:hover {
+    background: #e0f5e9;
+}
+
+#calendar td.selected {
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+#calendar td.event {
+    background-color: #28a745;
+    color: #fff;
+    font-weight: bold;
+}
+
+#calendar td#disabled {
+    background: transparent;
+    cursor: default;
+}
+
+#calendar td[data-date]:not([data-date=""]) {
+    pointer-events: auto;
+}
+
+#calendar td[data-date=""] {
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .wrap-header {
+        flex-direction: column;
+        align-items: center;
+    }
+    .wrap-header .head-day {
+        font-size: 40px;
+    }
+    .wrap-header .head-month {
+        font-size: 14px;
+    }
+}
+
+#calendar td.calendar-day {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto !important;
+}
+
+#calendar td.calendar-day:empty {
+    pointer-events: none !important;
+    background: transparent;
+}
+
+
+#calendar td.calendar-day[data-date]:not([data-date=""]) {
+    pointer-events: auto !important;
+    cursor: pointer;
+}
+
+
+.elegant-calencar * {
+    z-index: 1;
+}

@@ -80,3 +80,22 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/'); // Redirect ke halaman utama setelah logout
 })->name('logout');
+
+
+// Isnan
+Route::get('/home2', [PelatihanController::class, 'index']);
+Route::get('/register2', [RegisterController::class, 'showForm'])->name('register.show');
+Route::post('/register2', [RegisterController::class, 'submitForm'])->name('register.submit');
+
+Route::get('/login2', function () {
+    return view('login_register_page.login');
+});
+Route::get('/register2', function () {
+    return view('login_register_page.register');
+});
+Route::get('/modul2', function () {
+    return view('users.modul');
+});
+Route::get('/sub_modul2', function () {
+    return view('users.sub_modul');
+});
