@@ -61,7 +61,7 @@
                 <div class="card-body text-center">
                     
                   
-                    <button class="btn btn-light w-100 fw-bold mb-3"><a href="{{ url('/sub_modul2') }}">Start Learning</a></button>
+                    <button class="btn btn-light w-100 fw-bold mb-3"><a href="{{ url('/sub_modul') }}">Start Learning</a></button>
                     <div class="alert alert-warning text-dark fw-bold py-2" role="alert">
                 ⚠️ Complete all lessons to mark this course as complete
                     </div>

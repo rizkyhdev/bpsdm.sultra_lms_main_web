@@ -14,9 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\RegisterController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', [PelatihanController::class, 'index']);
 
 Auth::routes();
 
@@ -75,6 +77,9 @@ Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
 // Route untuk Halaman Review
 Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews');
 
+Route::get('/sub_modul', function () {
+    return view('student.modul.sub_modul');
+});
 //Route::get('/enrolled', [EnrolleCourseController::class, 'index'])->name('course');
 
 // Route untuk Sign Out (Logout)
@@ -85,19 +90,19 @@ Route::post('/logout', function () {
 
 
 // Isnan
-Route::get('/', [PelatihanController::class, 'index']);
-Route::get('/register2', [RegisterController::class, 'showForm'])->name('register.show');
-Route::post('/register2', [RegisterController::class, 'submitForm'])->name('register.submit');
+// Route::get('/', [PelatihanController::class, 'index']);
+// Route::get('/register2', [RegisterController::class, 'showForm'])->name('register.show');
+// Route::post('/register2', [RegisterController::class, 'submitForm'])->name('register.submit');
 
-Route::get('/login2', function () {
-    return view('login_register_page.login');
-});
-Route::get('/register2', function () {
-    return view('login_register_page.register');
-});
-Route::get('/modul2', function () {
-    return view('users.modul');
-});
-Route::get('/sub_modul2', function () {
-    return view('users.sub_modul');
-});
+// Route::get('/login2', function () {
+//     return view('login_register_page.login');
+// });
+// Route::get('/register2', function () {
+//     return view('login_register_page.register');
+// });
+// Route::get('/modul2', function () {
+//     return view('users.modul');
+// });
+// Route::get('/sub_modul2', function () {
+//     return view('users.sub_modul');
+// });
