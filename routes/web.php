@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Student\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Student\Traits\StudentControllerTrait;
 use App\Http\Controllers\studentnurul\ProfileController;   
 use App\Http\Controllers\studentnurul\ReviewController;
 use App\Http\Controllers\studentnurul\EnrolledController; 
@@ -59,6 +60,7 @@ Route::get('/contact', function () {
 
 // Route untuk Halaman Profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+// Route::get('/profile', [StudentControllerTrait::class, 'index'])->name('profile');
 
 Route::get('/review', [ReviewController::class, 'index'])->name('review');
 // Route untuk Halaman Setting

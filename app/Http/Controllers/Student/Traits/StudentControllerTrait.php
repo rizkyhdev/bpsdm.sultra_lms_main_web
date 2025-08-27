@@ -8,12 +8,24 @@ use Illuminate\Support\Facades\Auth;
 
 trait StudentControllerTrait
 {
+
+   
+
     /**
      * Mendapatkan user yang terautentikasi.
      */
     protected function getCurrentUser(): User
     {
         return Auth::user();
+    }
+
+      public function index()
+    {
+        $user = $this->getCurrentUser();
+        $name = $user->name;
+        $email = $user->email;
+        // $profilePicture = $user->profile_picture;
+        return view('student.profile', compact('name')); // atau 'profile', sesuai file blade Anda
     }
 
     /**
