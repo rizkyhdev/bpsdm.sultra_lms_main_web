@@ -1,313 +1,313 @@
-# Student Controllers for LMS BPSDM Sultra System
+# Controller Mahasiswa untuk Sistem LMS BPSDM Sultra
 
-This document provides a comprehensive overview of all the student role controllers created for the LMS BPSDM Sultra system.
+Dokumen ini menyediakan gambaran komprehensif dari semua controller peran mahasiswa yang dibuat untuk sistem LMS BPSDM Sultra.
 
-## Overview
+## Gambaran Umum
 
-The system includes 8 main controllers designed to handle all student functionality in the learning management system. Each controller follows Laravel best practices and includes proper authentication, authorization, and error handling.
+Sistem mencakup 8 controller utama yang dirancang untuk menangani semua fungsionalitas mahasiswa dalam sistem manajemen pembelajaran. Setiap controller mengikuti praktik terbaik Laravel dan mencakup autentikasi, otorisasi, dan penanganan error yang tepat.
 
-## Controllers Created
+## Controller yang Dibuat
 
 ### 1. StudentDashboardController
-**Location:** `app/Http/Controllers/Student/StudentDashboardController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentDashboardController.php`
 
-**Purpose:** Main dashboard for students showing learning overview and progress.
+**Tujuan:** Dashboard utama untuk mahasiswa yang menampilkan gambaran pembelajaran dan progress.
 
-**Key Methods:**
-- `index()` - Display student dashboard with enrolled courses, progress, JP records, and upcoming quizzes
-- `getDashboardData()` - AJAX endpoint for dashboard data with year filtering
-- `getLearningStats()` - Get learning statistics and metrics
+**Metode Utama:**
+- `index()` - Menampilkan dashboard mahasiswa dengan kursus yang diikuti, progress, catatan JP, dan kuis yang akan datang
+- `getDashboardData()` - Endpoint AJAX untuk data dashboard dengan filter tahun
+- `getLearningStats()` - Mendapatkan statistik pembelajaran dan metrik
 
-**Features:**
-- Enrolled courses with progress tracking
-- JP (Jam Pelajaran) accumulation for current year
-- Upcoming quizzes display
-- Recent learning activities
-- Course progress visualization
-- Learning statistics
+**Fitur:**
+- Kursus yang diikuti dengan pelacakan progress
+- Akumulasi JP (Jam Pelajaran) untuk tahun berjalan
+- Tampilan kuis yang akan datang
+- Aktivitas pembelajaran terbaru
+- Visualisasi progress kursus
+- Statistik pembelajaran
 
 ### 2. StudentCourseController
-**Location:** `app/Http/Controllers/Student/StudentCourseController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentCourseController.php`
 
-**Purpose:** Handle course browsing, enrollment, and learning progress.
+**Tujuan:** Menangani penelusuran kursus, pendaftaran, dan progress pembelajaran.
 
-**Key Methods:**
-- `index()` - List all available courses with filtering and search
-- `show()` - Display specific course details and progress
-- `enroll()` - Enroll student in a course
-- `myLearning()` - Show enrolled courses with progress
-- `trackProgress()` - Track and display learning progress
-- `unenroll()` - Remove enrollment from a course
-- `getRecommendations()` - Get course recommendations based on learning history
+**Metode Utama:**
+- `index()` - Daftar semua kursus yang tersedia dengan filter dan pencarian
+- `show()` - Menampilkan detail kursus tertentu dan progress
+- `enroll()` - Mendaftarkan mahasiswa ke kursus
+- `myLearning()` - Menampilkan kursus yang diikuti dengan progress
+- `trackProgress()` - Melacak dan menampilkan progress pembelajaran
+- `unenroll()` - Menghapus pendaftaran dari kursus
+- `getRecommendations()` - Mendapatkan rekomendasi kursus berdasarkan riwayat pembelajaran
 
-**Features:**
-- Course browsing with filters (bidang kompetensi, search, sorting)
-- Course enrollment management
-- Progress tracking and visualization
-- Course recommendations
-- Enrollment status management
+**Fitur:**
+- Penelusuran kursus dengan filter (bidang kompetensi, pencarian, pengurutan)
+- Manajemen pendaftaran kursus
+- Pelacakan dan visualisasi progress
+- Rekomendasi kursus
+- Manajemen status pendaftaran
 
 ### 3. StudentModuleController
-**Location:** `app/Http/Controllers/Student/StudentModuleController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentModuleController.php`
 
-**Purpose:** Handle module display and completion tracking.
+**Tujuan:** Menangani tampilan modul dan pelacakan penyelesaian.
 
-**Key Methods:**
-- `show()` - Display module with sub-modules and progress
-- `markComplete()` - Mark module as completed
-- `getProgress()` - Get detailed module progress
-- `getNavigation()` - Get navigation between modules
+**Metode Utama:**
+- `show()` - Menampilkan modul dengan sub-modul dan progress
+- `markComplete()` - Menandai modul sebagai selesai
+- `getProgress()` - Mendapatkan progress modul yang detail
+- `getNavigation()` - Mendapatkan navigasi antar modul
 
-**Features:**
-- Module access control (sequential progression)
-- Progress tracking and visualization
-- Module completion validation
-- Navigation between modules
-- Automatic course completion checking
+**Fitur:**
+- Kontrol akses modul (progresi berurutan)
+- Pelacakan dan visualisasi progress
+- Validasi penyelesaian modul
+- Navigasi antar modul
+- Pemeriksaan penyelesaian kursus otomatis
 
 ### 4. StudentSubModuleController
-**Location:** `app/Http/Controllers/Student/StudentSubModuleController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentSubModuleController.php`
 
-**Purpose:** Handle sub-module display and content progression.
+**Tujuan:** Menangani tampilan sub-modul dan progresi konten.
 
-**Key Methods:**
-- `show()` - Display sub-module with contents and progress
-- `markComplete()` - Mark sub-module as completed
-- `getProgress()` - Get detailed sub-module progress
-- `getNavigation()` - Get navigation between sub-modules
-- `updateProgress()` - Update learning progress
+**Metode Utama:**
+- `show()` - Menampilkan sub-modul dengan konten dan progress
+- `markComplete()` - Menandai sub-modul sebagai selesai
+- `getProgress()` - Mendapatkan progress sub-modul yang detail
+- `getNavigation()` - Mendapatkan navigasi antar sub-modul
+- `updateProgress()` - Memperbarui progress pembelajaran
 
-**Features:**
-- Sub-module access control
-- Content progress tracking
-- Sequential learning enforcement
-- Progress percentage updates
-- Automatic module completion checking
+**Fitur:**
+- Kontrol akses sub-modul
+- Pelacakan progress konten
+- Penegakan pembelajaran berurutan
+- Pembaruan persentase progress
+- Pemeriksaan penyelesaian modul otomatis
 
 ### 5. StudentContentController
-**Location:** `app/Http/Controllers/Student/StudentContentController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentContentController.php`
 
-**Purpose:** Handle learning content display and progress tracking.
+**Tujuan:** Menangani tampilan konten pembelajaran dan pelacakan progress.
 
-**Key Methods:**
-- `show()` - Display learning content (text, PDF, video)
-- `trackProgress()` - Track content viewing progress
-- `markComplete()` - Mark content as completed
-- `download()` - Download content files
-- `streamVideo()` - Stream video content
-- `getProgress()` - Get content progress details
-- `getNavigation()` - Get navigation between content items
+**Metode Utama:**
+- `show()` - Menampilkan konten pembelajaran (teks, PDF, video)
+- `trackProgress()` - Melacak progress melihat konten
+- `markComplete()` - Menandai konten sebagai selesai
+- `download()` - Mengunduh file konten
+- `streamVideo()` - Streaming konten video
+- `getProgress()` - Mendapatkan detail progress konten
+- `getNavigation()` - Mendapatkan navigasi antar item konten
 
-**Features:**
-- Multiple content type support (text, PDF, video)
-- Progress tracking with percentage updates
-- File download functionality
-- Video streaming support
-- Content access control
-- Progress persistence
+**Fitur:**
+- Dukungan berbagai tipe konten (teks, PDF, video)
+- Pelacakan progress dengan pembaruan persentase
+- Fungsionalitas unduhan file
+- Dukungan streaming video
+- Kontrol akses konten
+- Persistensi progress
 
 ### 6. StudentQuizController
-**Location:** `app/Http/Controllers/Student/StudentQuizController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentQuizController.php`
 
-**Purpose:** Handle quiz functionality including taking, scoring, and reviewing.
+**Tujuan:** Menangani fungsionalitas kuis termasuk mengerjakan, penilaian, dan review.
 
-**Key Methods:**
-- `index()` - List quizzes for a sub-module
-- `show()` - Display quiz details and attempts
-- `start()` - Start a new quiz attempt
-- `submit()` - Submit quiz answers and calculate scores
-- `result()` - Display quiz results
-- `reviewAttempt()` - Review previous quiz attempts
-- `getQuestions()` - Get quiz questions for frontend
-- `saveProgress()` - Auto-save quiz progress
+**Metode Utama:**
+- `index()` - Daftar kuis untuk sub-modul
+- `show()` - Menampilkan detail kuis dan percobaan
+- `start()` - Memulai percobaan kuis baru
+- `submit()` - Mengirimkan jawaban kuis dan menghitung skor
+- `result()` - Menampilkan hasil kuis
+- `reviewAttempt()` - Review percobaan kuis sebelumnya
+- `getQuestions()` - Mendapatkan pertanyaan kuis untuk frontend
+- `saveProgress()` - Auto-save progress kuis
 
-**Features:**
-- Quiz attempt management
-- Automatic scoring and grading
-- Progress auto-save
-- Attempt limit enforcement
-- Result review and analysis
-- Question randomization
-- Answer validation
+**Fitur:**
+- Manajemen percobaan kuis
+- Penilaian dan grading otomatis
+- Auto-save progress
+- Penegakan batas percobaan
+- Review dan analisis hasil
+- Randomisasi pertanyaan
+- Validasi jawaban
 
 ### 7. StudentCertificateController
-**Location:** `app/Http/Controllers/Student/StudentCertificateController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentCertificateController.php`
 
-**Purpose:** Handle certificate display, download, and validation.
+**Tujuan:** Menangani tampilan, unduhan, dan validasi sertifikat.
 
-**Key Methods:**
-- `index()` - List all earned certificates
-- `show()` - Display specific certificate details
-- `download()` - Download certificate as PDF
-- `view()` - View certificate in browser
-- `getCertificateData()` - Get certificate data for AJAX
-- `getStatistics()` - Get certificate statistics
-- `search()` - Search certificates
-- `export()` - Export certificates to CSV
-- `validateCertificate()` - Validate certificate authenticity
+**Metode Utama:**
+- `index()` - Daftar semua sertifikat yang diperoleh
+- `show()` - Menampilkan detail sertifikat tertentu
+- `download()` - Mengunduh sertifikat sebagai PDF
+- `view()` - Melihat sertifikat di browser
+- `getCertificateData()` - Mendapatkan data sertifikat untuk AJAX
+- `getStatistics()` - Mendapatkan statistik sertifikat
+- `search()` - Mencari sertifikat
+- `export()` - Mengekspor sertifikat ke CSV
+- `validateCertificate()` - Memvalidasi keaslian sertifikat
 
-**Features:**
-- PDF certificate generation
-- Certificate validation system
-- Statistics and reporting
-- Search and filtering
-- CSV export functionality
-- Certificate authenticity verification
+**Fitur:**
+- Generasi sertifikat PDF
+- Sistem validasi sertifikat
+- Statistik dan pelaporan
+- Pencarian dan filter
+- Fungsionalitas ekspor CSV
+- Verifikasi keaslian sertifikat
 
 ### 8. StudentJPRecordController
-**Location:** `app/Http/Controllers/Student/StudentJPRecordController.php`
+**Lokasi:** `app/Http/Controllers/Student/StudentJPRecordController.php`
 
-**Purpose:** Handle JP (Jam Pelajaran) record management and reporting.
+**Tujuan:** Menangani manajemen catatan JP (Jam Pelajaran) dan pelaporan.
 
-**Key Methods:**
-- `index()` - List all JP records with filtering
-- `yearSummary()` - Display JP summary for specific year
-- `getJpData()` - Get JP data for AJAX requests
-- `getStatistics()` - Get JP statistics and trends
-- `search()` - Search JP records
-- `export()` - Export JP records to CSV
-- `getTargetProgress()` - Get progress towards JP targets
-- `getYearComparison()` - Compare JP between years
+**Metode Utama:**
+- `index()` - Daftar semua catatan JP dengan filter
+- `yearSummary()` - Menampilkan ringkasan JP untuk tahun tertentu
+- `getJpData()` - Mendapatkan data JP untuk permintaan AJAX
+- `getStatistics()` - Mendapatkan statistik dan tren JP
+- `search()` - Mencari catatan JP
+- `export()` - Mengekspor catatan JP ke CSV
+- `getTargetProgress()` - Mendapatkan progress menuju target JP
+- `getYearComparison()` - Membandingkan JP antar tahun
 
-**Features:**
-- JP record tracking and visualization
-- Yearly and monthly summaries
-- Target progress tracking
-- Year-over-year comparisons
-- Statistical analysis
-- CSV export functionality
-- Filtering and search
+**Fitur:**
+- Pelacakan dan visualisasi catatan JP
+- Ringkasan tahunan dan bulanan
+- Pelacakan progress target
+- Perbandingan tahun ke tahun
+- Analisis statistik
+- Fungsionalitas ekspor CSV
+- Filter dan pencarian
 
-## Supporting Files
+## File Pendukung
 
 ### Middleware
-**Location:** `app/Http/Middleware/CheckRole.php`
+**Lokasi:** `app/Http/Middleware/CheckRole.php`
 
-**Purpose:** Role-based access control for student functionality.
+**Tujuan:** Kontrol akses berbasis peran untuk fungsionalitas mahasiswa.
 
-**Features:**
-- Authentication verification
-- Role validation
-- Access control enforcement
+**Fitur:**
+- Verifikasi autentikasi
+- Validasi peran
+- Penegakan kontrol akses
 
 ### Trait
-**Location:** `app/Http/Controllers/Student/Traits/StudentControllerTrait.php`
+**Lokasi:** `app/Http/Controllers/Student/Traits/StudentControllerTrait.php`
 
-**Purpose:** Common functionality shared across all student controllers.
+**Tujuan:** Fungsionalitas umum yang dibagikan di semua controller mahasiswa.
 
-**Features:**
-- User enrollment checking
-- Progress calculation methods
-- Access control helpers
-- JP calculation utilities
-- Formatting helpers
-- Learning statistics
+**Fitur:**
+- Pemeriksaan pendaftaran pengguna
+- Metode perhitungan progress
+- Helper kontrol akses
+- Utilitas perhitungan JP
+- Helper formatting
+- Statistik pembelajaran
 
-## Key Features Implemented
+## Fitur Utama yang Diimplementasikan
 
-### Authentication & Authorization
-- All controllers use `auth` middleware
-- Role-based access control with `role:student` middleware
-- Proper enrollment verification for course access
-- Sequential learning enforcement
+### Autentikasi & Otorisasi
+- Semua controller menggunakan middleware `auth`
+- Kontrol akses berbasis peran dengan middleware `role:student`
+- Verifikasi pendaftaran yang tepat untuk akses kursus
+- Penegakan pembelajaran berurutan
 
-### Progress Tracking
-- Comprehensive progress tracking at all levels (course, module, sub-module, content)
-- Automatic completion detection
-- Progress percentage calculations
-- Learning path enforcement
+### Pelacakan Progress
+- Pelacakan progress komprehensif di semua level (kursus, modul, sub-modul, konten)
+- Deteksi penyelesaian otomatis
+- Perhitungan persentase progress
+- Penegakan jalur pembelajaran
 
-### JP (Jam Pelajaran) Management
-- JP accumulation tracking
-- Yearly and monthly summaries
-- Target progress monitoring
-- Statistical analysis and reporting
+### Manajemen JP (Jam Pelajaran)
+- Pelacakan akumulasi JP
+- Ringkasan tahunan dan bulanan
+- Pemantauan progress target
+- Analisis statistik dan pelaporan
 
-### Quiz System
-- Multiple attempt support
-- Automatic scoring
-- Progress auto-save
-- Result review and analysis
+### Sistem Kuis
+- Dukungan multiple percobaan
+- Penilaian otomatis
+- Auto-save progress
+- Review dan analisis hasil
 
-### Certificate System
-- PDF generation
-- Authenticity validation
-- Download and viewing options
-- Export functionality
+### Sistem Sertifikat
+- Generasi PDF
+- Validasi keaslian
+- Opsi unduhan dan melihat
+- Fungsionalitas ekspor
 
-### Data Export
-- CSV export for JP records and certificates
-- Filtered export options
-- Proper formatting and headers
+### Ekspor Data
+- Ekspor CSV untuk catatan JP dan sertifikat
+- Opsi ekspor yang difilter
+- Format dan header yang tepat
 
-## Database Relationships Utilized
+## Relasi Database yang Digunakan
 
-The controllers properly utilize the defined database relationships:
+Controller dengan tepat memanfaatkan relasi database yang didefinisikan:
 - User → UserEnrollment → Course
 - Course → Module → SubModule → Content
 - Course → Quiz → Question → AnswerOption
-- User → UserProgress (for content/sub-module progress)
+- User → UserProgress (untuk progress konten/sub-modul)
 - User → QuizAttempt → UserAnswer
 - User → Certificate
 - User → JpRecord
 
-## Error Handling
+## Penanganan Error
 
-All controllers include comprehensive error handling:
-- Proper HTTP status codes
-- User-friendly error messages
-- Database transaction management
-- Validation error handling
-- Access control violations
+Semua controller mencakup penanganan error yang komprehensif:
+- Kode status HTTP yang tepat
+- Pesan error yang ramah pengguna
+- Manajemen transaksi database
+- Penanganan error validasi
+- Pelanggaran kontrol akses
 
-## Response Formats
+## Format Response
 
-Controllers return appropriate responses based on request type:
-- **Views** for page displays
-- **JSON responses** for AJAX requests
-- **File downloads** for content and certificates
-- **CSV exports** for data export
+Controller mengembalikan response yang sesuai berdasarkan tipe permintaan:
+- **Views** untuk tampilan halaman
+- **JSON responses** untuk permintaan AJAX
+- **File downloads** untuk konten dan sertifikat
+- **CSV exports** untuk ekspor data
 
-## Security Features
+## Fitur Keamanan
 
-- Authentication middleware on all controllers
-- Role-based access control
-- Enrollment verification for course access
-- Sequential learning enforcement
-- Input validation and sanitization
-- SQL injection prevention through Eloquent ORM
+- Middleware autentikasi di semua controller
+- Kontrol akses berbasis peran
+- Verifikasi pendaftaran untuk akses kursus
+- Penegakan pembelajaran berurutan
+- Validasi dan sanitasi input
+- Pencegahan SQL injection melalui Eloquent ORM
 
-## Performance Considerations
+## Pertimbangan Performa
 
-- Efficient database queries with proper relationships
-- Pagination for large datasets
-- Lazy loading where appropriate
-- Caching opportunities for statistics
-- Optimized progress calculations
+- Query database yang efisien dengan relasi yang tepat
+- Paginasi untuk dataset besar
+- Lazy loading yang sesuai
+- Peluang caching untuk statistik
+- Optimasi perhitungan progress
 
-## Future Enhancements
+## Peningkatan Masa Depan
 
-The controllers are designed to be extensible for future features:
-- Learning analytics and insights
-- Social learning features
-- Advanced progress tracking
-- Mobile app support
-- Integration with external systems
-- Advanced reporting and analytics
+Controller dirancang untuk dapat diperluas untuk fitur masa depan:
+- Analitik dan wawasan pembelajaran
+- Fitur pembelajaran sosial
+- Pelacakan progress lanjutan
+- Dukungan aplikasi mobile
+- Integrasi dengan sistem eksternal
+- Pelaporan dan analitik lanjutan
 
-## Usage Examples
+## Contoh Penggunaan
 
-### Basic Controller Usage
+### Penggunaan Controller Dasar
 ```php
-// In routes/web.php
+// Di routes/web.php
 Route::middleware(['auth', 'role:student'])->group(function () {
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
     Route::get('/student/courses', [StudentCourseController::class, 'index'])->name('student.courses.index');
-    // ... other routes
+    // ... rute lainnya
 });
 ```
 
-### Trait Usage
+### Penggunaan Trait
 ```php
 use App\Http\Controllers\Student\Traits\StudentControllerTrait;
 
@@ -318,13 +318,13 @@ class StudentCourseController extends Controller
     public function show(Course $course)
     {
         if (!$this->isUserEnrolled($course->id)) {
-            abort(403, 'You must be enrolled to view this course.');
+            abort(403, 'Anda harus terdaftar untuk melihat kursus ini.');
         }
         
         $progress = $this->getUserCourseProgress($course->id);
-        // ... rest of the method
+        // ... sisa metode
     }
 }
 ```
 
-This comprehensive set of controllers provides a solid foundation for the student learning experience in the LMS BPSDM Sultra system, with proper separation of concerns, security, and extensibility for future enhancements. 
+Set controller komprehensif ini menyediakan fondasi yang solid untuk pengalaman pembelajaran mahasiswa dalam sistem LMS BPSDM Sultra, dengan pemisahan keprihatinan yang tepat, keamanan, dan kemampuan diperluas untuk peningkatan masa depan. 
