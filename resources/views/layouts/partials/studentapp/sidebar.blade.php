@@ -26,26 +26,9 @@
               <i class="far fa-user me-2"></i>Profil Saya
           </a>
       </li>
-      @php
-          $isEnrolledActive = Route::is('enrolled') || Route::is('active') || Route::is('complete');
-      @endphp
-      <li class="nav-item {{ $isEnrolledActive ? 'active' : '' }}">
-          <a class="nav-link {{ $isEnrolledActive ? 'text-white' : 'text-black' }}" 
-            style="{{ $isEnrolledActive ? 'background-color: #21b3ca;' : '' }}" 
-            href="{{ route('enrolled') }}">
-              <i class="fas fa-book me-2"></i>Daftar Pelatihan
-          </a>
-      </li>
-      <li class="nav-item {{ Route::is('wishlist') ? 'active' : '' }}">
-          <a class="nav-link text-black fw-semibold" href="{{ route('wishlist') }}">
-              <i class="fas fa-bookmark me-2"></i> Daftar Keinginan
-          </a>
-      </li>
-      <li class="nav-item {{ Route::is('reviews') ? 'active' : '' }}">
-          <a class="nav-link text-black fw-semibold" href="{{ route('reviews') }}">
-              <i class="fas fa-star me-2"></i>Ulasan
-          </a>
-      </li>
+     
+    
+    
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-pen me-2"></i>Kuis Saya</a></li>
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-shopping-bag me-2"></i>Riwayat Pesanan</a></li>
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Tanya Jawab</a></li>

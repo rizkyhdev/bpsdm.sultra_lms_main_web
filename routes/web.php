@@ -3,6 +3,28 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PelatihanController;
+use App\Http\Controllers\Instructor\InstructorDashboardController;
+use App\Http\Controllers\Instructor\InstructorCourseController;
+use App\Http\Controllers\Instructor\InstructorModuleController;
+use App\Http\Controllers\Instructor\InstructorSubModuleController;
+use App\Http\Controllers\Instructor\InstructorContentController;
+use App\Http\Controllers\Instructor\InstructorQuizController;
+use App\Http\Controllers\Instructor\InstructorQuestionController;
+use App\Http\Controllers\Instructor\InstructorEnrollmentController;
+use App\Http\Controllers\Instructor\InstructorProgressController;
+use App\Http\Controllers\Instructor\InstructorAttemptController;
+use App\Http\Controllers\Instructor\InstructorReportController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminCourseController;
+use App\Http\Controllers\Admin\AdminModuleController;
+use App\Http\Controllers\Admin\AdminSubModuleController;
+use App\Http\Controllers\Admin\AdminContentController;
+use App\Http\Controllers\Admin\AdminQuizController;
+use App\Http\Controllers\Admin\AdminQuestionController;
+use App\Http\Controllers\Admin\AdminEnrollmentController;
+use App\Http\Controllers\Admin\AdminCertificateController;
+use App\Http\Controllers\Admin\AdminReportController;
 
 // Public landing (keep; uncertain usage in views)
 Route::get('/', [PelatihanController::class, 'index']);
@@ -13,7 +35,7 @@ Auth::routes();
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if (!$user) {
-        return redirect()->route('home');
+        return redirect()->route('welcome');
     }
     $role = $user->role ?? 'student';
     if ($role === 'admin') {
