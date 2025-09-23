@@ -1,77 +1,41 @@
 @extends('layouts.admin')
 
-@section('title', 'Ubah Pengguna')
+@section('title', __('Edit User'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Pengguna</a></li>
-    <li class="breadcrumb-item active">Ubah</li>
+    <li><a href="{{ route('admin.dashboard') }}" class="hover:underline">{{ __('Dashboard') }}</a></li>
+    <li><a href="{{ route('admin.users.index') }}" class="hover:underline">{{ __('Users') }}</a></li>
+    <li class="text-gray-600 dark:text-gray-400" aria-current="page">{{ __('Edit') }}</li>
 @endsection
 
 @section('content')
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <form action="{{ route('admin.users.update', $user) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label for="nip">NIP</label>
-                        <input type="text" id="nip" name="nip" class="form-control @error('nip') is-invalid @enderror" value="{{ old('nip', $user->nip) }}">
-                        @error('nip')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="nama">Nama</label>
-                        <input type="text" id="nama" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $user->nama) }}">
-                        @error('nama')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}">
-                        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
+    @php /** @var App\Models\User $user */ @endphp
+    <x-admin.card>
+        <form action="{{ route('admin.users.update', $user) }}" method="POST" novalidate>
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <x-admin.input name="nip" :label="__('NIP')" :value="old('nip', $user->nip)" />
+                <x-admin.input name="nama" :label="__('Name')" :value="old('nama', $user->nama)" />
+                <x-admin.input type="email" name="email" :label="__('Email')" :value="old('email', $user->email)" />
+            </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label for="jabatan">Jabatan</label>
-                        <input type="text" id="jabatan" name="jabatan" class="form-control @error('jabatan') is-invalid @enderror" value="{{ old('jabatan', $user->jabatan) }}">
-                        @error('jabatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="unit_kerja">Unit Kerja</label>
-                        <input type="text" id="unit_kerja" name="unit_kerja" class="form-control @error('unit_kerja') is-invalid @enderror" value="{{ old('unit_kerja', $user->unit_kerja) }}">
-                        @error('unit_kerja')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="role">Peran</label>
-                        <select id="role" name="role" class="form-control @error('role') is-invalid @enderror">
-                            @foreach(['admin'=>'Admin','instructor'=>'Instruktur','student'=>'Siswa'] as $val => $label)
-                                <option value="{{ $val }}" @if(old('role', $user->role)===$val) selected @endif>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        @error('role')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <x-admin.input name="jabatan" :label="__('Position')" :value="old('jabatan', $user->jabatan)" />
+                <x-admin.input name="unit_kerja" :label="__('Unit')" :value="old('unit_kerja', $user->unit_kerja)" />
+                <x-admin.select name="role" :label="__('Role')" :options="['admin'=>__('Admin'),'instructor'=>__('Instructor'),'student'=>__('Student')]" :value="old('role', $user->role)" />
+            </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label for="is_validated">Tervalidasi?</label>
-                        <select id="is_validated" name="is_validated" class="form-control @error('is_validated') is-invalid @enderror">
-                            <option value="0" @if(old('is_validated', (string)$user->is_validated)==='0') selected @endif>Tidak</option>
-                            <option value="1" @if(old('is_validated', (string)$user->is_validated)==='1') selected @endif>Ya</option>
-                        </select>
-                        @error('is_validated')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <x-admin.select name="is_validated" :label="__('Validated?')" :options="['0'=>__('No'),'1'=>__('Yes')]" :value="old('is_validated', (string) $user->is_validated)" />
+            </div>
 
-                <div class="d-flex justify-content-between">
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">Kembali</a>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
+            <div class="mt-6 flex items-center justify-between">
+                <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">{{ __('Back') }}</a>
+                <button type="submit" class="inline-flex items-center px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-500">{{ __('Save') }}</button>
+            </div>
+        </form>
+    </x-admin.card>
 @endsection
 
 

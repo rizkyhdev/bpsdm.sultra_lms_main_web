@@ -1,156 +1,92 @@
 @extends('layouts.admin')
 
-@section('title', 'Pengguna')
+@section('title', __('Users'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Pengguna</li>
+    <li><a href="{{ route('admin.dashboard') }}" class="hover:underline">{{ __('Dashboard') }}</a></li>
+    <li class="text-gray-600 dark:text-gray-400" aria-current="page">{{ __('Users') }}</li>
 @endsection
 
 @section('header-actions')
     @can('create', App\Models\User::class)
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary"><i class="fas fa-plus mr-1"></i> Tambah</a>
+        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-500">+ <span class="hidden sm:inline">{{ __('Add') }}</span></a>
     @endcan
 @endsection
 
 @section('content')
-    {{-- Pencarian & Filter --}}
-    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-3">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="form-row align-items-end">
-                    <div class="form-group col-md-3">
-                        <label for="q">Cari (NIP/Nama/Email)</label>
-                        <input type="text" id="q" name="q" value="{{ request('q') }}" class="form-control" placeholder="Ketik kata kunci">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="role">Peran</label>
-                        <select id="role" name="role" class="form-control">
-                            <option value="">Semua</option>
-                            <option value="admin" @if(request('role')=='admin') selected @endif>Admin</option>
-                            <option value="instructor" @if(request('role')=='instructor') selected @endif>Instruktur</option>
-                            <option value="student" @if(request('role')=='student') selected @endif>Siswa</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="validated">Validasi</label>
-                        <select id="validated" name="validated" class="form-control">
-                            <option value="">Semua</option>
-                            <option value="1" @if(request('validated')==='1') selected @endif>Tervalidasi</option>
-                            <option value="0" @if(request('validated')==='0') selected @endif>Belum</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="per_page">Per Halaman</label>
-                        <select id="per_page" name="per_page" class="form-control">
-                            @foreach([10,25,50,100] as $size)
-                                <option value="{{ $size }}" @if(request('per_page', 10)==$size) selected @endif>{{ $size }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group col-md-1">
-                        <button type="submit" class="btn btn-outline-secondary btn-block"><i class="fas fa-search"></i></button>
-                    </div>
+    {{-- Filters --}}
+    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-4">
+        <x-admin.card>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                <x-admin.input name="q" :label="__('Search (NIP/Name/Email)')" :value="request('q')" />
+                <x-admin.select name="role" :label="__('Role')" :options="[''=>__('All'),'admin'=>__('Admin'),'instructor'=>__('Instructor'),'student'=>__('Student')]" :value="request('role')" />
+                <x-admin.select name="validated" :label="__('Validation')" :options="[''=>__('All'),'1'=>__('Validated'),'0'=>__('Not yet')]" :value="request('validated')" />
+                <x-admin.select name="per_page" :label="__('Per page')" :options="[10=>10,25=>25,50=>50,100=>100]" :value="request('per_page',10)" />
+                <div class="sm:col-span-2 lg:col-span-1 flex items-end">
+                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">{{ __('Filter') }}</button>
                 </div>
             </div>
-        </div>
+        </x-admin.card>
     </form>
 
-    {{-- Tabel data --}}
-    <div class="card shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="thead-light">
-                    <tr>
-                        <th><a href="?{{ http_build_query(array_merge(request()->all(), ['sort' => 'nip'])) }}">NIP</a></th>
-                        <th><a href="?{{ http_build_query(array_merge(request()->all(), ['sort' => 'nama'])) }}">Nama</a></th>
-                        <th><a href="?{{ http_build_query(array_merge(request()->all(), ['sort' => 'email'])) }}">Email</a></th>
-                        <th>Peran</th>
-                        <th>Validasi</th>
-                        <th class="text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @forelse($users as $user)
-                    <tr>
-                        <td>{{ $user->nip }}</td>
-                        <td>{{ $user->nama }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td><span class="badge badge-info text-uppercase">{{ $user->role }}</span></td>
-                        <td>
-                            @if($user->is_validated)
-                                <span class="badge badge-success">Ya</span>
-                            @else
-                                <span class="badge badge-secondary">Tidak</span>
-                            @endif
-                        </td>
-                        <td class="text-right">
-                            <div class="btn-group btn-group-sm" role="group">
-                                @can('view', $user)
-                                    <a href="{{ route('admin.users.show', $user) }}" class="btn btn-outline-secondary" title="Detail"><i class="fas fa-eye"></i></a>
-                                @endcan
-                                @can('update', $user)
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-outline-primary" title="Ubah"><i class="fas fa-edit"></i></a>
-                                @endcan
-                                @can('delete', $user)
-                                    <button class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmDeleteModal" data-action="{{ route('admin.users.destroy', $user) }}" title="Hapus"><i class="fas fa-trash"></i></button>
-                                @endcan
-                                @can('validateUser', $user)
-                                    @if(!$user->is_validated)
-                                        <form action="{{ route('admin.users.validate', $user) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button class="btn btn-outline-success" title="Validasi"><i class="fas fa-check"></i></button>
-                                        </form>
-                                    @endif
-                                @endcan
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="6" class="text-center text-muted">Tidak ada data</td></tr>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
+    <x-admin.card>
+        <x-admin.table :headers="[
+            ['key'=>'nip','label'=>__('NIP'), 'sortable'=>true],
+            ['key'=>'nama','label'=>__('Name'), 'sortable'=>true],
+            ['key'=>'email','label'=>__('Email'), 'sortable'=>true],
+            ['key'=>'role','label'=>__('Role')],
+            ['key'=>'validated','label'=>__('Validated')],
+            ['key'=>'actions','label'=>__('Actions')],
+        ]">
+            @forelse($users as $user)
+                <tr>
+                    <td class="px-4 py-2">{{ $user->nip }}</td>
+                    <td class="px-4 py-2">{{ $user->nama }}</td>
+                    <td class="px-4 py-2">{{ $user->email }}</td>
+                    <td class="px-4 py-2"><x-admin.badge color="indigo">{{ strtoupper($user->role) }}</x-admin.badge></td>
+                    <td class="px-4 py-2">
+                        @if($user->is_validated)
+                            <x-admin.badge color="green">{{ __('Yes') }}</x-admin.badge>
+                        @else
+                            <x-admin.badge>{{ __('No') }}</x-admin.badge>
+                        @endif
+                    </td>
+                    <td class="px-4 py-2">
+                        <div class="flex justify-end gap-2">
+                            @can('view', $user)
+                                <a href="{{ route('admin.users.show', $user) }}" class="inline-flex items-center px-2 py-1 text-sm rounded border hover:bg-gray-50 dark:hover:bg-gray-800">{{ __('View') }}</a>
+                            @endcan
+                            @can('update', $user)
+                                <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center px-2 py-1 text-sm rounded border hover:bg-gray-50 dark:hover:bg-gray-800">{{ __('Edit') }}</a>
+                            @endcan
+                            @can('delete', $user)
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="inline-flex items-center px-2 py-1 text-sm rounded border border-red-300 text-red-700 hover:bg-red-50">{{ __('Delete') }}</button>
+                                </form>
+                            @endcan
+                            @can('validateUser', $user)
+                                @if(!$user->is_validated)
+                                    <form action="{{ route('admin.users.validate', $user) }}" method="POST">
+                                        @csrf
+                                        <button class="inline-flex items-center px-2 py-1 text-sm rounded border border-green-300 text-green-700 hover:bg-green-50">{{ __('Validate') }}</button>
+                                    </form>
+                                @endif
+                            @endcan
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="px-4 py-6"><x-admin.empty-state :title="__('No data')" :description="__('No users found for this filter.')"/></td>
+                </tr>
+            @endforelse
+        </x-admin.table>
 
-        <div class="card-body">
-            @include('partials._pagination', ['collection' => $users])
-        </div>
-    </div>
-
-    {{-- Modal konfirmasi hapus --}}
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Konfirmasi Hapus</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">Apakah Anda yakin ingin menghapus data ini?</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <form id="deleteForm" method="POST" action="#">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Hapus</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+        <x-admin.pagination :collection="$users" />
+    </x-admin.card>
 @endsection
 
-@section('scripts')
-<script>
-// Isi action form hapus dari tombol yang ditekan
-$('#confirmDeleteModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var action = button.data('action');
-    $('#deleteForm').attr('action', action);
-});
-</script>
-@endsection
 
 

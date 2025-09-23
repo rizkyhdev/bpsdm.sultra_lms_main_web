@@ -1,163 +1,120 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard Admin')
+@section('title', __('Admin Dashboard'))
 
 @section('breadcrumb')
-    {{-- Breadcrumb sederhana --}}
-    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    <li class="text-gray-600 dark:text-gray-400" aria-current="page">{{ __('Dashboard') }}</li>
 @endsection
 
 @section('content')
-    {{-- Kartu metrik utama --}}
-    <div class="row">
-        <div class="col-md-3 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small">Total Pengguna</div>
-                            <div class="h4 mb-0">{{ $metrics['users_total'] ?? 0 }}</div>
-                        </div>
-                        <i class="fas fa-users fa-2x text-secondary"></i>
-                    </div>
+    @php /** @var array{users_total?:int,courses_total?:int,enrollments_total?:int,completion_rate?:int|float} $metrics */ @endphp
+    @php /** @var \Illuminate\Support\Collection|array $recentEnrollments */ @endphp
+    @php /** @var \Illuminate\Support\Collection|array $recentCertificates */ @endphp
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <x-admin.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs text-gray-500">{{ __('Total Users') }}</div>
+                    <div class="text-2xl font-semibold">{{ $metrics['users_total'] ?? 0 }}</div>
                 </div>
+                <div class="text-gray-400">★</div>
             </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small">Total Kursus</div>
-                            <div class="h4 mb-0">{{ $metrics['courses_total'] ?? 0 }}</div>
-                        </div>
-                        <i class="fas fa-book-open fa-2x text-secondary"></i>
-                    </div>
+        </x-admin.card>
+        <x-admin.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs text-gray-500">{{ __('Total Courses') }}</div>
+                    <div class="text-2xl font-semibold">{{ $metrics['courses_total'] ?? 0 }}</div>
                 </div>
+                <div class="text-gray-400">★</div>
             </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small">Total Pendaftaran</div>
-                            <div class="h4 mb-0">{{ $metrics['enrollments_total'] ?? 0 }}</div>
-                        </div>
-                        <i class="fas fa-user-plus fa-2x text-secondary"></i>
-                    </div>
+        </x-admin.card>
+        <x-admin.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs text-gray-500">{{ __('Total Enrollments') }}</div>
+                    <div class="text-2xl font-semibold">{{ $metrics['enrollments_total'] ?? 0 }}</div>
                 </div>
+                <div class="text-gray-400">★</div>
             </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small">Completion Rate</div>
-                            <div class="h4 mb-0">{{ $metrics['completion_rate'] ?? 0 }}%</div>
-                        </div>
-                        <i class="fas fa-check-circle fa-2x text-secondary"></i>
-                    </div>
+        </x-admin.card>
+        <x-admin.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs text-gray-500">{{ __('Completion Rate') }}</div>
+                    <div class="text-2xl font-semibold">{{ $metrics['completion_rate'] ?? 0 }}%</div>
                 </div>
+                <div class="text-gray-400">★</div>
             </div>
-        </div>
+        </x-admin.card>
     </div>
 
-    <div class="row">
-        <div class="col-md-8 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white d-flex align-items-center justify-content-between">
-                    <span>Aktivitas Pendaftaran Terbaru</span>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
-                            <thead class="thead-light">
-                            <tr>
-                                <th>Pengguna</th>
-                                <th>Kursus</th>
-                                <th>Tanggal</th>
-                                <th>Status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @forelse(($recentEnrollments ?? []) as $en)
-                                <tr>
-                                    <td>{{ $en->user->nama ?? '-' }}</td>
-                                    <td>{{ $en->course->judul ?? '-' }}</td>
-                                    <td>{{ optional($en->enrollment_date)->format('d/m/Y') }}</td>
-                                    <td><span class="badge badge-{{ $en->status == 'completed' ? 'success' : 'secondary' }}">{{ $en->status }}</span></td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="4" class="text-center text-muted">Tidak ada data</td></tr>
-                            @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white">Sertifikat Terbaru</div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
-                            <thead class="thead-light">
-                            <tr>
-                                <th>Nomor</th>
-                                <th>Pengguna</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @forelse(($recentCertificates ?? []) as $c)
-                                <tr>
-                                    <td>{{ $c->nomor_sertifikat }}</td>
-                                    <td>{{ $c->user->nama ?? '-' }}</td>
-                                    <td class="text-right">
-                                        @if(!empty($c->file_path))
-                                            <a class="btn btn-sm btn-outline-primary" href="{{ Storage::url($c->file_path) }}" target="_blank"><i class="fas fa-download"></i></a>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="3" class="text-center text-muted">Tidak ada data</td></tr>
-                            @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+        <x-admin.card class="lg:col-span-2" :title="__('Recent Enrollments')">
+            <x-admin.table :headers="[
+                ['key'=>'user','label'=>__('User')],
+                ['key'=>'course','label'=>__('Course')],
+                ['key'=>'date','label'=>__('Date')],
+                ['key'=>'status','label'=>__('Status')],
+            ]">
+                @forelse(($recentEnrollments ?? []) as $en)
+                    <tr>
+                        <td class="px-4 py-2">{{ $en->user->nama ?? '-' }}</td>
+                        <td class="px-4 py-2">{{ $en->course->judul ?? '-' }}</td>
+                        <td class="px-4 py-2">{{ optional($en->enrollment_date)->format('d/m/Y') }}</td>
+                        <td class="px-4 py-2">
+                            @if(($en->status ?? null) === 'completed')
+                                <x-admin.badge color="green">{{ __('Completed') }}</x-admin.badge>
+                            @else
+                                <x-admin.badge>{{ $en->status ?? '-' }}</x-admin.badge>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-4 py-6">
+                            <x-admin.empty-state :title="__('No data')" :description="__('There are no recent enrollments.')" />
+                        </td>
+                    </tr>
+                @endforelse
+            </x-admin.table>
+        </x-admin.card>
+
+        <x-admin.card :title="__('Recent Certificates')">
+            <x-admin.table :headers="[
+                ['key'=>'number','label'=>__('Number')],
+                ['key'=>'user','label'=>__('User')],
+                ['key'=>'actions','label'=>'']
+            ]">
+                @forelse(($recentCertificates ?? []) as $c)
+                    <tr>
+                        <td class="px-4 py-2">{{ $c->nomor_sertifikat ?? '-' }}</td>
+                        <td class="px-4 py-2">{{ $c->user->nama ?? '-' }}</td>
+                        <td class="px-4 py-2 text-right">
+                            @if(!empty($c->file_path))
+                                <a class="inline-flex items-center px-2 py-1 text-sm rounded border hover:bg-gray-50 dark:hover:bg-gray-800" href="{{ Storage::url($c->file_path) }}" target="_blank" rel="noopener">{{ __('Download') }}</a>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3" class="px-4 py-6">
+                            <x-admin.empty-state :title="__('No data')" :description="__('There are no recent certificates.')" />
+                        </td>
+                    </tr>
+                @endforelse
+            </x-admin.table>
+        </x-admin.card>
     </div>
 
-    {{-- Placeholder chart (controller perlu menyediakan data berikut) --}}
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">Tren Pendaftaran</div>
-                <div class="card-body">
-                    <div id="chartEnrollments" style="height:240px"
-                         data-labels='@json($charts['enrollments']['labels'] ?? [])'
-                         data-series='@json($charts['enrollments']['series'] ?? [])'>
-                        {{-- Tempatkan chart JS di app.js menggunakan dataset di atas --}}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">Tren Kelulusan</div>
-                <div class="card-body">
-                    <div id="chartCompletions" style="height:240px"
-                         data-labels='@json($charts['completions']['labels'] ?? [])'
-                         data-series='@json($charts['completions']['series'] ?? [])'>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <x-admin.card :title="__('Enrollment Trend')">
+            <div id="chartEnrollments" class="h-60" data-labels='@json($charts['enrollments']['labels'] ?? [])' data-series='@json($charts['enrollments']['series'] ?? [])'></div>
+        </x-admin.card>
+        <x-admin.card :title="__('Completion Trend')">
+            <div id="chartCompletions" class="h-60" data-labels='@json($charts['completions']['labels'] ?? [])' data-series='@json($charts['completions']['series'] ?? [])'></div>
+        </x-admin.card>
     </div>
 @endsection
 

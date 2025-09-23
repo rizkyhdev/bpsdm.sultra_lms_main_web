@@ -1,3 +1,35 @@
+@php
+    /**
+     * Compatibility shim so legacy views using `@extends('layouts.admin')`
+     * render within the new Tailwind-based admin layout.
+     */
+@endphp
+@extends('admin.layouts.app')
+
+@section('title')
+    @yield('title')
+@endsection
+
+@section('breadcrumb')
+    @yield('breadcrumb')
+@endsection
+
+@section('header-actions')
+    @yield('header-actions')
+@endsection
+
+@section('content')
+    @yield('content')
+@endsection
+
+@push('head')
+    @stack('head')
+@endpush
+
+@push('scripts')
+    @stack('scripts')
+@endpush
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
