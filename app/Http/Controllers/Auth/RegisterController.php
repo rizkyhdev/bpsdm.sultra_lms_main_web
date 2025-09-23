@@ -99,6 +99,8 @@ class RegisterController extends Controller
             'nip' => $data['nip'],
              'jabatan' => $data['jabatan'],
               'unit_kerja' => $data['unit_kerja'],
+            // default role: student
+            'role' => 'student',
         ]);
     }
 }

@@ -9,6 +9,22 @@ Route::get('/', [PelatihanController::class, 'index']);
 
 Auth::routes();
 
+// Redirect hub setelah login/registrasi berdasarkan role
+Route::get('/dashboard', function () {
+    $user = auth()->user();
+    if (!$user) {
+        return redirect()->route('home');
+    }
+    $role = $user->role ?? 'student';
+    if ($role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+    if ($role === 'instructor') {
+        return redirect()->route('instructor.dashboard');
+    }
+    return redirect()->route('student.dashboard');
+})->name('dashboard');
+
 // Rute untuk Student Area (auth + role:student)
 Route::group([
     'prefix' => 'student',
