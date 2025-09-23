@@ -7,7 +7,6 @@ t<?php
 |
 | Ini adalah definisi factory legacy untuk Laravel 5.x. Gunakan
 | factory(Model::class)->create() untuk membuat data dummy realistis.
-| Komentar dalam Bahasa Indonesia sesuai permintaan.
 |
 */
 

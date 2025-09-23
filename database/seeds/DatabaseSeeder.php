@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
+
         $this->call([
             RolesAndUsersSeeder::class,
             CoursesSeeder::class,
