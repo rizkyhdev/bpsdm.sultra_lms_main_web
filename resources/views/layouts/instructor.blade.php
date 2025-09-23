@@ -21,53 +21,14 @@
     <!-- Komentar: Layout ini mengasumsikan Bootstrap 4 dan file public/css/app.css tersedia -->
 </head>
 <body>
+@include('layouts.partials.studentapp.header')
 <div class="d-flex">
-    <!-- Sidebar -->
-    <nav class="sidebar p-3">
-        <h5 class="mb-4">Instructor</h5>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('instructor.dashboard') }}">Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('instructor.courses.index') }}">Courses</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('instructor.reports.course') }}">Reports</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Help</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="sidebar p-0" style="min-width: 260px;">
+        @include('layouts.partials.studentapp.sidebar')
+    </div>
 
-    <!-- Main -->
     <div class="flex-grow-1">
-        <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white border-bottom px-3">
-            <form class="form-inline mr-auto w-100" action="{{ route('instructor.courses.index') }}" method="get">
-                <!-- Komentar: Kotak pencarian global sederhana, diarahkan ke daftar courses -->
-                <input class="form-control topbar-search" type="search" name="q" value="{{ request('q') }}" placeholder="Cari...">
-            </form>
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ auth()->user()->name ?? 'User' }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="{{ route('instructor.dashboard') }}">Profil</a>
-                        <div class="dropdown-divider"></div>
-                        <form action="{{ route('logout') }}" method="post" class="px-3">
-                            @csrf
-                            <button type="submit" class="btn btn-link p-0">Logout</button>
-                        </form>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-
         <div class="container-fluid content-wrapper">
-            <!-- Breadcrumb -->
             <div class="mb-3">
                 @yield('breadcrumb')
             </div>
@@ -80,6 +41,7 @@
         </div>
     </div>
 </div>
+@include('layouts.partials.studentapp.footer')
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

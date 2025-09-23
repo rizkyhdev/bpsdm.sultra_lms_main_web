@@ -27,53 +27,16 @@
     </style>
 </head>
 <body>
+@include('layouts.partials.studentapp.header')
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar kiri -->
-        <nav class="col-md-2 d-none d-md-block admin-sidebar sidebar py-3">
-            <div class="sidebar-sticky">
-                <h5 class="px-3 mb-3">BPSDM Sultra</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link @if(request()->is('admin')) active @endif" href="{{ route('admin.dashboard') }}"><i class="fas fa-home mr-2"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->is('admin/users*')) active @endif" href="{{ route('admin.users.index') }}"><i class="fas fa-users mr-2"></i> Pengguna</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->is('admin/courses*')) active @endif" href="{{ route('admin.courses.index') }}"><i class="fas fa-book-open mr-2"></i> Kursus</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->is('admin/enrollments*')) active @endif" href="{{ route('admin.enrollments.index') }}"><i class="fas fa-user-plus mr-2"></i> Pendaftaran</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->is('admin/certificates*')) active @endif" href="{{ route('admin.certificates.index') }}"><i class="fas fa-certificate mr-2"></i> Sertifikat</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->is('admin/reports*')) active @endif" href="{{ route('admin.reports.dashboard') }}"><i class="fas fa-chart-bar mr-2"></i> Laporan</a></li>
-                </ul>
-            </div>
-        </nav>
+        <!-- Sidebar kiri: gunakan sidebar studentapp untuk konsistensi -->
+        <div class="col-md-2 d-none d-md-block admin-sidebar sidebar py-3">
+            @include('layouts.partials.studentapp.sidebar')
+        </div>
 
         <main role="main" class="col-md-10 ml-sm-auto px-0">
-            <!-- Navbar atas -->
-            <nav class="navbar navbar-expand navbar-light bg-white border-bottom">
-                <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <!-- Pencarian global -->
-                <form class="form-inline mr-auto" action="#" method="GET">
-                    <!-- Catatan: Controller dapat meng-handle pencarian global bila diperlukan -->
-                    <input class="form-control mr-sm-2" type="search" name="q" placeholder="Cari..." aria-label="Search" value="{{ request('q') }}">
-                    <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
-                </form>
-                <!-- Menu user -->
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-user-circle mr-1"></i> {{ auth()->user()->nama ?? 'Admin' }}
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                            <a class="dropdown-item" href="{{ route('home') }}">Beranda</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Keluar</a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
+            <!-- Header global sudah disertakan di atas -->
 
             <div class="content-wrapper">
                 <!-- Breadcrumbs -->
@@ -98,6 +61,7 @@
             </div>
         </main>
     </div>
+    @include('layouts.partials.studentapp.footer')
 </div>
 
 <!-- JQuery dan Bootstrap 4 JS -->

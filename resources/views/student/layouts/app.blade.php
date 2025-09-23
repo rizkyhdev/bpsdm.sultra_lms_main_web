@@ -15,7 +15,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ $__t = trim($__env->yieldContent('title')); echo $__t !== '' ? $__t.' | ' : '' }}{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Sobat AURA') }}</title>
         @vite(['resources/css/app.css','resources/js/app.js'])
     </head>
     <body class="h-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">

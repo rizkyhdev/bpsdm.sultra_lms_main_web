@@ -4,7 +4,8 @@
     - $stats = ['enrolled' => int, 'completed' => int, 'in_progress' => int]
     - $recentActivities = Illuminate\Support\Collection<Activity>
 --}}
-@extends('student.layouts.app')
+<!-- @extends('student.layouts.app') -->
+@extends('layouts.studentapp')
 
 @section('title', __('Dashboard'))
 
