@@ -162,14 +162,14 @@
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Tanya Jawab</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-calendar me-2"></i>Kalender</a></li>
         </ul>
-        <h6 class="fw-bold text-uppercase text-white">Toko</h6>
+        <!-- <h6 class="fw-bold text-uppercase text-white">Toko</h6>
         <ul class="nav flex-column mb-4">
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-shopping-cart me-2"></i>Dasbor</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-download me-2"></i>Pesanan</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-map-marker-alt me-2"></i>Unduhan</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-user me-2"></i>Ubah Akun</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-wallet me-2"></i>Pembayaran</a></li>
-        </ul>
+        </ul> -->
         <h6 class="fw-bold text-uppercase text-white">Pengaturan Akun</h6>
         <ul class="nav flex-column">
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-gear me-2"></i>Ubah Profil</a></li>

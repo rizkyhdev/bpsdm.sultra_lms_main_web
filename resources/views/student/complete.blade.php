@@ -1,4 +1,4 @@
-@extends('student.studentapp') <!-- Sesuaikan dengan layout kamu -->
+@extends('layouts.studentapp') <!-- Sesuaikan dengan layout kamu -->
 
 @section('content')
 <div class="container-fluid my-1">

@@ -1,4 +1,4 @@
-@extends('student.studentapp')
+@extends('layouts.studentapp')
 @section('content')
 <!-- Main Content -->
   <div class="row mb-3 ">

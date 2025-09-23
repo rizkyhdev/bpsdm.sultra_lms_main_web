@@ -1,4 +1,4 @@
-@extends('student.studentapp')
+@extends('layouts.studentapp')
 @section('content')
 <div class="d-flex">
     <!-- Sidebar sudah ada di layout.app -->

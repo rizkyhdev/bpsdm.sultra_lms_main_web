@@ -1,5 +1,5 @@
 <!-- resources/views/landing.blade.php -->
-@extends('student.studentapp')
+@extends('layouts.studentapp')
 
 @section('content')
     <h1>Welcome to the Landing Page</h1>
