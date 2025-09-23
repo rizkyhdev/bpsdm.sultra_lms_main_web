@@ -25,6 +25,17 @@ use App\Http\Controllers\Instructor\InstructorEnrollmentController;
 use App\Http\Controllers\Instructor\InstructorProgressController;
 use App\Http\Controllers\Instructor\InstructorAttemptController;
 use App\Http\Controllers\Instructor\InstructorReportController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminCourseController;
+use App\Http\Controllers\Admin\AdminModuleController;
+use App\Http\Controllers\Admin\AdminSubModuleController;
+use App\Http\Controllers\Admin\AdminContentController;
+use App\Http\Controllers\Admin\AdminQuizController;
+use App\Http\Controllers\Admin\AdminQuestionController;
+use App\Http\Controllers\Admin\AdminEnrollmentController;
+use App\Http\Controllers\Admin\AdminCertificateController;
+use App\Http\Controllers\Admin\AdminReportController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -198,4 +209,122 @@ Route::group([
     Route::get('/courses/{courseId}/report', [InstructorReportController::class, 'courseReport'])->name('reports.course');
     Route::get('/quizzes/{quizId}/report', [InstructorReportController::class, 'quizReport'])->name('reports.quiz');
     Route::get('/reports/export/{type}/{scopeId}', [InstructorReportController::class, 'export'])->name('reports.export');
+});
+
+// Rute untuk Admin
+Route::group([
+    'prefix' => 'admin',
+    'as' => 'admin.',
+    'middleware' => ['auth', 'role:admin'],
+], function () {
+    // Dashboard
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Users
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/users/{id}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/users/{id}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/users/{id}/validate', [AdminUserController::class, 'validateUser'])->name('users.validate');
+    Route::get('/users-export', [AdminUserController::class, 'export'])->name('users.export');
+
+    // Courses
+    Route::get('/courses', [AdminCourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/create', [AdminCourseController::class, 'create'])->name('courses.create');
+    Route::post('/courses', [AdminCourseController::class, 'store'])->name('courses.store');
+    Route::get('/courses/{id}', [AdminCourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{id}/edit', [AdminCourseController::class, 'edit'])->name('courses.edit');
+    Route::put('/courses/{id}', [AdminCourseController::class, 'update'])->name('courses.update');
+    Route::delete('/courses/{id}', [AdminCourseController::class, 'destroy'])->name('courses.destroy');
+    Route::post('/courses/{id}/duplicate', [AdminCourseController::class, 'duplicate'])->name('courses.duplicate');
+    Route::get('/courses/{id}/report', [AdminCourseController::class, 'report'])->name('courses.report');
+
+    // Modules
+    Route::get('/courses/{courseId}/modules', [AdminModuleController::class, 'index'])->name('modules.index');
+    Route::get('/courses/{courseId}/modules/create', [AdminModuleController::class, 'create'])->name('modules.create');
+    Route::post('/courses/{courseId}/modules', [AdminModuleController::class, 'store'])->name('modules.store');
+    Route::get('/modules/{id}', [AdminModuleController::class, 'show'])->name('modules.show');
+    Route::get('/modules/{id}/edit', [AdminModuleController::class, 'edit'])->name('modules.edit');
+    Route::put('/modules/{id}', [AdminModuleController::class, 'update'])->name('modules.update');
+    Route::delete('/modules/{id}', [AdminModuleController::class, 'destroy'])->name('modules.destroy');
+    // Reorder: berdasarkan item
+    Route::post('/modules/{id}/reorder', [AdminModuleController::class, 'reorder'])->name('modules.reorder');
+
+    // Sub-Modules
+    Route::get('/modules/{moduleId}/sub-modules', [AdminSubModuleController::class, 'index'])->name('sub_modules.index');
+    Route::get('/modules/{moduleId}/sub-modules/create', [AdminSubModuleController::class, 'create'])->name('sub_modules.create');
+    Route::post('/modules/{moduleId}/sub-modules', [AdminSubModuleController::class, 'store'])->name('sub_modules.store');
+    Route::get('/sub-modules/{id}', [AdminSubModuleController::class, 'show'])->name('sub_modules.show');
+    Route::get('/sub-modules/{id}/edit', [AdminSubModuleController::class, 'edit'])->name('sub_modules.edit');
+    Route::put('/sub-modules/{id}', [AdminSubModuleController::class, 'update'])->name('sub_modules.update');
+    Route::delete('/sub-modules/{id}', [AdminSubModuleController::class, 'destroy'])->name('sub_modules.destroy');
+    Route::post('/sub-modules/{id}/reorder', [AdminSubModuleController::class, 'reorder'])->name('sub_modules.reorder');
+
+    // Contents
+    Route::get('/sub-modules/{subModuleId}/contents', [AdminContentController::class, 'index'])->name('contents.index');
+    Route::get('/sub-modules/{subModuleId}/contents/create', [AdminContentController::class, 'create'])->name('contents.create');
+    Route::post('/sub-modules/{subModuleId}/contents', [AdminContentController::class, 'store'])->name('contents.store');
+    Route::get('/contents/{id}', [AdminContentController::class, 'show'])->name('contents.show');
+    Route::get('/contents/{id}/edit', [AdminContentController::class, 'edit'])->name('contents.edit');
+    Route::put('/contents/{id}', [AdminContentController::class, 'update'])->name('contents.update');
+    Route::delete('/contents/{id}', [AdminContentController::class, 'destroy'])->name('contents.destroy');
+    Route::get('/contents/{id}/download', [AdminContentController::class, 'download'])->name('contents.download');
+    Route::post('/contents/{id}/reorder', [AdminContentController::class, 'reorder'])->name('contents.reorder');
+
+    // Quizzes
+    Route::get('/sub-modules/{subModuleId}/quizzes', [AdminQuizController::class, 'index'])->name('quizzes.index');
+    Route::get('/sub-modules/{subModuleId}/quizzes/create', [AdminQuizController::class, 'create'])->name('quizzes.create');
+    Route::post('/sub-modules/{subModuleId}/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');
+    Route::get('/quizzes/{id}', [AdminQuizController::class, 'show'])->name('quizzes.show');
+    Route::get('/quizzes/{id}/edit', [AdminQuizController::class, 'edit'])->name('quizzes.edit');
+    Route::put('/quizzes/{id}', [AdminQuizController::class, 'update'])->name('quizzes.update');
+    Route::delete('/quizzes/{id}', [AdminQuizController::class, 'destroy'])->name('quizzes.destroy');
+    Route::get('/quizzes/{id}/results', [AdminQuizController::class, 'results'])->name('quizzes.results');
+
+    // Questions
+    Route::get('/quizzes/{quizId}/questions', [AdminQuestionController::class, 'index'])->name('questions.index');
+    Route::get('/quizzes/{quizId}/questions/create', [AdminQuestionController::class, 'create'])->name('questions.create');
+    Route::post('/quizzes/{quizId}/questions', [AdminQuestionController::class, 'store'])->name('questions.store');
+    Route::get('/questions/{id}', [AdminQuestionController::class, 'show'])->name('questions.show');
+    Route::get('/questions/{id}/edit', [AdminQuestionController::class, 'edit'])->name('questions.edit');
+    Route::put('/questions/{id}', [AdminQuestionController::class, 'update'])->name('questions.update');
+    Route::delete('/questions/{id}', [AdminQuestionController::class, 'destroy'])->name('questions.destroy');
+    Route::post('/questions/{id}/reorder', [AdminQuestionController::class, 'reorder'])->name('questions.reorder');
+
+    // Enrollments
+    Route::get('/enrollments', [AdminEnrollmentController::class, 'index'])->name('enrollments.index');
+    Route::get('/enrollments/create', [AdminEnrollmentController::class, 'create'])->name('enrollments.create');
+    Route::post('/enrollments', [AdminEnrollmentController::class, 'store'])->name('enrollments.store');
+    Route::get('/enrollments/{id}', [AdminEnrollmentController::class, 'show'])->name('enrollments.show');
+    Route::get('/enrollments/{id}/edit', [AdminEnrollmentController::class, 'edit'])->name('enrollments.edit');
+    Route::put('/enrollments/{id}', [AdminEnrollmentController::class, 'update'])->name('enrollments.update');
+    Route::delete('/enrollments/{id}', [AdminEnrollmentController::class, 'destroy'])->name('enrollments.destroy');
+
+    // Certificates
+    Route::get('/certificates', [AdminCertificateController::class, 'index'])->name('certificates.index');
+    Route::get('/certificates/create', [AdminCertificateController::class, 'create'])->name('certificates.create');
+    Route::post('/certificates', [AdminCertificateController::class, 'store'])->name('certificates.store');
+    Route::get('/certificates/{id}', [AdminCertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificates/{id}/edit', [AdminCertificateController::class, 'edit'])->name('certificates.edit');
+    Route::put('/certificates/{id}', [AdminCertificateController::class, 'update'])->name('certificates.update');
+    Route::delete('/certificates/{id}', [AdminCertificateController::class, 'destroy'])->name('certificates.destroy');
+    Route::post('/certificates/bulk-generate', [AdminCertificateController::class, 'bulkGenerate'])->name('certificates.bulk_generate');
+    Route::get('/certificates/export', [AdminCertificateController::class, 'export'])->name('certificates.export');
+    Route::get('/certificates/verify', [AdminCertificateController::class, 'verify'])->name('certificates.verify');
+
+    // Reports
+    Route::get('/reports', [AdminReportController::class, 'dashboard'])->name('reports.dashboard');
+    Route::get('/reports/users', [AdminReportController::class, 'users'])->name('reports.users');
+    Route::get('/reports/courses', [AdminReportController::class, 'courses'])->name('reports.courses');
+    Route::get('/reports/jp', [AdminReportController::class, 'jp'])->name('reports.jp');
+    Route::get('/reports/quizzes', [AdminReportController::class, 'quizzes'])->name('reports.quizzes');
+    Route::get('/reports/certificates', [AdminReportController::class, 'certificates'])->name('reports.certificates');
+    Route::get('/reports/users/export', [AdminReportController::class, 'exportUsers'])->name('reports.users.export');
+    Route::get('/reports/courses/export', [AdminReportController::class, 'exportCourses'])->name('reports.courses.export');
+    Route::get('/reports/jp/export', [AdminReportController::class, 'exportJp'])->name('reports.jp.export');
+    Route::get('/reports/quizzes/export', [AdminReportController::class, 'exportQuizzes'])->name('reports.quizzes.export');
+    Route::get('/reports/certificates/export', [AdminReportController::class, 'exportCertificates'])->name('reports.certificates.export');
 });
