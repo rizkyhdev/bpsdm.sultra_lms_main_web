@@ -4,38 +4,37 @@
     - $stats = ['enrolled' => int, 'completed' => int, 'in_progress' => int]
     - $recentActivities = Illuminate\Support\Collection<Activity>
 --}}
-<!-- @extends('student.layouts.app') -->
 @extends('layouts.studentapp')
 
 @section('title', __('Dashboard'))
 
 @section('content')
     @include('student._breadcrumbs', ['crumbs' => [
-        ['label' => 'Dashboard'],
+        ['label' => __('Dashboard')],
     ]])
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <x-student::card :title="__('Enrolled Courses')">
+        <x-student.card :title="__('Enrolled Courses')">
             <p class="text-3xl font-bold">{{ (int)($stats['enrolled'] ?? 0) }}</p>
-        </x-student::card>
+        </x-student.card>
 
-        <x-student::card :title="__('In Progress')">
+        <x-student.card :title="__('In Progress')">
             <p class="text-3xl font-bold">{{ (int)($stats['in_progress'] ?? 0) }}</p>
-        </x-student::card>
+        </x-student.card>
 
-        <x-student::card :title="__('Completed')">
+        <x-student.card :title="__('Completed')">
             <p class="text-3xl font-bold">{{ (int)($stats['completed'] ?? 0) }}</p>
-        </x-student::card>
+        </x-student.card>
     </div>
 
     <div class="mt-6">
-        <x-student::card :title="__('Recent Activity')">
+        <x-student.card :title="__('Recent Activity')">
             @if(($recentActivities ?? collect())->isEmpty())
-                <x-student::empty-state :title="__('No recent activity')" :description="__('You have no recent learning activity.')">
+                <x-student.empty-state :title="__('No recent activity')" :description="__('You have no recent learning activity.')">
                     <x-slot:action>
                         <a href="{{ route('student.courses.index') }}" class="inline-flex items-center px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">{{ __('Browse Courses') }}</a>
                     </x-slot:action>
-                </x-student::empty-state>
+                </x-student.empty-state>
             @else
                 <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($recentActivities as $activity)
@@ -49,41 +48,7 @@
                     @endforeach
                 </ul>
             @endif
-        </x-student::card>
+        </x-student.card>
     </div>
-@endsection
-
-@extends('layouts.studentapp')
-
-@section('content')
-<div class="container-fluid my-1">
-  <!-- Cards -->
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card text-white bg-info mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Daftar Pelatihan</h5>
-          <p class="card-text">0</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card text-white bg-warning mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Pelatihan yang Aktif</h5>
-          <p class="card-text">2</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card text-white bg-success mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Pelatihan yang Selesai</h5>
-          <p class="card-text">0</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 @endsection
 

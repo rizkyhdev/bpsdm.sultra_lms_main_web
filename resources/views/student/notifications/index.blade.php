@@ -3,19 +3,19 @@
     Variabel:
     - $notifications: LengthAwarePaginator|Collection berisi {id,title,body,read_at,created_at}
 --}}
-@extends('student.layouts.app')
+@extends('layouts.studentapp')
 
 @section('title', __('Notifications'))
 
 @section('content')
     @include('student._breadcrumbs', ['crumbs' => [
-        ['label' => 'Dashboard', 'route' => 'student.dashboard'],
-        ['label' => 'Notifications'],
+        ['label' => __('Dashboard'), 'route' => 'student.dashboard'],
+        ['label' => __('Notifications')],
     ]])
 
-    <x-student::card>
+    <x-student.card>
         @if(($notifications ?? collect())->isEmpty())
-            <x-student::empty-state :title="__('No notifications')" :description="__('You are all caught up!')" />
+            <x-student.empty-state :title="__('No notifications')" :description="__('You are all caught up!')" />
         @else
             <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach($notifications as $n)
@@ -33,7 +33,7 @@
                                     <button type="submit" class="px-3 py-1.5 rounded-md text-xs border hover:bg-gray-50 dark:hover:bg-gray-700">{{ __('Mark as read') }}</button>
                                 </form>
                             @else
-                                <x-student::badge variant="default">{{ __('Read') }}</x-student::badge>
+                                <x-student.badge variant="default">{{ __('Read') }}</x-student.badge>
                             @endif
                         </div>
                     </li>
@@ -43,7 +43,7 @@
                 <div class="mt-4">{{ $notifications->links() }}</div>
             @endif
         @endif
-    </x-student::card>
+    </x-student.card>
 @endsection
 
 

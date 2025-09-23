@@ -16,13 +16,13 @@
   <nav>
     <h6 class="fw-bold text-uppercase text-white">Dasbor</h6>
     <ul class="nav flex-column mb-4">
-      <li class="nav-item {{ Route::is('dashboard') ? 'active' : '' }}">
-          <a class="nav-link text-black" href="{{ route('dashboard') }}">
+      <li class="nav-item {{ Route::is('student.dashboard') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.dashboard') }}">
               <i class="fas fa-home me-2"></i>Dasbor
           </a>
       </li>
-      <li class="nav-item {{ Route::is('profile') ? 'active' : '' }}">
-          <a class="nav-link text-black" href="{{ route('profile') }}">
+      <li class="nav-item {{ Route::is('student.profile.show') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.profile.show') }}">
               <i class="far fa-user me-2"></i>Profil Saya
           </a>
       </li>

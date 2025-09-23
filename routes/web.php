@@ -1,52 +1,13 @@
 <?php
 
-use App\Http\Controllers\Student\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Student\Traits\StudentControllerTrait;
-use App\Http\Controllers\studentnurul\ProfileController;   
-use App\Http\Controllers\studentnurul\ReviewController;
-use App\Http\Controllers\studentnurul\EnrolledController; 
-use App\Http\Controllers\studentnurul\EnrolleActiveController;
-use App\Http\Controllers\studentnurul\EnrolleCompleteController;
-use App\Http\Controllers\studentnurul\WishlistController;
-use App\Http\Controllers\studentnurul\ReviewsController;   
-use App\Http\Controllers\studentnurul\SettingController;  
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PelatihanController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\Instructor\InstructorDashboardController;
-use App\Http\Controllers\Instructor\InstructorCourseController;
-use App\Http\Controllers\Instructor\InstructorModuleController;
-use App\Http\Controllers\Instructor\InstructorSubModuleController;
-use App\Http\Controllers\Instructor\InstructorContentController;
-use App\Http\Controllers\Instructor\InstructorQuizController;
-use App\Http\Controllers\Instructor\InstructorQuestionController;
-use App\Http\Controllers\Instructor\InstructorEnrollmentController;
-use App\Http\Controllers\Instructor\InstructorProgressController;
-use App\Http\Controllers\Instructor\InstructorAttemptController;
-use App\Http\Controllers\Instructor\InstructorReportController;
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminUserController;
-use App\Http\Controllers\Admin\AdminCourseController;
-use App\Http\Controllers\Admin\AdminModuleController;
-use App\Http\Controllers\Admin\AdminSubModuleController;
-use App\Http\Controllers\Admin\AdminContentController;
-use App\Http\Controllers\Admin\AdminQuizController;
-use App\Http\Controllers\Admin\AdminQuestionController;
-use App\Http\Controllers\Admin\AdminEnrollmentController;
-use App\Http\Controllers\Admin\AdminCertificateController;
-use App\Http\Controllers\Admin\AdminReportController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
+// Public landing (keep; uncertain usage in views)
 Route::get('/', [PelatihanController::class, 'index']);
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 
 // Rute untuk Student Area (auth + role:student)
 Route::group([
@@ -137,95 +98,6 @@ Route::group([
     });
 });
 
-// // Route untuk Landing Page (Halaman Utama)
-// Route::get('/landing', function () {
-//     return view('student.landing');
-// })->name('landing');
-
-// // Route untuk Halaman Dashboard
-// Route::get('/dashboard', function () {
-//     return view('student.dashboard');
-// })->name('dashboard');
-
-
-// // Route untuk Halaman Course
-// Route::get('/course', function () {
-//     return view('student.course');
-// })->name('course');
-
-// Route::get('/enroled-course', function(){
-//     return view('student.pelatihan');
-// })->name('enroled-course');
-
-
-// // Route untuk Halaman Article
-// Route::get('/article', function () {
-//     return view('student.article');
-// })->name('article');
-
-// // Route untuk Halaman Contact
-// Route::get('/contact', function () {
-//     return view('student.contact');
-// })->name('contact');
-
-
-// // Route untuk Halaman Profile
-// Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-// // Route::get('/profile', [StudentControllerTrait::class, 'index'])->name('profile');
-
-// Route::get('/review', [ReviewController::class, 'index'])->name('review');
-// // Route untuk Halaman Setting
-// Route::get('/settings', [SettingController::class, 'index'])->name('settings');
-
-// Route::get('/enrolled', [EnrolledController::class, 'index'])->name('enrolled');
-
-// Route::get('/active', [EnrolleActiveController::class, 'index'])->name('active');
-
-// Route::get('/complete', [EnrolleCompleteController::class, 'index'])->name('complete');
-
-// Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
-
-
-
-// // Route untuk Halaman Review
-// Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews');
-
-// Route::get('/sub_modul', function () {
-//     return view('student.modul.sub_modul');
-// });
-
-
-
-
-
-
-//Route::get('/enrolled', [EnrolleCourseController::class, 'index'])->name('course');
-
-// Route untuk Sign Out (Logout)
-Route::post('/logout', function () {
-    Auth::logout();
-    return redirect('/'); // Redirect ke halaman utama setelah logout
-})->name('logout');
-
-
-// Isnan
-// Route::get('/', [PelatihanController::class, 'index']);
-// Route::get('/register2', [RegisterController::class, 'showForm'])->name('register.show');
-// Route::post('/register2', [RegisterController::class, 'submitForm'])->name('register.submit');
-
-// Route::get('/login2', function () {
-//     return view('login_register_page.login');
-// });
-// Route::get('/register2', function () {
-//     return view('login_register_page.register');
-// });
-// Route::get('/modul2', function () {
-//     return view('users.modul');
-// });
-// Route::get('/sub_modul2', function () {
-//     return view('users.sub_modul');
-// });
-
 // Rute untuk Instruktur
 Route::group([
     'prefix' => 'instructor',
@@ -288,7 +160,7 @@ Route::group([
     Route::get('/questions/{id}/edit', [InstructorQuestionController::class, 'edit'])->name('questions.edit');
     Route::put('/questions/{id}', [InstructorQuestionController::class, 'update'])->name('questions.update');
     Route::delete('/questions/{id}', [InstructorQuestionController::class, 'destroy'])->name('questions.destroy');
-    Route::post('/questions/reorder', [InstructorQuestionController::class, 'reorder'])->name('questions.reorder');
+    Route::post('/questions/{id}/reorder', [InstructorQuestionController::class, 'reorder'])->name('questions.reorder');
 
     Route::get('/enrollments', [InstructorEnrollmentController::class, 'index'])->name('enrollments.index');
     Route::get('/enrollments/{id}', [InstructorEnrollmentController::class, 'show'])->name('enrollments.show');
@@ -421,5 +293,4 @@ Route::group([
     Route::get('/reports/courses/export', [AdminReportController::class, 'exportCourses'])->name('reports.courses.export');
     Route::get('/reports/jp/export', [AdminReportController::class, 'exportJp'])->name('reports.jp.export');
     Route::get('/reports/quizzes/export', [AdminReportController::class, 'exportQuizzes'])->name('reports.quizzes.export');
-    Route::get('/reports/certificates/export', [AdminReportController::class, 'exportCertificates'])->name('reports.certificates.export');
 });

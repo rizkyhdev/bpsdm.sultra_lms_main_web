@@ -7,10 +7,9 @@
     </button>
   </div>
   <nav class="d-none d-lg-flex gap-4 fw-semibold">
-      <a href="{{ route('landing') }}" class="text-decoration-none text-dark">Home</a>
-      <a href="{{ route('course') }}" class="text-decoration-none text-dark">Course</a>
-      <a href="{{ route('article') }}" class="text-decoration-none text-dark">Article</a>
-      <a href="{{ route('contact') }}" class="text-decoration-none text-dark">Contact</a>
+      <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">Home</a>
+      <a href="{{ route('student.courses.index') }}" class="text-decoration-none text-dark">Course</a>
+     
   </nav>
   <div class="d-flex align-items-center gap-3">
     <div class="position-relative">
@@ -47,17 +46,13 @@
             @endguest
           </div>
         </div>
-        <a class="dropdown-item dropdown-link" href="{{ route('profile') }}">
+        <a class="dropdown-item dropdown-link" href="{{ route('student.profile.show') }}">
           <div class="hover-bg">
             <i class="far fa-user me-2"></i> Profil
           </div>
         </a>
-        <a class="dropdown-item dropdown-link" href="{{ route('review') }}">
-          <div class="hover-bg">
-            <i class="far fa-star me-2"></i> Ulasan
-          </div>
-        </a>
-        <a class="dropdown-item dropdown-link" href="{{ route('settings') }}">
+      
+        <a class="dropdown-item dropdown-link" href="{{ route('student.settings.index') }}">
           <div class="hover-bg">
             <i class="fas fa-cog me-2"></i> Pengaturan
           </div>

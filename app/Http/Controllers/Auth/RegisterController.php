@@ -29,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    // protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -50,7 +50,7 @@ class RegisterController extends Controller
     {
         $user = Auth::user();
         if (!$user) {
-            return route('home');
+            return route('dashboard');
         }
 
         $role = $user->role ?? null;

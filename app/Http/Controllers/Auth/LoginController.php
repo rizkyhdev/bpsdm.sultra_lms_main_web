@@ -26,7 +26,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    // protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -48,7 +48,7 @@ class LoginController extends Controller
     {
         $user = Auth::user();
         if (!$user) {
-            return route('home');
+            return route('dashboard');
         }
 
         $role = $user->role ?? null; // sesuaikan jika menggunakan package role

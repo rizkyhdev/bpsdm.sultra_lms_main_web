@@ -3,27 +3,27 @@
     Variabel:
     - $module: object{id,title,description,order,completed,submodules:Collection,attachments:Collection,nextModule,previousModule}
 --}}
-@extends('student.layouts.app')
+@extends('layouts.studentapp')
 
 @section('title', $module->title)
 
 @section('content')
     @include('student._breadcrumbs', ['crumbs' => [
-        ['label' => 'Dashboard', 'route' => 'student.dashboard'],
-        ['label' => 'Courses', 'route' => 'student.courses.index'],
+        ['label' => __('Dashboard'), 'route' => 'student.dashboard'],
+        ['label' => __('Courses'), 'route' => 'student.courses.index'],
         ['label' => __('Module') . ' #' . ($module->order ?? '-')],
     ]])
 
-    <x-student::card>
+    <x-student.card>
         <div class="flex items-start justify-between gap-4">
             <div>
                 <h1 class="text-xl font-bold">{{ $module->title }}</h1>
                 <p class="text-sm text-gray-600 dark:text-gray-300">{{ __('Order') }}: {{ $module->order ?? '-' }}</p>
                 <div class="mt-2">
                     @if($module->completed)
-                        <x-student::badge variant="success">{{ __('Completed') }}</x-student::badge>
+                        <x-student.badge variant="success">{{ __('Completed') }}</x-student.badge>
                     @else
-                        <x-student::badge>{{ __('In Progress') }}</x-student::badge>
+                        <x-student.badge>{{ __('In Progress') }}</x-student.badge>
                     @endif
                 </div>
             </div>
@@ -53,7 +53,7 @@
         <div class="mt-6">
             <h2 class="text-sm font-semibold mb-2">{{ __('Lessons') }}</h2>
             @if(($module->submodules ?? collect())->isEmpty())
-                <x-student::empty-state :title="__('No lessons yet')" />
+                <x-student.empty-state :title="__('No lessons yet')" />
             @else
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($module->submodules as $sub)
@@ -70,7 +70,7 @@
                 </div>
             @endif
         </div>
-    </x-student::card>
+    </x-student.card>
 @endsection
 
 
