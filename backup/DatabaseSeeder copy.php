@@ -1,19 +1,32 @@
+{{-- 
 <?php
-
 
 namespace Database\Seeders;
 
+use App\Models\User;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-use Database\Seeders\RolesAndUsersSeeder;
-use Database\Seeders\CoursesSeeder;
-use Database\Seeders\ModulesAndSubModulesSeeder;
-use Database\Seeders\ContentsSeeder;
-use Database\Seeders\QuizzesSeeder;
-use Database\Seeders\EnrollmentAndProgressSeeder;
-use Database\Seeders\QuizAttemptsSeeder;
-use Database\Seeders\CertificatesAndJpRecordsSeeder;
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // User::factory(10)->create();
 
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+    }
+}
+--}}
+
+<?php
+
+use Illuminate\Database\Seeder;
 
 /**
  * Cara menjalankan seeder (Laravel 5.x):

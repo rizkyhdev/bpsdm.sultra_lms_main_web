@@ -1,19 +1,6 @@
 <?php
 
-
-namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
-
-use Database\Seeders\RolesAndUsersSeeder;
-use Database\Seeders\CoursesSeeder;
-use Database\Seeders\ModulesAndSubModulesSeeder;
-use Database\Seeders\ContentsSeeder;
-use Database\Seeders\QuizzesSeeder;
-use Database\Seeders\EnrollmentAndProgressSeeder;
-use Database\Seeders\QuizAttemptsSeeder;
-use Database\Seeders\CertificatesAndJpRecordsSeeder;
-
 
 /**
  * Cara menjalankan seeder (Laravel 5.x):
