@@ -38,6 +38,9 @@ $factory->define(App\Models\Course::class, function (Faker $faker) {
     $faker = FakerFactory::create('id_ID');
     $bidang = ['Manajemen ASN', 'Pelayanan Publik', 'Kepemimpinan', 'Teknis Pemerintahan', 'Pengadaan Barang/Jasa'];
     return [
+        'user_id' => function () {
+            return factory(App\Models\User::class)->create(['role' => 'instructor'])->id;
+        },
         'judul' => $faker->randomElement([
             'Dasar-Dasar Pelayanan Publik',
             'Manajemen Kinerja ASN',

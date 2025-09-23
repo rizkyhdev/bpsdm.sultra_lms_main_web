@@ -21,7 +21,7 @@ class InstructorQuestionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'instructor']);
+        $this->middleware(['auth', 'role:instructor']);
     }
 
     /**

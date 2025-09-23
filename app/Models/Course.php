@@ -20,6 +20,7 @@ class Course extends Model
         'deskripsi',
         'jp_value',
         'bidang_kompetensi',
+        'user_id',
     ];
 
     /**
@@ -48,6 +49,14 @@ class Course extends Model
     public function userEnrollments(): HasMany
     {
         return $this->hasMany(UserEnrollment::class);
+    }
+
+    /**
+     * Owner (instructor) of the course.
+     */
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
