@@ -48,62 +48,151 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
-// // Route untuk Landing Page (Halaman Utama)
-// Route::get('/landing', function () {
-//     return view('student.landing');
-// })->name('landing');
+// Rute untuk Student Area (auth + role:student)
+Route::group([
+    'prefix' => 'student',
+    'as' => 'student.',
+    'middleware' => ['auth', 'role:student'],
+], function () {
+    // Dashboard
+    Route::get('/dashboard', function () {
+        $stats = ['enrolled' => 0, 'completed' => 0, 'in_progress' => 0];
+        $recentActivities = collect();
+        return view('student.dashboard', compact('stats', 'recentActivities'));
+    })->name('dashboard');
 
-// // Route untuk Halaman Dashboard
-// Route::get('/dashboard', function () {
-//     return view('student.dashboard');
-// })->name('dashboard');
+    // Courses
+    Route::get('/courses', function () {
+        $courses = collect();
+        return view('student.courses.index', compact('courses'));
+    })->name('courses.index');
+    Route::get('/courses/{id}', function ($id) {
+        $course = (object) [
+            'id' => $id,
+            'title' => __('Course'),
+            'description' => '', // HTML aman diisi dari backend
+            'cover_url' => asset('image/course-placeholder.png'),
+            'progress_percent' => 0,
+            'instructor_name' => __('Instructor'),
+            'modules' => collect(),
+        ];
+        return view('student.courses.show', compact('course'));
+    })->name('courses.show');
+
+    // Modules
+    Route::get('/modules/{id}', function ($id) {
+        $module = (object) [
+            'id' => $id,
+            'title' => __('Module'),
+            'description' => '',
+            'order' => 1,
+            'completed' => false,
+            'submodules' => collect(),
+            'attachments' => collect(),
+            'previousModule' => null,
+            'nextModule' => null,
+        ];
+        return view('student.modules.show', compact('module'));
+    })->name('modules.show');
+
+    // Progress
+    Route::get('/progress', function () {
+        $summary = (object) ['enrolled' => 0, 'completed' => 0, 'in_progress' => 0];
+        $items = collect();
+        return view('student.progress.index', compact('summary', 'items'));
+    })->name('progress.index');
+
+    // Profile
+    Route::get('/profile', function () {
+        $user = auth()->user();
+        return view('student.profile.show', compact('user'));
+    })->name('profile.show');
+    Route::get('/profile/edit', function () {
+        $user = auth()->user();
+        return view('student.profile.edit', compact('user'));
+    })->name('profile.edit');
+    Route::patch('/profile', function () {
+        // TODO: implementasi update profil di controller
+        return back()->with('status', __('Profile updated.'));
+    })->name('profile.update');
+
+    // Notifications
+    Route::get('/notifications', function () {
+        $notifications = collect();
+        return view('student.notifications.index', compact('notifications'));
+    })->name('notifications.index');
+    Route::post('/notifications', function () {
+        // TODO: tandai notifikasi dibaca
+        return back()->with('status', __('Marked as read.'));
+    });
+
+    // Settings
+    Route::get('/settings', function () {
+        $settings = (object) ['theme' => 'light', 'timezone' => config('app.timezone'), 'locale' => app()->getLocale(), 'email_notifications' => false];
+        return view('student.settings.index', compact('settings'));
+    })->name('settings.index');
+    Route::patch('/settings', function () {
+        // TODO: simpan pengaturan
+        return back()->with('status', __('Settings saved.'));
+    });
+});
+
+// Route untuk Landing Page (Halaman Utama)
+Route::get('/landing', function () {
+    return view('student.landing');
+})->name('landing');
+
+// Route untuk Halaman Dashboard
+Route::get('/dashboard', function () {
+    return view('student.dashboard');
+})->name('dashboard');
 
 
-// // Route untuk Halaman Course
-// Route::get('/course', function () {
-//     return view('student.course');
-// })->name('course');
+// Route untuk Halaman Course
+Route::get('/course', function () {
+    return view('student.course');
+})->name('course');
 
-// Route::get('/enroled-course', function(){
-//     return view('student.pelatihan');
-// })->name('enroled-course');
-
-
-// // Route untuk Halaman Article
-// Route::get('/article', function () {
-//     return view('student.article');
-// })->name('article');
-
-// // Route untuk Halaman Contact
-// Route::get('/contact', function () {
-//     return view('student.contact');
-// })->name('contact');
+Route::get('/enroled-course', function(){
+    return view('student.pelatihan');
+})->name('enroled-course');
 
 
-// // Route untuk Halaman Profile
-// Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-// // Route::get('/profile', [StudentControllerTrait::class, 'index'])->name('profile');
+// Route untuk Halaman Article
+Route::get('/article', function () {
+    return view('student.article');
+})->name('article');
 
-// Route::get('/review', [ReviewController::class, 'index'])->name('review');
-// // Route untuk Halaman Setting
-// Route::get('/settings', [SettingController::class, 'index'])->name('settings');
-
-// Route::get('/enrolled', [EnrolledController::class, 'index'])->name('enrolled');
-
-// Route::get('/active', [EnrolleActiveController::class, 'index'])->name('active');
-
-// Route::get('/complete', [EnrolleCompleteController::class, 'index'])->name('complete');
-
-// Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+// Route untuk Halaman Contact
+Route::get('/contact', function () {
+    return view('student.contact');
+})->name('contact');
 
 
+// Route untuk Halaman Profile
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+// Route::get('/profile', [StudentControllerTrait::class, 'index'])->name('profile');
 
-// // Route untuk Halaman Review
-// Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews');
+Route::get('/review', [ReviewController::class, 'index'])->name('review');
+// Route untuk Halaman Setting
+Route::get('/settings', [SettingController::class, 'index'])->name('settings');
 
-// Route::get('/sub_modul', function () {
-//     return view('student.modul.sub_modul');
-// });
+Route::get('/enrolled', [EnrolledController::class, 'index'])->name('enrolled');
+
+Route::get('/active', [EnrolleActiveController::class, 'index'])->name('active');
+
+Route::get('/complete', [EnrolleCompleteController::class, 'index'])->name('complete');
+
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+
+
+
+// Route untuk Halaman Review
+Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews');
+
+Route::get('/sub_modul', function () {
+    return view('student.modul.sub_modul');
+});
 
 
 

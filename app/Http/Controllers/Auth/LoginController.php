@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -25,7 +26,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/dashboard';
+    // protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -36,5 +37,31 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
+    }
+
+    /**
+     * Tentukan redirect setelah login berdasarkan role user.
+     *
+     * @return string
+     */
+    protected function redirectTo()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return route('home');
+        }
+
+        $role = $user->role ?? null; // sesuaikan jika menggunakan package role
+
+        if ($role === 'admin') {
+            return route('admin.dashboard');
+        }
+
+        if ($role === 'instructor') {
+            return route('instructor.dashboard');
+        }
+
+        // default: student
+        return route('student.dashboard');
     }
 }

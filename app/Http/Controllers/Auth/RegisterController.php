@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -28,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/dashboard';
+    // protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -38,6 +39,31 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    /**
+     * Tentukan redirect setelah registrasi berdasarkan role user.
+     *
+     * @return string
+     */
+    protected function redirectTo()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return route('home');
+        }
+
+        $role = $user->role ?? null;
+
+        if ($role === 'admin') {
+            return route('admin.dashboard');
+        }
+
+        if ($role === 'instructor') {
+            return route('instructor.dashboard');
+        }
+
+        return route('student.dashboard');
     }
 
     /**
