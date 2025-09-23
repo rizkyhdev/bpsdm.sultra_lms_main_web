@@ -41,7 +41,8 @@ Lalu ikuti arahan instalasi. Pastikan php yang digunakan mengacu pada direktori 
 4. Install komponen composer yang dibutuhkan `composer install`
 5. Install komponen frontend yang dibutuhkan `npm install`
 6. Inisiasi database dengan `php artisan migrate`
-6. Jalankan development mode dengan `composer run dev`
+7. Seed database `php artisan migrate:fresh --seed` or `php artisan db:seed`
+8. Jalankan development mode dengan `composer run dev`
 
 ## Spesifikasi Utama Sistem
 
