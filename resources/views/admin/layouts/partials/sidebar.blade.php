@@ -75,11 +75,11 @@
     <h6 class="fw-bold text-uppercase text-white">Account</h6>
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link text-black" href="{{ route('logout') }}"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <a class="nav-link text-black" href="#"
+           onclick="event.preventDefault(); document.getElementById('logout-form-admin').submit();">
           <i class="fas fa-sign-out-alt me-2"></i>Logout
         </a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        <form id="logout-form-admin" action="{{ route('logout') }}" method="POST" class="d-none">
           @csrf
         </form>
       </li>
@@ -87,7 +87,7 @@
   </nav>
 </aside>
 
-@php
+<!-- @php
     $nav = [
         ['label' => __('Dashboard'), 'route' => 'admin.dashboard', 'icon' => 'home', 'active' => request()->routeIs('admin.dashboard')],
         ['label' => __('Users'), 'route' => 'admin.users.index', 'icon' => 'users', 'active' => request()->routeIs('admin.users.*')],
@@ -116,6 +116,6 @@
             </li>
         @endforeach
     </ul>
-</div>
+</div> -->
 
 
