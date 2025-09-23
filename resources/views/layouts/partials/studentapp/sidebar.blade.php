@@ -21,6 +21,20 @@
               <i class="fas fa-home me-2"></i>Dasbor
           </a>
       </li>
+      @if(auth()->check() && auth()->user()->role === 'admin')
+      <li class="nav-item">
+          <a class="nav-link text-black" href="{{ route('admin.dashboard') }}">
+              <i class="fas fa-user-shield me-2"></i>Admin Dashboard
+          </a>
+      </li>
+      @endif
+      @if(auth()->check() && auth()->user()->role === 'instructor')
+      <li class="nav-item">
+          <a class="nav-link text-black" href="{{ route('instructor.dashboard') }}">
+              <i class="fas fa-chalkboard-teacher me-2"></i>Instructor Dashboard
+          </a>
+      </li>
+      @endif
       <li class="nav-item {{ Route::is('student.profile.show') ? 'active' : '' }}">
           <a class="nav-link text-black" href="{{ route('student.profile.show') }}">
               <i class="far fa-user me-2"></i>Profil Saya

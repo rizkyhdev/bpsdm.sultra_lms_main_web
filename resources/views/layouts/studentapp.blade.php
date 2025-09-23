@@ -28,7 +28,11 @@
   @include('layouts.partials.studentapp.header')
 
   <div class="page-container d-flex flex-fill fw-semibold">
-    @include('layouts.partials.studentapp.sidebar')
+    @hasSection('sidebar')
+      @yield('sidebar')
+    @else
+      @include('layouts.partials.studentapp.sidebar')
+    @endif
     <!-- Main Content -->
     <main class="flex-fill p-4">
       @yield('content')

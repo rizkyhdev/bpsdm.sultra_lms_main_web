@@ -1,3 +1,92 @@
+<aside id="sidebar" style="background-color: #88d4e1;" class="text-black p-4">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+      <i class="far fa-user text-black fs-3"></i>
+    </div>
+    <div>
+      @auth
+          <p class="mb-0 fw-bold">{{ auth()->user()->name }}</p>
+          <small class="text-info">{{ auth()->user()->email }}</small>
+      @else
+          <p class="mb-0 fw-bold">Admin</p>
+          <small class="text-white">admin@example.com</small>
+      @endauth
+    </div>
+  </div>
+  <nav>
+    <h6 class="fw-bold text-uppercase text-white">Admin</h6>
+    <ul class="nav flex-column mb-4">
+      <li class="nav-item {{ Route::is('admin.dashboard') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.dashboard') }}">
+          <i class="fas fa-home me-2"></i>Dashboard
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.users') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.users.index') }}">
+          <i class="fas fa-users me-2"></i>Users
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.courses') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.courses.index') }}">
+          <i class="fas fa-book me-2"></i>Courses
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.modules') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.courses.index') }}">
+          <i class="fas fa-layer-group me-2"></i>Modules
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.sub_modules') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.courses.index') }}">
+          <i class="fas fa-sitemap me-2"></i>Sub-Modules
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.contents') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.contents.index') }}">
+          <i class="far fa-file-alt me-2"></i>Contents
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.quizzes') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.quizzes.index') }}">
+          <i class="fas fa-question-circle me-2"></i>Quizzes
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.questions') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.questions.index') }}">
+          <i class="fas fa-list-ol me-2"></i>Questions
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.enrollments') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.enrollments.index') }}">
+          <i class="fas fa-user-check me-2"></i>Enrollments
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.certificates') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.certificates.index') }}">
+          <i class="fas fa-certificate me-2"></i>Certificates
+        </a>
+      </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.reports') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.reports.dashboard') }}">
+          <i class="fas fa-chart-bar me-2"></i>Reports
+        </a>
+      </li>
+    </ul>
+    <h6 class="fw-bold text-uppercase text-white">Account</h6>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link text-black" href="{{ route('logout') }}"
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+          @csrf
+        </form>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
 @php
     $nav = [
         ['label' => __('Dashboard'), 'route' => 'admin.dashboard', 'icon' => 'home', 'active' => request()->routeIs('admin.dashboard')],
