@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Class InstructorDashboardController
+ * Kelas InstructorDashboardController
  *
- * Provides instructor dashboard metrics and per-course overviews.
+ * Menyediakan metrik dashboard instruktur dan ringkasan per kursus.
  */
 class InstructorDashboardController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -26,7 +26,7 @@ class InstructorDashboardController extends Controller
     }
 
     /**
-     * Display the instructor dashboard metrics.
+     * Menampilkan metrik dashboard instruktur.
      *
      * @param Request $request
      * @return \Illuminate\Http\Response
@@ -59,7 +59,7 @@ class InstructorDashboardController extends Controller
             ->take(10)
             ->get();
 
-        // Simple completion rate: completed enrollments over total enrollments
+        // Tingkat penyelesaian sederhana: jumlah enrollment selesai dibanding total enrollment
         $completedEnrollments = UserEnrollment::query()
             ->whereIn('course_id', (clone $coursesQuery)->pluck('id'))
             ->where('status', 'completed')
@@ -77,7 +77,7 @@ class InstructorDashboardController extends Controller
     }
 
     /**
-     * Display an overview for a single course owned by the instructor.
+     * Menampilkan ringkasan untuk satu kursus milik instruktur.
      *
      * @param int $courseId
      * @return \Illuminate\Http\Response
@@ -97,7 +97,7 @@ class InstructorDashboardController extends Controller
             ? round(($completedEnrollments / $enrollmentsCount) * 100, 2)
             : 0.0;
 
-        // Basic quiz performance snapshot
+        // Gambaran kinerja kuis dasar
         $quizIds = $course->modules->flatMap(function ($m) {
             return $m->subModules->flatMap(function ($s) {
                 return $s->quizzes->pluck('id');
