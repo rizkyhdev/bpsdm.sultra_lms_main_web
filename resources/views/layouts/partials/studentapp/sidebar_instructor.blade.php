@@ -41,16 +41,7 @@
           <i class="far fa-file-alt me-2"></i>Contents
         </a>
       </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.quizzes') ? 'active' : '' }}">
-        <a class="nav-link text-black" href="{{ route('instructor.quizzes.index') }}">
-          <i class="fas fa-question-circle me-2"></i>Quizzes
-        </a>
-      </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.questions') ? 'active' : '' }}">
-        <a class="nav-link text-black" href="{{ route('instructor.questions.index') }}">
-          <i class="fas fa-list-ol me-2"></i>Questions
-        </a>
-      </li>
+    
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.enrollments') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('instructor.enrollments.index') }}">
           <i class="fas fa-user-check me-2"></i>Enrollments
@@ -61,11 +52,7 @@
           <i class="fas fa-tasks me-2"></i>Progress
         </a>
       </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.attempts') ? 'active' : '' }}">
-        <a class="nav-link text-black" href="{{ route('instructor.quizzes.index') }}">
-          <i class="fas fa-clipboard-check me-2"></i>Attempts
-        </a>
-      </li>
+     
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.reports') ? 'active' : '' }}">
         <a class="nav-link text-black" href="#" onclick="event.preventDefault();">
           <i class="fas fa-chart-bar me-2"></i>Reports

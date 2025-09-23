@@ -42,37 +42,58 @@ class InstructorDashboardController extends Controller
             ->orderBy('id', 'desc');
 
         $totalCourses = (clone $coursesQuery)->count();
+        $ownedCourseIds = (clone $coursesQuery)->pluck('id');
         $totalEnrollments = UserEnrollment::query()
-            ->whereIn('course_id', (clone $coursesQuery)->pluck('id'))
+            ->whereIn('course_id', $ownedCourseIds)
             ->count();
 
-        $recentActivity = QuizAttempt::query()
-            ->whereIn('quiz_id', function ($q) use ($instructorId) {
-                $q->select('quizzes.id')
-                    ->from('quizzes')
-                    ->join('sub_modules', 'quizzes.sub_module_id', '=', 'sub_modules.id')
-                    ->join('modules', 'sub_modules.module_id', '=', 'modules.id')
-                    ->join('courses', 'modules.course_id', '=', 'courses.id')
-                    ->where('courses.user_id', $instructorId);
-            })
+        $instructorQuizIds = QuizAttempt::query()
+            ->select('quizzes.id')
+            ->from('quizzes')
+            ->join('sub_modules', 'quizzes.sub_module_id', '=', 'sub_modules.id')
+            ->join('modules', 'sub_modules.module_id', '=', 'modules.id')
+            ->join('courses', 'modules.course_id', '=', 'courses.id')
+            ->where('courses.user_id', $instructorId)
+            ->distinct()
+            ->pluck('quizzes.id');
+
+        $recentAttempts = QuizAttempt::with(['user', 'quiz'])
+            ->whereIn('quiz_id', $instructorQuizIds)
             ->latest('completed_at')
             ->take(10)
             ->get();
 
         // Tingkat penyelesaian sederhana: jumlah enrollment selesai dibanding total enrollment
         $completedEnrollments = UserEnrollment::query()
-            ->whereIn('course_id', (clone $coursesQuery)->pluck('id'))
+            ->whereIn('course_id', $ownedCourseIds)
             ->where('status', 'completed')
             ->count();
         $completionRate = $totalEnrollments > 0
             ? round(($completedEnrollments / $totalEnrollments) * 100, 2)
             : 0.0;
 
+        // Rata-rata nilai kuis untuk kuis milik instruktur
+        $avgQuizScore = QuizAttempt::query()
+            ->whereIn('quiz_id', $instructorQuizIds)
+            ->avg('nilai');
+        $avgQuizScore = $avgQuizScore ? round((float) $avgQuizScore, 2) : 0.0;
+
+        // Enrollments terbaru pada kursus milik instruktur
+        $recentEnrollments = UserEnrollment::with(['user', 'course'])
+            ->whereIn('course_id', $ownedCourseIds)
+            ->latest('created_at')
+            ->take(10)
+            ->get();
+
         return view('instructor.dashboard', [
-            'totalCourses' => $totalCourses,
-            'totalEnrollments' => $totalEnrollments,
-            'completionRate' => $completionRate,
-            'recentActivity' => $recentActivity,
+            'metrics' => [
+                'total_courses' => $totalCourses,
+                'total_enrollments' => $totalEnrollments,
+                'avg_completion' => $completionRate,
+                'avg_quiz_score' => $avgQuizScore,
+            ],
+            'recentEnrollments' => $recentEnrollments,
+            'recentAttempts' => $recentAttempts,
         ]);
     }
 

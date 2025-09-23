@@ -18,7 +18,9 @@
     <div class="card-body">
       <form class="form-inline" method="get" action="{{ route('instructor.courses.index') }}">
         <div class="form-group mr-2 mb-2">
-          <input type="text" class="form-control" name="q" value="{{ $q }}" placeholder="Cari judul...">
+          {{-- <input type="text" class="form-control" name="q" value="{{ $q }}" placeholder="Cari judul..."> --}}
+          <label class="sr-only" for="q">{{ __('Search') }}</label>
+          <input type="text" class="form-control" id="q" name="q" value="{{ request('q') }}" placeholder="{{ __('Search') }}">
         </div>
         <div class="form-group mr-2 mb-2">
           <select name="bidang_kompetensi" class="form-control">

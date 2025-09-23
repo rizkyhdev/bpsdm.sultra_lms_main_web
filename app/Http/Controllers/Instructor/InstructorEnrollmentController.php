@@ -37,6 +37,11 @@ class InstructorEnrollmentController extends Controller
 
         $ownedCourseIds = Course::where('user_id', Auth::id())->pluck('id');
 
+        // Courses owned by instructor for filter dropdown
+        $courses = Course::whereIn('id', $ownedCourseIds)
+            ->orderBy('judul')
+            ->get(['id', 'judul']);
+
         $enrollments = UserEnrollment::with(['user', 'course'])
             ->whereIn('course_id', $ownedCourseIds)
             ->when($courseId, function ($q) use ($courseId) {
@@ -55,7 +60,15 @@ class InstructorEnrollmentController extends Controller
             ->paginate($perPage)
             ->appends($request->query());
 
-        return view('instructor.enrollments.index', compact('enrollments'));
+        $filters = [
+            'course' => $courseId,
+            'status' => $status,
+            'from' => $from,
+            'to' => $to,
+            'per_page' => $perPage,
+        ];
+
+        return view('instructor.enrollments.index', compact('enrollments', 'courses', 'filters'));
     }
 
     /**

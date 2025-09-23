@@ -20,7 +20,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 <x-admin.input name="search" :label="__('Search (NIP/Name/Email)')" :value="request('search')" />
                 <x-admin.select name="role" :label="__('Role')" :options="['all'=>__('All'),'admin'=>__('Admin'),'instructor'=>__('Instructor'),'student'=>__('Student')]" :value="request('role')" />
-                
+                 {{-- <x-admin.select name="is_validated" :label="__('Validation')" :options="[''=>__('All'),'1'=>__('Validated'),'0'=>__('Not yet')]" :value="request('is_validated')" /> --}}
                 <x-admin.select name="per_page" :label="__('Per page')" :options="[10=>10,25=>25,50=>50,100=>100]" :value="request('per_page',10)" />
                 <div class="sm:col-span-2 lg:col-span-1 flex items-end">
                     <button type="submit" class="inline-flex w-full items-center justify-center gap-2 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">{{ __('Filter') }}</button>
