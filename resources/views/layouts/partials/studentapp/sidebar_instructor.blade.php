@@ -37,7 +37,7 @@
         </a>
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.contents') ? 'active' : '' }}">
-        <a class="nav-link text-black" href="{{ route('instructor.contents.index') }}">
+        <a class="nav-link text-black" href="{{ route('instructor.courses.index') }}">
           <i class="far fa-file-alt me-2"></i>Contents
         </a>
       </li>
@@ -62,7 +62,7 @@
         </a>
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.attempts') ? 'active' : '' }}">
-        <a class="nav-link text-black" href="{{ route('instructor.attempts.index', ['quizId' => request('quizId')]) }}">
+        <a class="nav-link text-black" href="{{ route('instructor.quizzes.index') }}">
           <i class="fas fa-clipboard-check me-2"></i>Attempts
         </a>
       </li>
