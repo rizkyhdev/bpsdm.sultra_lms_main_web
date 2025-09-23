@@ -28,7 +28,7 @@
         <dt class="col-sm-3">File</dt>
         <dd class="col-sm-9">
           @if($content->file_path)
-            <a href="{{ route('instructor.contents.download', $content) }}">Download</a>
+            <a href="{{ route('instructor.contents.download', $content->id) }}">Download</a>
           @else
             <span class="text-muted">-</span>
           @endif

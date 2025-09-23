@@ -17,7 +17,7 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <form action="{{ route('instructor.quizzes.update', $quiz) }}" method="post">
+      <form action="{{ route('instructor.quizzes.update', $quiz->id) }}" method="post">
         @csrf
         @method('PUT')
         <div class="form-group">

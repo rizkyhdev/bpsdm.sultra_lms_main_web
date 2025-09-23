@@ -18,7 +18,7 @@
 <div class="container-fluid">
   <div class="card mb-3">
     <div class="card-body">
-      <form class="form-inline" method="get" action="{{ route('instructor.sub_modules.contents.index', $subModule) }}">
+      <form class="form-inline" method="get" action="{{ route('instructor.contents.index', $subModule->id) }}">
         <div class="form-group mr-2 mb-2">
           <select name="tipe" class="form-control" onchange="this.form.submit()">
             <option value="">- Semua Tipe -</option>
@@ -35,7 +35,7 @@
           </select>
         </div>
         @can('create', [App\Models\Content::class, $subModule])
-          <a href="{{ route('instructor.sub_modules.contents.create', $subModule) }}" class="btn btn-success mb-2 ml-auto">Tambah Content</a>
+          <a href="{{ route('instructor.contents.create', $subModule->id) }}" class="btn btn-success mb-2 ml-auto">Tambah Content</a>
         @endcan
       </form>
     </div>
@@ -44,7 +44,7 @@
   <div class="card mb-3">
     <div class="card-header">Reorder</div>
     <div class="card-body">
-      <form action="{{ route('instructor.contents.reorder', $subModule) }}" method="post">
+      <form action="{{ route('instructor.contents.reorder') }}" method="post">
         @csrf
         <div class="form-group">
           <label>JSON Payload</label>
@@ -71,12 +71,12 @@
                 @endif
               </td>
               <td class="text-right">
-                <a href="{{ route('instructor.contents.show', $c) }}" class="btn btn-sm btn-outline-primary">Show</a>
+                  <a href="{{ route('instructor.contents.show', $c->id) }}" class="btn btn-sm btn-outline-primary">Show</a>
                 @can('update', $c)
-                  <a href="{{ route('instructor.contents.edit', $c) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                  <a href="{{ route('instructor.contents.edit', $c->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @endcan
                 @can('delete', $c)
-                  <form action="{{ route('instructor.contents.destroy', $c) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus konten ini?')">
+                  <form action="{{ route('instructor.contents.destroy', $c->id) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus konten ini?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>

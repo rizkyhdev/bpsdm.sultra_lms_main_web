@@ -20,7 +20,7 @@
       <a href="{{ route('instructor.courses.index') }}" class="btn btn-light btn-sm">&larr; Kembali ke Courses</a>
     </div>
     @can('create', [App\Models\Module::class, $course])
-      <a href="{{ route('instructor.courses.modules.create', $course) }}" class="btn btn-primary btn-sm">Tambah Module</a>
+      <a href="{{ route('instructor.modules.create', $course->id) }}" class="btn btn-primary btn-sm">Tambah Module</a>
     @endcan
   </div>
 
@@ -28,7 +28,7 @@
     <div class="card-header">Reorder</div>
     <div class="card-body">
       {{-- Komentar: UI drag&drop bisa ditambahkan. Di sini form sederhana untuk kirim JSON urutan. --}}
-      <form action="{{ route('instructor.modules.reorder', $course) }}" method="post">
+      <form action="{{ route('instructor.modules.reorder') }}" method="post">
         @csrf
         <div class="form-group">
           <label>JSON Payload</label>

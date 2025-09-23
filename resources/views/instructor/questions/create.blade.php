@@ -17,7 +17,7 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <form action="{{ route('instructor.quizzes.questions.store', $quiz) }}" method="post">
+      <form action="{{ route('instructor.questions.store', $quiz->id) }}" method="post">
         @csrf
         <div class="form-group">
           <label>Pertanyaan</label>

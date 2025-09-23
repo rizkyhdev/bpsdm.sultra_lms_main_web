@@ -18,7 +18,7 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <form action="{{ route('instructor.contents.update', $content) }}" method="post" enctype="multipart/form-data">
+      <form action="{{ route('instructor.contents.update', $content->id) }}" method="post" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="form-group">
@@ -39,7 +39,7 @@
           <label>File Saat Ini</label>
           <div>
             @if($content->file_path)
-              <a href="{{ route('instructor.contents.download', $content) }}">{{ basename($content->file_path) }}</a>
+              <a href="{{ route('instructor.contents.download', $content->id) }}">{{ basename($content->file_path) }}</a>
             @else
               <span class="text-muted">Tidak ada file</span>
             @endif

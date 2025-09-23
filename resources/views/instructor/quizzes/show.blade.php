@@ -6,7 +6,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb mb-0">
     <li class="breadcrumb-item"><a href="{{ route('instructor.dashboard') }}">Instructor</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('instructor.sub_modules.show', $quiz->subModule) }}">{{ $quiz->subModule->judul }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('instructor.submodules.show', $quiz->subModule->id) }}">{{ $quiz->subModule->judul }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ $quiz->judul }}</li>
   </ol>
   {{-- Binding: $quiz, $stats --}}
@@ -18,10 +18,10 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="text-muted small">Attempts: {{ $stats['attempts'] ?? 0 }} | Rata-rata Nilai: {{ $stats['avg_score'] ?? 0 }}%</div>
     <div>
-      <a href="{{ route('instructor.questions.index', $quiz) }}" class="btn btn-outline-primary btn-sm">Kelola Pertanyaan</a>
-      <a href="{{ route('instructor.quizzes.results', $quiz) }}" class="btn btn-outline-info btn-sm">Lihat Hasil</a>
+      <a href="{{ route('instructor.questions.index', $quiz->id) }}" class="btn btn-outline-primary btn-sm">Kelola Pertanyaan</a>
+      <a href="{{ route('instructor.quizzes.results', $quiz->id) }}" class="btn btn-outline-info btn-sm">Lihat Hasil</a>
       @can('update', $quiz)
-        <a href="{{ route('instructor.quizzes.edit', $quiz) }}" class="btn btn-secondary btn-sm">Edit</a>
+        <a href="{{ route('instructor.quizzes.edit', $quiz->id) }}" class="btn btn-secondary btn-sm">Edit</a>
       @endcan
     </div>
   </div>

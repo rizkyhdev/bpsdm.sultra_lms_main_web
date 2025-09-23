@@ -17,7 +17,7 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-end mb-3">
     @can('create', [App\Models\Quiz::class, $subModule])
-      <a href="{{ route('instructor.sub_modules.quizzes.create', $subModule) }}" class="btn btn-primary btn-sm">Tambah Quiz</a>
+      <a href="{{ route('instructor.quizzes.create', $subModule->id) }}" class="btn btn-primary btn-sm">Tambah Quiz</a>
     @endcan
   </div>
   <div class="card">

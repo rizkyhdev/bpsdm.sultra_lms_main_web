@@ -17,14 +17,14 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-3">
     @can('create', [App\Models\Question::class, $quiz])
-      <a href="{{ route('instructor.quizzes.questions.create', $quiz) }}" class="btn btn-primary btn-sm">Tambah Pertanyaan</a>
+      <a href="{{ route('instructor.questions.create', $quiz->id) }}" class="btn btn-primary btn-sm">Tambah Pertanyaan</a>
     @endcan
   </div>
 
   <div class="card mb-3">
     <div class="card-header">Reorder</div>
     <div class="card-body">
-      <form action="{{ route('instructor.questions.reorder', $quiz) }}" method="post">
+      <form action="{{ route('instructor.questions.reorder') }}" method="post">
         @csrf
         <div class="form-group">
           <label>JSON Payload</label>

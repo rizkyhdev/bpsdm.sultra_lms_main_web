@@ -18,14 +18,14 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-3">
     @can('create', [App\Models\SubModule::class, $module])
-      <a href="{{ route('instructor.modules.sub_modules.create', $module) }}" class="btn btn-primary btn-sm">Tambah Sub-Module</a>
+      <a href="{{ route('instructor.submodules.create', $module->id) }}" class="btn btn-primary btn-sm">Tambah Sub-Module</a>
     @endcan
   </div>
 
   <div class="card mb-3">
     <div class="card-header">Reorder</div>
     <div class="card-body">
-      <form action="{{ route('instructor.sub_modules.reorder', $module) }}" method="post">
+      <form action="{{ route('instructor.submodules.reorder') }}" method="post">
         @csrf
         <div class="form-group">
           <label>JSON Payload</label>
@@ -47,12 +47,12 @@
               <td>{{ $sm->judul }}</td>
               <td class="text-truncate" style="max-width: 420px;">{{ $sm->deskripsi }}</td>
               <td class="text-right">
-                <a href="{{ route('instructor.sub_modules.show', $sm) }}" class="btn btn-sm btn-outline-primary">Show</a>
+                <a href="{{ route('instructor.submodules.show', $sm->id) }}" class="btn btn-sm btn-outline-primary">Show</a>
                 @can('update', $sm)
-                  <a href="{{ route('instructor.sub_modules.edit', $sm) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                  <a href="{{ route('instructor.submodules.edit', $sm->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @endcan
                 @can('delete', $sm)
-                  <form action="{{ route('instructor.sub_modules.destroy', $sm) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus sub-module ini?')">
+                  <form action="{{ route('instructor.submodules.destroy', $sm->id) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus sub-module ini?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>

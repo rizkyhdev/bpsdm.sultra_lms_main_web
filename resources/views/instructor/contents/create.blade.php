@@ -18,7 +18,7 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <form action="{{ route('instructor.sub_modules.contents.store', $subModule) }}" method="post" enctype="multipart/form-data">
+      <form action="{{ route('instructor.contents.store', $subModule->id) }}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
           <label>Judul</label>

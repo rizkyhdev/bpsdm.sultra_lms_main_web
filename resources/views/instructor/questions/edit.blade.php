@@ -17,7 +17,7 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <form action="{{ route('instructor.questions.update', $question) }}" method="post">
+      <form action="{{ route('instructor.questions.update', $question->id) }}" method="post">
         @csrf
         @method('PUT')
         <div class="form-group">
@@ -63,7 +63,7 @@
         <button type="button" id="addOptionBtn" class="btn btn-sm btn-outline-primary">Tambah Opsi</button>
 
         <div class="d-flex justify-content-between mt-3">
-          <a href="{{ route('instructor.questions.index', $question->quiz) }}" class="btn btn-light">Batal</a>
+          <a href="{{ route('instructor.questions.index', $question->quiz->id) }}" class="btn btn-light">Batal</a>
           <button type="submit" class="btn btn-primary">Update</button>
         </div>
       </form>

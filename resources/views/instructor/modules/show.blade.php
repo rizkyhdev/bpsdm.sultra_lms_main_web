@@ -20,7 +20,7 @@
       <div class="text-muted small">Sub-Modules: {{ $subModules->count() }}</div>
     </div>
     @can('create', [App\Models\SubModule::class, $module])
-      <a href="{{ route('instructor.modules.sub_modules.create', $module) }}" class="btn btn-primary btn-sm">Tambah Sub-Module</a>
+      <a href="{{ route('instructor.submodules.create', $module->id) }}" class="btn btn-primary btn-sm">Tambah Sub-Module</a>
     @endcan
   </div>
 
@@ -31,7 +31,7 @@
     <div class="tab-pane fade show active" id="subs" role="tabpanel">
       <div class="list-group">
         @forelse($subModules as $sm)
-          <a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{ route('instructor.sub_modules.show', $sm) }}">
+          <a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{ route('instructor.submodules.show', $sm->id) }}">
             <span>{{ $sm->urutan }}. {{ $sm->judul }}</span>
             <span class="text-muted small">Kelola</span>
           </a>
