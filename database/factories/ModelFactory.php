@@ -9,7 +9,7 @@
 | factory(Model::class)->create() untuk membuat data dummy realistis.
 |
 */
-
+namespace Database\Factories;
 use Faker\Generator as Faker;
 use Faker\Factory as FakerFactory;
 use Illuminate\Support\Str;
