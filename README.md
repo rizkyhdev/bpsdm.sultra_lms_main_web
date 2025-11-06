@@ -9,6 +9,7 @@ Berdasarkan Peraturan Pemerintah Nomor 11 Tahun 2017 yang telah diubah dengan Pe
 Sistem LMS ini akan menjadi platform utama dalam mendukung pemenuhan kewajiban tersebut serta mewujudkan konsep Smart ASN yang memiliki integritas, profesionalisme, wawasan global, dan kemampuan memanfaatkan teknologi informasi.
 
 ## Tujuan Pengembangan
+
 -   Memfasilitasi pengembangan kompetensi teknis ASN Pemprov Sultra
 -   Menyediakan akses belajar yang fleksibel tanpa batasan waktu dan tempat
 -   Memenuhi kewajiban minimal 20 JP pengembangan kompetensi per tahun
@@ -28,16 +29,16 @@ Sistem LMS ini akan menjadi platform utama dalam mendukung pemenuhan kewajiban t
 
 Untuk mengatur sistem komputer anda pada pengembangan LMS BPSDM Sultra, silakan ikuti langkah-langkah berikut:
 
-1. Install PHP versi 8.3 disini. 
-[https://windows.php.net/download#php-8.3](https://windows.php.net/download#php-8.3) . 
-Lalu di bagian VS16 x64 Thread Safe (2025-Jul-29 16:52:42), klik Zip file untuk mendownload. Ekstrak Zip file tadi. Lalu di Setting Environment Variable Windows, di variable PATH, tambahkan direktori tempat anda mengekstrak Zip file PHP 8.3. Buka CMD baru untuk mencoba php yang baru saja install dengan cara `php -v`.
+1. Install PHP versi 8.3 disini.
+   [https://windows.php.net/download#php-8.3](https://windows.php.net/download#php-8.3) .
+   Lalu di bagian VS16 x64 Thread Safe (2025-Jul-29 16:52:42), klik Zip file untuk mendownload. Ekstrak Zip file tadi. Lalu di Setting Environment Variable Windows, di variable PATH, tambahkan direktori tempat anda mengekstrak Zip file PHP 8.3. Buka CMD baru untuk mencoba php yang baru saja install dengan cara `php -v`.
 
-2. Install Composer versi 2.8 disini. 
-https://getcomposer.org/Composer-Setup.exe . 
-Lalu ikuti arahan instalasi. Pastikan php yang digunakan mengacu pada direktori PHP yang baru saja di-install. Buka CMD baru untuk mencoba composer yang baru saja install dengan cara `composer --version`.
+2. Install Composer versi 2.8 disini.
+   https://getcomposer.org/Composer-Setup.exe .
+   Lalu ikuti arahan instalasi. Pastikan php yang digunakan mengacu pada direktori PHP yang baru saja di-install. Buka CMD baru untuk mencoba composer yang baru saja install dengan cara `composer --version`.
 
 3. Unggah kode dari github. Lalu masuk ke direktori tsb.
-`git clone https://github.com/rizkyhdev/bpsdm.sultra_lms_main_web.git`
+   `git clone https://github.com/rizkyhdev/bpsdm.sultra_lms_main_web.git`
 4. Install komponen composer yang dibutuhkan `composer install`
 5. Install komponen frontend yang dibutuhkan `npm install`
 6. Inisiasi database dengan `php artisan migrate`
@@ -81,8 +82,6 @@ Lalu ikuti arahan instalasi. Pastikan php yang digunakan mengacu pada direktori 
 | Sertifikasi            | Penerbitan sertifikat elektronik setelah menyelesaikan modul pembelajaran                |
 | Laporan dan Analitik   | Data statistik dan laporan mengenai aktivitas pembelajaran dan capaian JP                |
 | Integrasi Data         | Koneksi dengan database kepegawaian Pemprov Sultra                                       |
-
-
 
 ## Target Pengguna
 
