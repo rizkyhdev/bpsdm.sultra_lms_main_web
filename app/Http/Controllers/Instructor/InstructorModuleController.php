@@ -91,9 +91,12 @@ class InstructorModuleController extends Controller
      */
     public function show($id)
     {
-        $module = Module::with(['subModules'])->findOrFail($id);
+        $module = Module::with(['subModules' => function ($query) {
+            $query->orderBy('urutan');
+        }])->findOrFail($id);
         $this->authorize('view', $module);
-        return view('instructor.modules.show', compact('module'));
+        $subModules = $module->subModules;
+        return view('instructor.modules.show', compact('module', 'subModules'));
     }
 
     /**
