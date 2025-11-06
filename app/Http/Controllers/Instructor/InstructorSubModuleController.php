@@ -91,9 +91,22 @@ class InstructorSubModuleController extends Controller
      */
     public function show($id)
     {
-        $sub = SubModule::with('module.course')->findOrFail($id);
-        $this->authorize('view', $sub);
-        return view('instructor.submodules.show', compact('sub'));
+        $subModule = SubModule::with(['module.course', 'contents' => function ($query) {
+            $query->orderBy('urutan');
+        }, 'quizzes'])->findOrFail($id);
+        $this->authorize('view', $subModule);
+        
+        $contents = $subModule->contents;
+        $quizzes = $subModule->quizzes;
+        
+        // Calculate progress summary
+        $progressSummary = [
+            'avg_completion' => 0,
+            'participants' => 0,
+            'completed' => 0,
+        ];
+        
+        return view('instructor.submodules.show', compact('subModule', 'contents', 'quizzes', 'progressSummary'));
     }
 
     /**
