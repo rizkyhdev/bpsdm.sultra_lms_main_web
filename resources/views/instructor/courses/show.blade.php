@@ -62,7 +62,7 @@
       <p>Snapshot singkat. <a href="{{ route('instructor.enrollments.index', ['course' => $course->id]) }}">Lihat detail</a></p>
     </div>
     <div class="tab-pane fade" id="reports" role="tabpanel">
-      <a class="btn btn-outline-primary" href="{{ route('instructor.reports.course', ['course' => $course->id]) }}">Course Report</a>
+      <a class="btn btn-outline-primary" href="{{ route('instructor.reports.course', ['courseId' => $course->id]) }}">Course Report</a>
     </div>
   </div>
 </div>

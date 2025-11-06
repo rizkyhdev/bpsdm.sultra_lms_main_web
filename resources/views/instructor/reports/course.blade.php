@@ -17,7 +17,7 @@
 <div class="container-fluid">
   <div class="card mb-3">
     <div class="card-body">
-      <form class="form-row" method="get" action="{{ route('instructor.reports.course', $course) }}">
+      <form class="form-row" method="get" action="{{ route('instructor.reports.course', ['courseId' => $course->id]) }}">
         <div class="form-group col-md-4">
           <label class="small mb-1">Dari</label>
           <input type="date" name="from" value="{{ request('from') }}" class="form-control">
@@ -28,7 +28,7 @@
         </div>
         <div class="form-group col-md-4 d-flex align-items-end">
           <button class="btn btn-primary" type="submit">Filter</button>
-          <a href="{{ route('instructor.reports.course', $course) }}" class="btn btn-link">Reset</a>
+          <a href="{{ route('instructor.reports.course', ['courseId' => $course->id]) }}" class="btn btn-link">Reset</a>
         </div>
       </form>
     </div>
@@ -56,8 +56,8 @@
   </div>
 
   <div class="mt-3">
-    <a href="{{ route('instructor.reports.course', array_merge(['course'=>$course->id], request()->all(), ['export'=>'csv'])) }}" class="btn btn-outline-secondary btn-sm">Export CSV</a>
-    <a href="{{ route('instructor.reports.course', array_merge(['course'=>$course->id], request()->all(), ['export'=>'pdf'])) }}" class="btn btn-outline-secondary btn-sm">Export PDF</a>
+    <a href="{{ route('instructor.reports.course', array_merge(['courseId'=>$course->id], request()->all(), ['export'=>'csv'])) }}" class="btn btn-outline-secondary btn-sm">Export CSV</a>
+    <a href="{{ route('instructor.reports.course', array_merge(['courseId'=>$course->id], request()->all(), ['export'=>'pdf'])) }}" class="btn btn-outline-secondary btn-sm">Export PDF</a>
   </div>
 </div>
 @endsection
