@@ -32,22 +32,30 @@ class InstructorContentController extends Controller
      */
     public function index(Request $request, $subModuleId)
     {
-        $sub = SubModule::with('module.course')->findOrFail($subModuleId);
-        $this->authorize('view', $sub);
+        $subModule = SubModule::with('module.course')->findOrFail($subModuleId);
+        $this->authorize('view', $subModule);
 
         $q = trim($request->get('q'));
         $perPage = (int) $request->get('per_page', 15);
+        $tipe = $request->get('tipe');
 
         $contents = Content::query()
-            ->where('sub_module_id', $sub->id)
+            ->where('sub_module_id', $subModule->id)
             ->when($q, function ($query) use ($q) {
                 $query->where('judul', 'like', "%$q%");
+            })
+            ->when($tipe, function ($query) use ($tipe) {
+                $query->where('tipe', $tipe);
             })
             ->orderBy('urutan')
             ->paginate($perPage)
             ->appends($request->query());
 
-        return view('instructor.contents.index', compact('sub', 'contents'));
+        $filters = [
+            'tipe' => $tipe,
+        ];
+
+        return view('instructor.contents.index', compact('subModule', 'contents', 'filters'));
     }
 
     /**
@@ -57,9 +65,9 @@ class InstructorContentController extends Controller
      */
     public function create($subModuleId)
     {
-        $sub = SubModule::with('module.course')->findOrFail($subModuleId);
-        $this->authorize('update', $sub);
-        return view('instructor.contents.create', compact('sub'));
+        $subModule = SubModule::with('module.course')->findOrFail($subModuleId);
+        $this->authorize('update', $subModule);
+        return view('instructor.contents.create', compact('subModule'));
     }
 
     /**
@@ -70,8 +78,8 @@ class InstructorContentController extends Controller
      */
     public function store(StoreContentRequest $request, $subModuleId)
     {
-        $sub = SubModule::with('module.course')->findOrFail($subModuleId);
-        $this->authorize('update', $sub);
+        $subModule = SubModule::with('module.course')->findOrFail($subModuleId);
+        $this->authorize('update', $subModule);
 
         DB::beginTransaction();
         try {
@@ -80,7 +88,7 @@ class InstructorContentController extends Controller
             $content->judul = $data['judul'];
             $content->tipe = $data['tipe'];
             $content->urutan = $data['urutan'];
-            $content->sub_module_id = $sub->id;
+            $content->sub_module_id = $subModule->id;
 
             if ($request->hasFile('file_path')) {
                 $file = $request->file('file_path');
@@ -91,10 +99,10 @@ class InstructorContentController extends Controller
             $content->save();
             DB::commit();
             Log::info('Content created', ['content_id' => $content->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.contents.index', $sub->id)->with('success', 'Content created successfully.');
+            return redirect()->route('instructor.contents.index', $subModule->id)->with('success', 'Content created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to create content', ['sub_module_id' => $sub->id, 'error' => $e->getMessage()]);
+            Log::error('Failed to create content', ['sub_module_id' => $subModule->id, 'error' => $e->getMessage()]);
             return redirect()->back()->withInput()->with('error', 'Failed to create content.');
         }
     }
