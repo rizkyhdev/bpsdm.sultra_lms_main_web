@@ -47,9 +47,70 @@ class InstructorAttemptController extends Controller
      */
     public function show($attemptId)
     {
-        $attempt = QuizAttempt::with(['quiz.subModule.module.course', 'userAnswers.question.answerOptions', 'user'])->findOrFail($attemptId);
+        $attempt = QuizAttempt::with([
+            'quiz.subModule.module.course', 
+            'quiz.questions.answerOptions',
+            'userAnswers.question.answerOptions', 
+            'userAnswers.answerOption', 
+            'user'
+        ])->findOrFail($attemptId);
         $this->authorize('view', $attempt);
-        return view('instructor.attempts.show', compact('attempt'));
+
+        // Prepare items array for the view
+        // Get all questions for the quiz to ensure we show all questions, even if not answered
+        $allQuestions = $attempt->quiz->questions()->with('answerOptions')->orderBy('urutan')->get();
+        $userAnswersByQuestionId = $attempt->userAnswers->keyBy('question_id');
+        
+        $items = [];
+        foreach ($allQuestions as $question) {
+            $userAnswer = $userAnswersByQuestionId->get($question->id);
+            $correctOption = $question->answerOptions->where('is_correct', true)->first();
+            
+            // Determine if answer is correct
+            $isCorrect = false;
+            $jawaban = '';
+            
+            if ($question->tipe === 'essay') {
+                // For essay questions, get the answer text from answerOption if available
+                // Essay answers might be stored in answerOption->teks_jawaban
+                if ($userAnswer && $userAnswer->answerOption) {
+                    $jawaban = $userAnswer->answerOption->teks_jawaban;
+                } elseif ($userAnswer) {
+                    // Check if there's a text answer stored elsewhere
+                    $jawaban = 'No answer provided';
+                } else {
+                    $jawaban = 'No answer provided';
+                }
+                // Check if manually graded (manual_score column might exist)
+                $graded = $userAnswer && isset($userAnswer->manual_score) && $userAnswer->manual_score !== null;
+                $score = $graded ? $userAnswer->manual_score : null;
+            } else {
+                // For multiple choice/true-false, check if selected answer is correct
+                if ($userAnswer && $userAnswer->answerOption && $correctOption) {
+                    $isCorrect = $userAnswer->answerOption->id === $correctOption->id;
+                    $jawaban = $userAnswer->answerOption->teks_jawaban;
+                } elseif ($userAnswer && $userAnswer->answerOption) {
+                    $jawaban = $userAnswer->answerOption->teks_jawaban;
+                    $isCorrect = false; // No correct option or answer doesn't match
+                } else {
+                    $jawaban = 'No answer selected';
+                    $isCorrect = false;
+                }
+            }
+            
+            $items[] = [
+                'question_id' => $question->id,
+                'pertanyaan' => $question->pertanyaan,
+                'tipe' => $question->tipe,
+                'bobot' => $question->bobot,
+                'jawaban' => $jawaban,
+                'is_correct' => $isCorrect,
+                'graded' => $userAnswer && isset($userAnswer->manual_score) && $userAnswer->manual_score !== null,
+                'score' => ($userAnswer && isset($userAnswer->manual_score)) ? $userAnswer->manual_score : null,
+            ];
+        }
+
+        return view('instructor.attempts.show', compact('attempt', 'items'));
     }
 
     /**
