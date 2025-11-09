@@ -21,7 +21,14 @@ class InstructorContentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:instructor']);
+        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $user = Auth::user();
+            if ($user && ($user->role === 'instructor' || $user->role === 'admin')) {
+                return $next($request);
+            }
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        });
     }
 
     /**
