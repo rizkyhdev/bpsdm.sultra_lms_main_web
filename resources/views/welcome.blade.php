@@ -51,7 +51,7 @@
           <a class="nav-link" href="#alur">Panduan</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#ftco-section">Pelatihan</a>
+          <a class="nav-link" href="{{ route('courses.index') }}">Pelatihan</a>
         </li>
          <li class="nav-item">
           <a class="nav-link" href="#article">Artikel</a>

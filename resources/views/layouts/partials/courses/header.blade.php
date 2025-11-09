@@ -7,7 +7,11 @@
     </button> -->
   </div>
   <nav class="d-none d-lg-flex gap-4 fw-semibold">
-      <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">Beranda</a>
+      @auth
+        <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">Beranda</a>
+      @else
+        <a href="{{ url('/') }}" class="text-decoration-none text-dark">Beranda</a>
+      @endauth
       <a href="{{ route('courses.index') }}" class="text-decoration-none text-dark">Pelatihan</a>
      
   </nav>
