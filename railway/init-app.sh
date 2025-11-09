@@ -7,8 +7,9 @@ set -e
 # Run migrations
 php artisan migrate --force
 
-# Seed admin user
-php artisan db:seed --class=RolesAndUsersSeeder --force
+# Create admin user if it doesn't exist
+# Use environment variables with defaults (can be overridden via Railway environment variables)
+php railway/create-admin.php
 
 # Clear cache
 php artisan optimize:clear
