@@ -7,6 +7,9 @@ set -e
 # Run migrations
 php artisan migrate --force
 
+# Seed admin user
+php artisan db:seed --class=RolesAndUsersSeeder --force
+
 # Clear cache
 php artisan optimize:clear
 
