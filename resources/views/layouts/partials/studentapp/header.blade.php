@@ -7,8 +7,8 @@
     </button>
   </div>
   <nav class="d-none d-lg-flex gap-4 fw-semibold">
-      <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">Home</a>
-      <a href="{{ route('student.courses.index') }}" class="text-decoration-none text-dark">Course</a>
+      <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">Beranda</a>
+      <a href="{{ route('courses.index') }}" class="text-decoration-none text-dark">Pelatihan</a>
      
   </nav>
   <div class="d-flex align-items-center gap-3">
