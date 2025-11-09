@@ -285,8 +285,8 @@ class StudentQuizController extends Controller
                 // UserAnswer table only has: quiz_attempt_id, question_id, answer_option_id
                 UserAnswer::updateOrCreate(
                     [
-                        'quiz_attempt_id' => $attempt->id,
-                        'question_id' => $question->id
+                    'quiz_attempt_id' => $attempt->id,
+                    'question_id' => $question->id
                     ],
                     [
                         'answer_option_id' => $selectedOptionId
@@ -606,8 +606,8 @@ class StudentQuizController extends Controller
                 // UserAnswer table only has: quiz_attempt_id, question_id, answer_option_id
                 UserAnswer::updateOrCreate(
                     [
-                        'quiz_attempt_id' => $attempt->id,
-                        'question_id' => $answerData['question_id']
+                    'quiz_attempt_id' => $attempt->id,
+                    'question_id' => $answerData['question_id']
                     ],
                     [
                         'answer_option_id' => $selectedOptionId
@@ -679,7 +679,7 @@ class StudentQuizController extends Controller
         
         // Always check sub-module completion when a quiz is passed
         // The checkSubModuleCompletion method will verify if all requirements are met
-        $this->checkSubModuleCompletion($user, $subModule->id);
+            $this->checkSubModuleCompletion($user, $subModule->id);
     }
 
     /**

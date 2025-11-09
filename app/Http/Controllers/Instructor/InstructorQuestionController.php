@@ -21,7 +21,14 @@ class InstructorQuestionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:instructor']);
+        $this->middleware(['auth']);
+        $this->middleware(function ($request, $next) {
+            $user = Auth::user();
+            if (!in_array($user->role, ['admin', 'instructor'])) {
+                abort(403, 'Unauthorized access.');
+            }
+            return $next($request);
+        });
     }
 
     /**
@@ -32,7 +39,8 @@ class InstructorQuestionController extends Controller
      */
     public function index(Request $request, $quizId)
     {
-        $quiz = Quiz::with('subModule.module.course')->findOrFail($quizId);
+        // Load quiz with relationships based on quiz level
+        $quiz = Quiz::with(['subModule.module.course', 'module.course', 'course'])->findOrFail($quizId);
         $this->authorize('view', $quiz);
 
         $perPage = (int) $request->get('per_page', 15);

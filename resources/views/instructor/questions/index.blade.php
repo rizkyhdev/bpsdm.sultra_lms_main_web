@@ -21,10 +21,10 @@
     @endcan
   </div>
 
-  <div class="card mb-3">
+  <!-- <div class="card mb-3">
     <div class="card-header">Reorder</div>
     <div class="card-body">
-      <form action="{{ route('instructor.questions.reorder') }}" method="post">
+      <form action="{{ route('instructor.questions.reorder', $quiz->id) }}" method="post">
         @csrf
         <div class="form-group">
           <label>JSON Payload</label>
@@ -33,7 +33,7 @@
         <button type="submit" class="btn btn-outline-secondary">Simpan Urutan</button>
       </form>
     </div>
-  </div>
+  </div> -->
 
   <div class="card">
     <div class="table-responsive">
