@@ -32,9 +32,10 @@ class StudentContentController extends Controller
         $user = Auth::user();
         
         // Periksa apakah user sudah terdaftar dalam kursus
+        // Accept multiple valid enrollment statuses: enrolled, in_progress, completed, or active
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -102,10 +103,10 @@ class StudentContentController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -179,10 +180,10 @@ class StudentContentController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -238,10 +239,10 @@ class StudentContentController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -284,10 +285,10 @@ class StudentContentController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -357,10 +358,10 @@ class StudentContentController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -411,10 +412,10 @@ class StudentContentController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $content->subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {

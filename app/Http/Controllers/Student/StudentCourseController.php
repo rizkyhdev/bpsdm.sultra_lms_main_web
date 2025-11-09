@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContentProgress;
 use App\Models\Course;
 use App\Models\UserEnrollment;
 use App\Models\UserProgress;
@@ -275,9 +276,13 @@ class StudentCourseController extends Controller
                 ]);
             }
 
-            // Inisialisasi record progress untuk semua sub-modul
+            // Load course relationships to ensure modules, submodules, and contents are available
+            $course->load(['modules.subModules.contents']);
+
+            // Inisialisasi record progress untuk semua sub-modul dan konten
             foreach ($course->modules as $module) {
                 foreach ($module->subModules as $subModule) {
+                    // Initialize sub-module progress
                     UserProgress::firstOrCreate([
                         'user_id' => $user->id,
                         'sub_module_id' => $subModule->id
@@ -286,6 +291,18 @@ class StudentCourseController extends Controller
                         'progress_percentage' => 0,
                         'started_at' => now()
                     ]);
+
+                    // Initialize content progress for all contents in this sub-module
+                    foreach ($subModule->contents as $content) {
+                        ContentProgress::firstOrCreate([
+                            'user_id' => $user->id,
+                            'content_id' => $content->id
+                        ], [
+                            'is_completed' => false,
+                            'progress_percentage' => 0,
+                            'started_at' => now()
+                        ]);
+                    }
                 }
             }
 

@@ -88,6 +88,7 @@ Route::group([
 
     // Sub-Modules
     Route::get('/sub-modules/{subModule}', [\App\Http\Controllers\Student\StudentSubModuleController::class, 'show'])->name('sub_modules.show');
+    Route::post('/sub-modules/{subModule}/mark-complete', [\App\Http\Controllers\Student\StudentSubModuleController::class, 'markComplete'])->name('sub_modules.mark-complete');
 
     // Contents
     Route::get('/contents/{content}', [\App\Http\Controllers\Student\StudentContentController::class, 'show'])->name('contents.show');

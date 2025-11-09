@@ -30,9 +30,10 @@ class StudentSubModuleController extends Controller
         $user = Auth::user();
         
         // Periksa apakah user sudah terdaftar dalam kursus
+        // Accept multiple valid enrollment statuses: enrolled, in_progress, completed, or active
         $enrollment = $user->userEnrollments()
             ->where('course_id', $subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -66,12 +67,15 @@ class StudentSubModuleController extends Controller
             ]);
         }
 
+        // Get contents collection for the view
+        $contents = $subModule->contents;
+
         // Menghitung progress konten
-        $totalContents = $subModule->contents->count();
+        $totalContents = $contents->count();
         $completedContents = 0;
         $contentProgress = 0;
 
-        foreach ($subModule->contents as $content) {
+        foreach ($contents as $content) {
             $contentUserProgress = $content->userProgress()->where('user_id', $user->id)->first();
             
             if ($contentUserProgress && $contentUserProgress->is_completed) {
@@ -128,10 +132,10 @@ class StudentSubModuleController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -200,10 +204,10 @@ class StudentSubModuleController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -277,10 +281,10 @@ class StudentSubModuleController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -339,10 +343,10 @@ class StudentSubModuleController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
