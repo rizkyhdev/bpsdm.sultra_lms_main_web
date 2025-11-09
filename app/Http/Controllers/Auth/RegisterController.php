@@ -92,6 +92,9 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // Auto-validate users from BPSDM unit
+        $isValidated = strtoupper(trim($data['unit_kerja'])) === 'BPSDM';
+        
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -101,8 +104,8 @@ class RegisterController extends Controller
               'unit_kerja' => $data['unit_kerja'],
             // default role: student
             'role' => 'student',
-            // default is_validated: false (menunggu approval admin)
-            'is_validated' => false,
+            // Auto-validate if unit_kerja is BPSDM, otherwise wait for admin approval
+            'is_validated' => $isValidated,
         ]);
     }
 
@@ -115,6 +118,12 @@ class RegisterController extends Controller
      */
     protected function registered(\Illuminate\Http\Request $request, $user)
     {
+        // If user is validated (e.g., from BPSDM), keep them logged in and redirect to dashboard
+        if ($user->is_validated) {
+            return redirect($this->redirectTo())
+                ->with('success', 'Registrasi berhasil! Selamat datang di sistem LMS.');
+        }
+
         // Logout user karena belum divalidasi
         Auth::logout();
         $request->session()->invalidate();
