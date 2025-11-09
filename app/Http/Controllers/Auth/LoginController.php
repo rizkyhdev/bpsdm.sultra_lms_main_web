@@ -64,4 +64,26 @@ class LoginController extends Controller
         // default: student
         return route('student.dashboard');
     }
+
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(\Illuminate\Http\Request $request, $user)
+    {
+        // Check if user is validated
+        if (!$user->is_validated) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            return redirect()->route('login')
+                ->with('error', 'Akun Anda belum divalidasi oleh admin. Silakan tunggu persetujuan admin untuk dapat masuk ke sistem LMS.');
+        }
+
+        return redirect()->intended($this->redirectPath());
+    }
 }

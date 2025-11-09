@@ -101,6 +101,27 @@ class RegisterController extends Controller
               'unit_kerja' => $data['unit_kerja'],
             // default role: student
             'role' => 'student',
+            // default is_validated: false (menunggu approval admin)
+            'is_validated' => false,
         ]);
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function registered(\Illuminate\Http\Request $request, $user)
+    {
+        // Logout user karena belum divalidasi
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Redirect ke login dengan pesan sukses
+        return redirect()->route('login')
+            ->with('success', 'Registrasi berhasil! Akun Anda sedang menunggu persetujuan dari admin. Anda akan dapat masuk ke sistem LMS setelah admin memvalidasi akun Anda.');
     }
 }
