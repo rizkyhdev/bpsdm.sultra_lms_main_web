@@ -6,7 +6,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb mb-0">
     <li class="breadcrumb-item"><a href="{{ route('instructor.dashboard') }}">Instructor</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('instructor.submodules.show', $quiz->subModule->id) }}">{{ $quiz->subModule->judul }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('instructor.sub_modules.show', $quiz->subModule->id) }}">{{ $quiz->subModule->judul }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ $quiz->judul }}</li>
   </ol>
   {{-- Binding: $quiz, $stats --}}

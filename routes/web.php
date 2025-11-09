@@ -165,14 +165,14 @@ Route::group([
     Route::delete('/modules/{id}', [InstructorModuleController::class, 'destroy'])->name('modules.destroy');
     Route::post('/modules/reorder', [InstructorModuleController::class, 'reorder'])->name('modules.reorder');
 
-    Route::get('/modules/{moduleId}/sub-modules', [InstructorSubModuleController::class, 'index'])->name('submodules.index');
-    Route::get('/modules/{moduleId}/sub-modules/create', [InstructorSubModuleController::class, 'create'])->name('submodules.create');
-    Route::post('/modules/{moduleId}/sub-modules', [InstructorSubModuleController::class, 'store'])->name('submodules.store');
-    Route::get('/sub-modules/{id}', [InstructorSubModuleController::class, 'show'])->name('submodules.show');
-    Route::get('/sub-modules/{id}/edit', [InstructorSubModuleController::class, 'edit'])->name('submodules.edit');
-    Route::put('/sub-modules/{id}', [InstructorSubModuleController::class, 'update'])->name('submodules.update');
-    Route::delete('/sub-modules/{id}', [InstructorSubModuleController::class, 'destroy'])->name('submodules.destroy');
-    Route::post('/sub-modules/reorder', [InstructorSubModuleController::class, 'reorder'])->name('submodules.reorder');
+    Route::get('/modules/{moduleId}/sub-modules', [InstructorSubModuleController::class, 'index'])->name('sub_modules.index');
+    Route::get('/modules/{moduleId}/sub-modules/create', [InstructorSubModuleController::class, 'create'])->name('sub_modules.create');
+    Route::post('/modules/{moduleId}/sub-modules', [InstructorSubModuleController::class, 'store'])->name('sub_modules.store');
+    Route::get('/sub-modules/{id}', [InstructorSubModuleController::class, 'show'])->name('sub_modules.show');
+    Route::get('/sub-modules/{id}/edit', [InstructorSubModuleController::class, 'edit'])->name('sub_modules.edit');
+    Route::put('/sub-modules/{id}', [InstructorSubModuleController::class, 'update'])->name('sub_modules.update');
+    Route::delete('/sub-modules/{id}', [InstructorSubModuleController::class, 'destroy'])->name('sub_modules.destroy');
+    Route::post('/sub-modules/reorder', [InstructorSubModuleController::class, 'reorder'])->name('sub_modules.reorder');
 
     Route::get('/sub-modules/{subModuleId}/contents', [InstructorContentController::class, 'index'])->name('contents.index');
     Route::get('/sub-modules/{subModuleId}/contents/create', [InstructorContentController::class, 'create'])->name('contents.create');

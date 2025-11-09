@@ -7,7 +7,7 @@
   <ol class="breadcrumb mb-0">
     <li class="breadcrumb-item"><a href="{{ route('instructor.dashboard') }}">Instructor</a></li>
     <li class="breadcrumb-item"><a href="{{ route('instructor.modules.show', $subModule->module) }}">{{ $subModule->module->judul }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('instructor.submodules.show', $subModule) }}">{{ $subModule->judul }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('instructor.sub_modules.show', $subModule) }}">{{ $subModule->judul }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Content Create</li>
   </ol>
   {{-- Binding: $subModule --}}

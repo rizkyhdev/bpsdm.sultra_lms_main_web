@@ -77,7 +77,7 @@ class InstructorSubModuleController extends Controller
             $sub->module_id = $module->id;
             $sub->save();
             Log::info('SubModule created', ['sub_module_id' => $sub->id, 'module_id' => $module->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.submodules.index', $module->id)->with('success', 'Sub-module created successfully.');
+            return redirect()->route('instructor.sub_modules.index', $module->id)->with('success', 'Sub-module created successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to create sub-module', ['module_id' => $module->id, 'error' => $e->getMessage()]);
             return redirect()->back()->withInput()->with('error', 'Failed to create sub-module.');
@@ -135,7 +135,7 @@ class InstructorSubModuleController extends Controller
         try {
             $sub->update($request->validated());
             Log::info('SubModule updated', ['sub_module_id' => $sub->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.submodules.show', $sub->id)->with('success', 'Sub-module updated successfully.');
+            return redirect()->route('instructor.sub_modules.show', $sub->id)->with('success', 'Sub-module updated successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to update sub-module', ['sub_module_id' => $sub->id, 'error' => $e->getMessage()]);
             return redirect()->back()->withInput()->with('error', 'Failed to update sub-module.');

@@ -18,7 +18,7 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <form action="{{ route('instructor.submodules.update', $subModule->id) }}" method="post">
+      <form action="{{ route('instructor.sub_modules.update', $subModule->id) }}" method="post">
         @csrf
         @method('PUT')
         <div class="form-group">
