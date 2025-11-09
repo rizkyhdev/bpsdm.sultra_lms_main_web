@@ -63,11 +63,31 @@ class Content extends Model
             return null;
         }
 
-        $url = $this->youtube_url;
+        $url = trim($this->youtube_url);
         
         // Handle various YouTube URL formats
-        if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $url, $matches)) {
-            return $matches[1];
+        // Standard: https://www.youtube.com/watch?v=VIDEO_ID
+        // Short: https://youtu.be/VIDEO_ID
+        // Embed: https://www.youtube.com/embed/VIDEO_ID
+        // Mobile: https://m.youtube.com/watch?v=VIDEO_ID
+        // With timestamp: https://www.youtube.com/watch?v=VIDEO_ID&t=123s
+        
+        $patterns = [
+            // Standard watch URLs
+            '/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/',
+            // Alternative patterns
+            '/(?:youtube\.com\/.*[?&]v=)([a-zA-Z0-9_-]{11})/',
+        ];
+        
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return $matches[1];
+            }
+        }
+        
+        // If URL is just a video ID (11 characters)
+        if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $url)) {
+            return $url;
         }
         
         return null;
@@ -83,6 +103,7 @@ class Content extends Model
             return null;
         }
         
-        return "https://www.youtube.com/embed/{$videoId}?enablejsapi=1&origin=" . urlencode(request()->getSchemeAndHttpHost());
+        $origin = urlencode(request()->getSchemeAndHttpHost());
+        return "https://www.youtube.com/embed/{$videoId}?enablejsapi=1&origin={$origin}&rel=0&modestbranding=1";
     }
 } 

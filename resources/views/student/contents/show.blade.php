@@ -95,18 +95,23 @@
                     @if($content->tipe === 'youtube')
                         {{-- YouTube Video Player --}}
                         <div id="youtube-player-container" class="mb-4">
-                            <div class="ratio ratio-16x9 mb-3">
-                                <iframe id="youtube-player" 
-                                        src="{{ $content->youtube_embed_url }}&controls=0&modestbranding=1&rel=0" 
-                                        frameborder="0" 
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                        allowfullscreen>
-                                </iframe>
-                            </div>
-                            <div class="alert alert-info mb-0">
-                                <i class="bi bi-info-circle me-2"></i>
-                                <strong>Catatan:</strong> Video harus ditonton sampai selesai sebelum Anda dapat melanjutkan ke konten berikutnya.
-                            </div>
+                            @if($content->youtube_embed_url && $content->youtube_video_id)
+                                <div class="ratio ratio-16x9 mb-3">
+                                    <div id="youtube-player"></div>
+                                </div>
+                                <div class="alert alert-info mb-0">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>Catatan:</strong> Video harus ditonton sampai selesai sebelum Anda dapat melanjutkan ke konten berikutnya.
+                                </div>
+                            @else
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Error:</strong> URL YouTube tidak valid atau video tidak tersedia.
+                                    @if($content->youtube_url)
+                                        <br><small>URL yang dimasukkan: <a href="{{ $content->youtube_url }}" target="_blank">{{ $content->youtube_url }}</a></small>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     @elseif($content->tipe === 'video')
                         {{-- Regular Video Player --}}
@@ -249,7 +254,7 @@
     </div>
 </div>
 
-@if($content->tipe === 'youtube')
+@if($content->tipe === 'youtube' && $content->youtube_embed_url)
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 let player;
@@ -259,14 +264,40 @@ let videoDuration = {{ $progress->video_duration ?? 0 }};
 let watchedDuration = {{ $progress->watched_duration ?? 0 }};
 let isCompleted = {{ $progress->is_completed ? 'true' : 'false' }};
 let maxSeekPosition = lastTrackedPosition; // Prevent skipping ahead
+let videoId = '{{ $content->youtube_video_id }}';
 
 function onYouTubeIframeAPIReady() {
-    player = new YT.Player('youtube-player', {
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-        }
-    });
+    if (!videoId) {
+        console.error('YouTube video ID tidak ditemukan');
+        return;
+    }
+    
+    try {
+        player = new YT.Player('youtube-player', {
+            videoId: videoId,
+            playerVars: {
+                'enablejsapi': 1,
+                'origin': window.location.origin,
+                'rel': 0,
+                'modestbranding': 1,
+                'controls': 1
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange,
+                'onError': onPlayerError
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing YouTube player:', error);
+    }
+}
+
+function onPlayerError(event) {
+    console.error('YouTube player error:', event.data);
+    if (event.data === 100 || event.data === 101 || event.data === 150) {
+        alert('Video tidak tersedia atau tidak dapat diputar. Silakan coba lagi atau hubungi administrator.');
+    }
 }
 
 function onPlayerReady(event) {
