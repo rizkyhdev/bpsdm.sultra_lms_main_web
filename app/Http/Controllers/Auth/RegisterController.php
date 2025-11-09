@@ -63,6 +63,10 @@ class RegisterController extends Controller
             return route('instructor.dashboard');
         }
 
+        if ($role === 'supervisor') {
+            return route('student.dashboard');
+        }
+
         return route('student.dashboard');
     }
 
@@ -81,6 +85,7 @@ class RegisterController extends Controller
             'nip' => ['required', 'string', 'max:255','unique:users'],
             'jabatan' => ['required', 'string', 'max:255'],
             'unit_kerja' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'string', 'in:student,instructor,admin'],
         ]);
     }
 
@@ -93,7 +98,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         // Auto-validate users from BPSDM unit
-        $isValidated = strtoupper(trim($data['unit_kerja'])) === 'BPSDM';
+        $isValidated = strtoupper(trim($data['unit_kerja'])) === 'BPSDMSULTRA';
         
         return User::create([
             'name' => $data['name'],
@@ -102,8 +107,8 @@ class RegisterController extends Controller
             'nip' => $data['nip'],
              'jabatan' => $data['jabatan'],
               'unit_kerja' => $data['unit_kerja'],
-            // default role: student
-            'role' => 'student',
+            // Use selected role from registration form
+            'role' => $data['role'] ?? 'student',
             // Auto-validate if unit_kerja is BPSDM, otherwise wait for admin approval
             'is_validated' => $isValidated,
         ]);
