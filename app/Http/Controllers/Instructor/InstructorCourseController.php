@@ -83,6 +83,57 @@ class InstructorCourseController extends Controller
     {
         $this->authorize('create', Course::class);
 
+        // Clean and filter empty nested arrays before validation
+        // This preserves original indices to maintain file upload key alignment
+        $modules = $request->input('modules', []);
+        $cleanedModules = [];
+        
+        foreach ($modules as $moduleIndex => $moduleData) {
+            // Skip empty modules (missing required fields: judul or urutan)
+            if (empty($moduleData['judul']) || empty($moduleData['urutan'])) {
+                continue;
+            }
+            
+            $cleanedModule = $moduleData;
+            
+            // Clean sub_modules - preserve original indices
+            if (isset($moduleData['sub_modules']) && is_array($moduleData['sub_modules'])) {
+                $cleanedSubModules = [];
+                foreach ($moduleData['sub_modules'] as $subModuleIndex => $subModuleData) {
+                    // Skip empty sub_modules (missing required fields: judul or urutan)
+                    if (empty($subModuleData['judul']) || empty($subModuleData['urutan'])) {
+                        continue;
+                    }
+                    
+                    $cleanedSubModule = $subModuleData;
+                    
+                    // Clean contents - preserve original indices
+                    if (isset($subModuleData['contents']) && is_array($subModuleData['contents'])) {
+                        $cleanedContents = [];
+                        foreach ($subModuleData['contents'] as $contentIndex => $contentData) {
+                            // Skip empty contents (missing required fields: judul, tipe, or urutan)
+                            if (empty($contentData['judul']) || empty($contentData['tipe']) || empty($contentData['urutan'])) {
+                                continue;
+                            }
+                            // Preserve original index for file upload keys
+                            $cleanedContents[$contentIndex] = $contentData;
+                        }
+                        $cleanedSubModule['contents'] = $cleanedContents;
+                    }
+                    
+                    // Preserve original index for file upload keys
+                    $cleanedSubModules[$subModuleIndex] = $cleanedSubModule;
+                }
+                $cleanedModule['sub_modules'] = $cleanedSubModules;
+            }
+            
+            // Preserve original index for file upload keys
+            $cleanedModules[$moduleIndex] = $cleanedModule;
+        }
+        
+        // Merge cleaned modules back into request (preserving indices)
+        $request->merge(['modules' => $cleanedModules]);
+
         try {
             $validated = $request->validate([
                 'judul' => 'required|string|max:255',
@@ -94,13 +145,13 @@ class InstructorCourseController extends Controller
                 'modules.*.deskripsi' => 'nullable|string',
                 'modules.*.urutan' => 'required|integer|min:1',
                 'modules.*.sub_modules' => 'nullable|array',
-                'modules.*.sub_modules.*.judul' => 'required_with:modules.*.sub_modules|string|max:255',
+                'modules.*.sub_modules.*.judul' => 'required|string|max:255',
                 'modules.*.sub_modules.*.deskripsi' => 'nullable|string',
-                'modules.*.sub_modules.*.urutan' => 'required_with:modules.*.sub_modules|integer|min:1',
+                'modules.*.sub_modules.*.urutan' => 'required|integer|min:1',
                 'modules.*.sub_modules.*.contents' => 'nullable|array',
-                'modules.*.sub_modules.*.contents.*.judul' => 'required_with:modules.*.sub_modules.*.contents|string|max:255',
-                'modules.*.sub_modules.*.contents.*.tipe' => 'required_with:modules.*.sub_modules.*.contents|in:text,html,pdf,video,audio,image,link,youtube',
-                'modules.*.sub_modules.*.contents.*.urutan' => 'required_with:modules.*.sub_modules.*.contents|integer|min:1',
+                'modules.*.sub_modules.*.contents.*.judul' => 'required|string|max:255',
+                'modules.*.sub_modules.*.contents.*.tipe' => 'required|in:text,html,pdf,video,audio,image,link,youtube',
+                'modules.*.sub_modules.*.contents.*.urutan' => 'required|integer|min:1',
                 'modules.*.sub_modules.*.contents.*.html_content' => 'nullable|string|required_if:modules.*.sub_modules.*.contents.*.tipe,html,text',
                 'modules.*.sub_modules.*.contents.*.external_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,link',
                 'modules.*.sub_modules.*.contents.*.youtube_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,youtube',
