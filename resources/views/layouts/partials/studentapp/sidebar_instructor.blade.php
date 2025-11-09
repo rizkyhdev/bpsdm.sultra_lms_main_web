@@ -28,7 +28,7 @@
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.quizzes') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('instructor.quizzes.index-all') }}">
-          <i class="fas fa-question-circle me-2"></i>Quizzes
+          <i class="fas fa-question-circle me-2"></i>Kuis Pelatihan
         </a>
       </li>
       <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.modules') ? 'active' : '' }}">
