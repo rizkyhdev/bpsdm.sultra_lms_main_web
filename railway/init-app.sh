@@ -6,7 +6,7 @@ set -e
 
 # composer install
 npm install
-composer install --no-dev --no-interaction --prefer-dist
+composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
 npm run build
 
 # Run migrations
