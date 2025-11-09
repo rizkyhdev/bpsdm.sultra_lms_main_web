@@ -81,34 +81,13 @@ Route::group([
 
     // Courses
     Route::get('/courses', [\App\Http\Controllers\Student\StudentCourseController::class, 'enrolledCourses'])->name('courses.index');
-    Route::get('/courses/{id}', function ($id) {
-        $course = (object) [
-            'id' => $id,
-            'title' => __('Course'),
-            'description' => '', // HTML aman diisi dari backend
-            'cover_url' => asset('image/course-placeholder.png'),
-            'progress_percent' => 0,
-            'instructor_name' => __('Instructor'),
-            'modules' => collect(),
-        ];
-        return view('student.courses.show', compact('course'));
-    })->name('courses.show');
+    Route::get('/courses/{course}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
 
     // Modules
-    Route::get('/modules/{id}', function ($id) {
-        $module = (object) [
-            'id' => $id,
-            'title' => __('Module'),
-            'description' => '',
-            'order' => 1,
-            'completed' => false,
-            'submodules' => collect(),
-            'attachments' => collect(),
-            'previousModule' => null,
-            'nextModule' => null,
-        ];
-        return view('student.modules.show', compact('module'));
-    })->name('modules.show');
+    Route::get('/modules/{module}', [\App\Http\Controllers\Student\StudentModuleController::class, 'show'])->name('modules.show');
+
+    // Sub-Modules
+    Route::get('/sub-modules/{subModule}', [\App\Http\Controllers\Student\StudentSubModuleController::class, 'show'])->name('sub_modules.show');
 
     // Progress
     Route::get('/progress', function () {

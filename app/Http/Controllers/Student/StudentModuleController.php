@@ -40,7 +40,7 @@ class StudentModuleController extends Controller
         }
 
         // Mendapatkan modul dengan sub-modul dan progress user
-        $module->load(['subModules' => function ($query) {
+        $module->load(['course', 'subModules' => function ($query) {
             $query->orderBy('urutan');
         }, 'subModules.userProgress' => function ($query) use ($user) {
             $query->where('user_id', $user->id);

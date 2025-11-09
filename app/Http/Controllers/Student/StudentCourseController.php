@@ -188,19 +188,44 @@ class StudentCourseController extends Controller
             ];
         }
 
+        // Menghitung progress keseluruhan kursus
+        $totalSubModules = 0;
+        $completedSubModules = 0;
+        foreach ($modules as $module) {
+            $totalSubModules += $module->subModules->count();
+            $completedSubModules += $moduleProgress[$module->id]['completed'];
+        }
+        $overallProgress = $totalSubModules > 0 
+            ? round(($completedSubModules / $totalSubModules) * 100, 2) 
+            : 0;
+
         // Mendapatkan statistik kursus
         $totalStudents = $course->userEnrollments()->count();
         $completedStudents = $course->userEnrollments()->whereNotNull('completed_at')->count();
-        $averageScore = $course->certificates()->avg('score') ?? 0;
+        // Note: Certificates table doesn't have a score column, so we skip average score calculation
+
+        // Format course data untuk view
+        $courseData = (object) [
+            'id' => $course->id,
+            'title' => $course->judul,
+            'description' => $course->deskripsi,
+            'cover_url' => asset('image/course-placeholder.png'),
+            'progress_percent' => $overallProgress,
+            'instructor_name' => $course->owner ? $course->owner->name : __('Instructor'),
+            'updated_at' => $course->updated_at,
+            'jp_value' => $course->jp_value,
+            'bidang_kompetensi' => $course->bidang_kompetensi,
+        ];
 
         return view('student.courses.show', compact(
             'course',
+            'courseData',
             'enrollment',
             'modules',
             'moduleProgress',
             'totalStudents',
             'completedStudents',
-            'averageScore'
+            'overallProgress'
         ));
     }
 
