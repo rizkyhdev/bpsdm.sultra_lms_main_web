@@ -25,45 +25,172 @@ class StudentQuizController extends Controller
     }
 
     /**
-     * Menampilkan daftar quiz untuk sub-modul.
+     * Menampilkan daftar quiz untuk sub-modul (legacy method).
      */
     public function index(Request $request): View
     {
         $user = Auth::user();
         $subModuleId = $request->get('sub_module_id');
         
-        if (!$subModuleId) {
-            abort(400, 'Sub-module ID diperlukan.');
+        // If sub_module_id is provided, show quizzes for that sub-module
+        if ($subModuleId) {
+            // Periksa apakah user sudah terdaftar dalam kursus
+            $subModule = \App\Models\SubModule::with('module.course')->find($subModuleId);
+            if (!$subModule) {
+                abort(404, 'Sub-module tidak ditemukan.');
+            }
+
+            $enrollment = $user->userEnrollments()
+                ->where('course_id', $subModule->module->course_id)
+                ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
+                ->first();
+
+            if (!$enrollment) {
+                abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses quiz.');
+            }
+
+            // Mendapatkan quiz untuk sub-modul
+            $quizzes = Quiz::where('sub_module_id', $subModuleId)
+                ->with(['subModule.module.course'])
+                ->get();
+
+            // Mendapatkan percobaan quiz user untuk sub-modul ini
+            $quizAttempts = $user->quizAttempts()
+                ->whereIn('quiz_id', $quizzes->pluck('id'))
+                ->with('quiz')
+                ->get()
+                ->keyBy('quiz_id');
+
+            return view('student.quizzes.index', compact('quizzes', 'quizAttempts', 'subModule'));
         }
 
-        // Periksa apakah user sudah terdaftar dalam kursus
-        $subModule = \App\Models\SubModule::with('module.course')->find($subModuleId);
-        if (!$subModule) {
-            abort(404, 'Sub-module tidak ditemukan.');
-        }
-
-        $enrollment = $user->userEnrollments()
-            ->where('course_id', $subModule->module->course_id)
+        // Otherwise, show all quizzes from enrolled courses
+        $user = Auth::user();
+        
+        // Get all enrolled courses
+        $enrollments = $user->userEnrollments()
             ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
-            ->first();
-
-        if (!$enrollment) {
-            abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses quiz.');
-        }
-
-        // Mendapatkan quiz untuk sub-modul
-        $quizzes = Quiz::where('sub_module_id', $subModuleId)
-            ->with(['subModule.module.course'])
+            ->with('course')
             ->get();
-
-        // Mendapatkan percobaan quiz user untuk sub-modul ini
-        $quizAttempts = $user->quizAttempts()
-            ->whereIn('quiz_id', $quizzes->pluck('id'))
+        
+        $courseIds = $enrollments->pluck('course_id')->toArray();
+        
+        if (empty($courseIds)) {
+            $quizzes = new \Illuminate\Pagination\LengthAwarePaginator(
+                collect([]),
+                0,
+                15,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+            $quizAttempts = collect();
+            $quizStats = [];
+            return view('student.quizzes.index-all', compact('quizzes', 'quizAttempts', 'quizStats', 'enrollments'));
+        }
+        
+        // Get search query
+        $searchQuery = $request->get('q');
+        $statusFilter = $request->get('status');
+        $courseFilter = $request->get('course_id');
+        
+        // Filter course IDs if course filter is applied
+        if ($courseFilter) {
+            $courseIds = array_intersect($courseIds, [$courseFilter]);
+        }
+        
+        // Get all quizzes from enrolled courses (at course, module, or sub-module level)
+        $quizzesQuery = Quiz::where(function($query) use ($courseIds) {
+                $query->whereIn('course_id', $courseIds)
+                    ->orWhereHas('module', function($q) use ($courseIds) {
+                        $q->whereIn('course_id', $courseIds);
+                    })
+                    ->orWhereHas('subModule.module', function($q) use ($courseIds) {
+                        $q->whereIn('course_id', $courseIds);
+                    });
+            })
+            ->with(['course', 'module.course', 'subModule.module.course']);
+        
+        // Apply search filter
+        if ($searchQuery) {
+            $quizzesQuery->where('judul', 'like', "%{$searchQuery}%");
+        }
+        
+        // Get all quizzes first (before pagination for status filtering)
+        $allQuizzes = $quizzesQuery->orderBy('created_at', 'desc')->get();
+        
+        // Get all quiz attempts for the user
+        $allQuizAttempts = $user->quizAttempts()
+            ->whereIn('quiz_id', $allQuizzes->pluck('id'))
             ->with('quiz')
             ->get()
-            ->keyBy('quiz_id');
-
-        return view('student.quizzes.index', compact('quizzes', 'quizAttempts', 'subModule'));
+            ->groupBy('quiz_id');
+        
+        // Get statistics and apply status filter
+        $quizStats = [];
+        $filteredQuizzes = collect();
+        
+        foreach ($allQuizzes as $quiz) {
+            $attempts = $allQuizAttempts->get($quiz->id, collect());
+            $completedAttempts = $attempts->whereNotNull('completed_at');
+            $passedAttempts = $completedAttempts->where('is_passed', true);
+            $bestScore = $completedAttempts->max('nilai') ?? null;
+            
+            $stats = [
+                'total_attempts' => $attempts->count(),
+                'completed_attempts' => $completedAttempts->count(),
+                'passed_attempts' => $passedAttempts->count(),
+                'best_score' => $bestScore,
+                'has_passed' => $passedAttempts->count() > 0,
+                'can_take' => $this->canTakeQuiz($user, $quiz),
+            ];
+            
+            // Apply status filter
+            if ($statusFilter) {
+                $shouldInclude = false;
+                switch ($statusFilter) {
+                    case 'not_started':
+                        $shouldInclude = $stats['total_attempts'] == 0;
+                        break;
+                    case 'in_progress':
+                        $shouldInclude = $attempts->whereNull('completed_at')->count() > 0;
+                        break;
+                    case 'passed':
+                        $shouldInclude = $stats['has_passed'];
+                        break;
+                    case 'failed':
+                        $shouldInclude = $stats['completed_attempts'] > 0 && !$stats['has_passed'];
+                        break;
+                }
+                
+                if (!$shouldInclude) {
+                    continue;
+                }
+            }
+            
+            $quizStats[$quiz->id] = $stats;
+            $filteredQuizzes->push($quiz);
+        }
+        
+        // Paginate the filtered results
+        $currentPage = $request->get('page', 1);
+        $perPage = 15;
+        $offset = ($currentPage - 1) * $perPage;
+        $items = $filteredQuizzes->slice($offset, $perPage)->values();
+        
+        $quizzes = new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $filteredQuizzes->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+        
+        // Get quiz attempts for paginated quizzes only
+        $quizAttempts = $allQuizAttempts->filter(function($attempts, $quizId) use ($quizzes) {
+            return $quizzes->pluck('id')->contains($quizId);
+        });
+        
+        return view('student.quizzes.index-all', compact('quizzes', 'quizAttempts', 'quizStats', 'enrollments'));
     }
 
     /**

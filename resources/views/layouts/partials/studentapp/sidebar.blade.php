@@ -26,8 +26,8 @@
               <i class="fas fa-book me-2"></i>Pelatihan Saya
           </a>
       </li>
-      <li class="nav-item {{ Route::is('student.courses.*') ? 'active' : '' }}">
-          <a class="nav-link text-black" href="{{ route('student.courses.index') }}">
+      <li class="nav-item {{ Route::is('student.quizzes.*') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.quizzes.index') }}">
               <i class="fas fa-question-circle me-2"></i>Kuis Saya
           </a>
       </li>
