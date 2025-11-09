@@ -3,6 +3,7 @@
 
 namespace Database\Seeders;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 
 class RolesAndUsersSeeder extends Seeder
@@ -18,7 +19,7 @@ class RolesAndUsersSeeder extends Seeder
             'nip' => '197801012005011001',
             'name' => 'Administrator BPSDM',
             'email' => 'admin@bpsdmsultra.go.id',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
             'jabatan' => 'Administrator',
             'unit_kerja' => 'BPSDM Sultra',
             'role' => 'admin',
