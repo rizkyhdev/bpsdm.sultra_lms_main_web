@@ -136,7 +136,7 @@
                                     <div class="mt-1">
                                         @if($selectedOption)
                                             <span class="badge {{ $userAnswer->is_correct ? 'bg-success' : 'bg-danger' }}">
-                                                {{ $selectedOption->teks }}
+                                                {{ $selectedOption->teks_jawaban }}
                                             </span>
                                         @else
                                             <span class="badge bg-secondary">Tidak dijawab</span>
@@ -149,7 +149,7 @@
                                     <strong class="text-muted">Jawaban Benar:</strong>
                                     <div class="mt-1">
                                         <span class="badge bg-success">
-                                            {{ $correctOption->teks }}
+                                            {{ $correctOption->teks_jawaban }}
                                         </span>
                                     </div>
                                 </div>

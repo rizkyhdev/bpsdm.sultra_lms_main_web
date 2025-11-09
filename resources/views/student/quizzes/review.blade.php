@@ -136,7 +136,7 @@
                                                            {{ $selectedOption && $selectedOption->id === $option->id ? 'checked' : '' }} 
                                                            disabled>
                                                     <label class="form-check-label w-100">
-                                                        {{ $option->teks }}
+                                                        {{ $option->teks_jawaban }}
                                                         @if($option->is_correct)
                                                             <span class="badge bg-success ms-2">
                                                                 <i class="bi bi-check-circle me-1"></i>Jawaban Benar
@@ -157,7 +157,7 @@
                                 @if($selectedOption && !$userAnswer->is_correct)
                                 <div class="alert alert-danger mb-0">
                                     <i class="bi bi-info-circle me-2"></i>
-                                    <strong>Jawaban Anda:</strong> {{ $selectedOption->teks }}
+                                    <strong>Jawaban Anda:</strong> {{ $selectedOption->teks_jawaban }}
                                 </div>
                                 @elseif(!$selectedOption)
                                 <div class="alert alert-warning mb-0">

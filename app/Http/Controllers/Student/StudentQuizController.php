@@ -518,7 +518,7 @@ class StudentQuizController extends Controller
                 'answer_options' => $question->answerOptions->map(function ($option) {
                     return [
                         'id' => $option->id,
-                        'teks' => $option->teks
+                        'teks' => $option->teks_jawaban
                     ];
                 })
             ];
