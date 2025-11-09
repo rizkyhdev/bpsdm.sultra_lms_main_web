@@ -23,7 +23,7 @@
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.courses') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('instructor.courses.index') }}">
-          <i class="fas fa-book-open me-2"></i>Courses
+          <i class="fas fa-book-open me-2"></i>Pelatihan
         </a>
       </li>
       <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.modules') ? 'active' : '' }}">
@@ -44,27 +44,27 @@
     
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.enrollments') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('instructor.enrollments.index') }}">
-          <i class="fas fa-user-check me-2"></i>Enrollments
+          <i class="fas fa-user-check me-2"></i>Peserta Pelatihan
         </a>
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.progress') ? 'active' : '' }}">
         <a class="nav-link text-black" href="#" onclick="event.preventDefault();">
-          <i class="fas fa-tasks me-2"></i>Certificates
+          <i class="fas fa-tasks me-2"></i>Sertifikat
         </a>
       </li>
      
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.reports') ? 'active' : '' }}">
         <a class="nav-link text-black" href="#" onclick="event.preventDefault();">
-          <i class="fas fa-chart-bar me-2"></i>Reports
+          <i class="fas fa-chart-bar me-2"></i>Laporan
         </a>
       </li>
     </ul>
-    <h6 class="fw-bold text-uppercase text-white">Account</h6>
+    <h6 class="fw-bold text-uppercase text-white">Akun</h6>
     <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link text-black" href="#"
            onclick="event.preventDefault(); document.getElementById('logout-form-instructor').submit();">
-          <i class="fas fa-sign-out-alt me-2"></i>Logout
+          <i class="fas fa-sign-out-alt me-2"></i>Keluar
         </a>
         <form id="logout-form-instructor" action="{{ route('logout') }}" method="POST" class="d-none">
           @csrf

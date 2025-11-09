@@ -107,6 +107,34 @@ class StudentSubModuleController extends Controller
 
         // Periksa apakah sub-modul dapat ditandai sebagai selesai
         $canMarkComplete = $totalContents > 0 && $completedContents >= $totalContents;
+        
+        // Check if sub-module is completed (all contents are completed)
+        $isSubModuleCompleted = $totalContents > 0 && $completedContents >= $totalContents;
+        
+        // If sub-module is completed, check if module is completed
+        if ($isSubModuleCompleted && $progress && !$progress->is_completed) {
+            // Auto-mark sub-module as complete if all contents are done
+            $progress->update([
+                'is_completed' => true,
+                'progress_percentage' => 100,
+                'completed_at' => now()
+            ]);
+            $progress->refresh();
+        }
+        
+        // Check if module is completed (all sub-modules are completed)
+        if ($isSubModuleCompleted) {
+            $this->checkModuleCompletion($user, $subModule->module_id);
+        }
+        
+        // Get next module if there's no next sub-module
+        $nextModule = null;
+        if (!$nextSubModule) {
+            $nextModule = \App\Models\Module::where('course_id', $module->course_id)
+                ->where('urutan', '>', $module->urutan)
+                ->orderBy('urutan')
+                ->first();
+        }
 
         return view('student.sub-modules.show', compact(
             'subModule',
@@ -121,7 +149,9 @@ class StudentSubModuleController extends Controller
             'completionPercentage',
             'nextSubModule',
             'previousSubModule',
-            'canMarkComplete'
+            'canMarkComplete',
+            'isSubModuleCompleted',
+            'nextModule'
         ));
     }
 
@@ -451,9 +481,10 @@ class StudentSubModuleController extends Controller
      */
     private function checkCourseCompletion($user, $courseId): void
     {
+        // Check for enrollment with any valid status
         $enrollment = $user->userEnrollments()
             ->where('course_id', $courseId)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -493,16 +524,19 @@ class StudentSubModuleController extends Controller
      */
     private function createJpRecord($user, $course): void
     {
-        // Check if JP record already exists for this course
+        // Check if JP record already exists for this course and year
+        $currentYear = now()->year;
         $existingJpRecord = $user->jpRecords()
             ->where('course_id', $course->id)
+            ->where('tahun', $currentYear)
             ->first();
 
         if (!$existingJpRecord) {
             $user->jpRecords()->create([
                 'course_id' => $course->id,
-                'jp_value' => $course->jp_value,
-                'earned_at' => now()
+                'jp_earned' => $course->jp_value ?? 0,
+                'tahun' => $currentYear,
+                'recorded_at' => now()
             ]);
         }
     }

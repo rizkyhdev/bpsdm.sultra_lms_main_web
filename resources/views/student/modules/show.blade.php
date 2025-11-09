@@ -57,14 +57,34 @@
                                 </button>
                             @endif
                             @if($nextModule)
-                                <a href="{{ route('student.modules.show', $nextModule->id) }}" 
-                                   class="btn btn-primary btn-sm">
-                                    Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
-                                </a>
+                                @php
+                                    $canProceedToNext = $isModuleCompleted ?? false;
+                                @endphp
+                                @if($canProceedToNext)
+                                    <a href="{{ route('student.modules.show', $nextModule->id) }}" 
+                                       class="btn btn-primary btn-sm">
+                                        Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                    </a>
+                                @else
+                                    <button class="btn btn-primary btn-sm" disabled>
+                                        Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                    </button>
+                                    <small class="text-muted d-block mt-1">
+                                        <i class="bi bi-info-circle me-1"></i>Selesaikan semua sub-modul untuk melanjutkan
+                                    </small>
+                                @endif
                             @else
-                                <button class="btn btn-primary btn-sm" disabled>
-                                    Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
-                                </button>
+                                {{-- No next module - show button to go back to course --}}
+                                @if($module->course)
+                                    <a href="{{ route('student.courses.show', $module->course_id) }}" 
+                                       class="btn btn-success btn-sm">
+                                        <i class="bi bi-check-circle me-1"></i>Kembali ke Pelatihan
+                                    </a>
+                                @else
+                                    <button class="btn btn-primary btn-sm" disabled>
+                                        Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                    </button>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -245,14 +265,34 @@
                         @endif
                         
                         @if($nextModule)
-                            <a href="{{ route('student.modules.show', $nextModule->id) }}" 
-                               class="btn btn-primary btn-sm">
-                                Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
-                            </a>
+                            @php
+                                $canProceedToNext = $isModuleCompleted ?? false;
+                            @endphp
+                            @if($canProceedToNext)
+                                <a href="{{ route('student.modules.show', $nextModule->id) }}" 
+                                   class="btn btn-primary btn-sm">
+                                    Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            @else
+                                <button class="btn btn-primary btn-sm" disabled>
+                                    Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                </button>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="bi bi-info-circle me-1"></i>Selesaikan semua sub-modul untuk melanjutkan
+                                </small>
+                            @endif
                         @else
-                            <button class="btn btn-primary btn-sm" disabled>
-                                Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
-                            </button>
+                            {{-- No next module - show button to go back to course --}}
+                            @if($module->course)
+                                <a href="{{ route('student.courses.show', $module->course_id) }}" 
+                                   class="btn btn-success btn-sm">
+                                    <i class="bi bi-check-circle me-1"></i>Kembali ke Pelatihan
+                                </a>
+                            @else
+                                <button class="btn btn-primary btn-sm" disabled>
+                                    Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                </button>
+                            @endif
                         @endif
                         
                         @if($module->course)

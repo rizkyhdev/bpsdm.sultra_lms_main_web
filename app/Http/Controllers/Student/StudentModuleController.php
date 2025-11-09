@@ -96,6 +96,14 @@ class StudentModuleController extends Controller
             abort(403, 'Anda harus menyelesaikan modul sebelumnya terlebih dahulu.');
         }
 
+        // Check if current module is completed (all sub-modules are completed)
+        $isModuleCompleted = $totalSubModules > 0 && $completedSubModules >= $totalSubModules;
+        
+        // If module is completed, check if course is completed
+        if ($isModuleCompleted) {
+            $this->checkCourseCompletion($user, $module->course_id);
+        }
+
         return view('student.modules.show', compact(
             'module',
             'enrollment',
@@ -105,7 +113,8 @@ class StudentModuleController extends Controller
             'completionPercentage',
             'nextModule',
             'previousModule',
-            'isAccessible'
+            'isAccessible',
+            'isModuleCompleted'
         ));
     }
 
@@ -346,6 +355,7 @@ class StudentModuleController extends Controller
      */
     private function checkCourseCompletion($user, $courseId): void
     {
+        // Check for enrollment with any valid status (not just active)
         $enrollment = $user->userEnrollments()
             ->where('course_id', $courseId)
             ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
@@ -388,16 +398,19 @@ class StudentModuleController extends Controller
      */
     private function createJpRecord($user, $course): void
     {
-        // Check if JP record already exists for this course
+        // Check if JP record already exists for this course and year
+        $currentYear = now()->year;
         $existingJpRecord = $user->jpRecords()
             ->where('course_id', $course->id)
+            ->where('tahun', $currentYear)
             ->first();
 
         if (!$existingJpRecord) {
             $user->jpRecords()->create([
                 'course_id' => $course->id,
-                'jp_value' => $course->jp_value,
-                'earned_at' => now()
+                'jp_earned' => $course->jp_value ?? 0,
+                'tahun' => $currentYear,
+                'recorded_at' => now()
             ]);
         }
     }

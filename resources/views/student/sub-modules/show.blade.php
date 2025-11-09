@@ -67,9 +67,17 @@
                                     Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
                                 </a>
                             @else
-                                <button class="btn btn-primary btn-sm" disabled>
-                                    Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
-                                </button>
+                                {{-- No next sub-module - check if we can go to next module --}}
+                                @if(isset($nextModule) && $nextModule)
+                                    <a href="{{ route('student.modules.show', $nextModule->id) }}" 
+                                       class="btn btn-success btn-sm">
+                                        <i class="bi bi-check-circle me-1"></i>Modul Selanjutnya
+                                    </a>
+                                @else
+                                    <button class="btn btn-primary btn-sm" disabled>
+                                        Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                    </button>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -282,9 +290,17 @@
                                 Sub-Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
                             </a>
                         @else
-                            <button class="btn btn-primary btn-sm" disabled>
-                                Sub-Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
-                            </button>
+                            {{-- No next sub-module - check if we can go to next module --}}
+                            @if(isset($nextModule) && $nextModule)
+                                <a href="{{ route('student.modules.show', $nextModule->id) }}" 
+                                   class="btn btn-success btn-sm">
+                                    <i class="bi bi-check-circle me-1"></i>Modul Selanjutnya
+                                </a>
+                            @else
+                                <button class="btn btn-primary btn-sm" disabled>
+                                    Sub-Modul Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                                </button>
+                            @endif
                         @endif
                         
                         @if($module)
