@@ -4,9 +4,12 @@
 # Exit the script if any command fails
 set -e
 
+# chmod +x ./railway/init-app.sh && sh ./railway/init-app.sh
+
 # RUN BUILD
 # npm install
 # composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+# composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist && npm install && npm run build
 # npm run build
 
 # Run migrations
