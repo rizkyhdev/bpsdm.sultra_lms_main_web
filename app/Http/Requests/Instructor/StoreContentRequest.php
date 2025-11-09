@@ -20,7 +20,7 @@ class StoreContentRequest extends FormRequest
             'html_content' => 'nullable|string|required_if:tipe,html,text',
             'external_url' => 'nullable|url|required_if:tipe,link',
             'youtube_url' => 'nullable|url|required_if:tipe,youtube',
-            'required_duration' => 'nullable|integer|min:1|required_if:tipe,youtube',
+            'required_duration' => 'nullable|integer|min:1',
             'urutan' => 'required|integer|min:1',
         ];
     }
@@ -33,7 +33,6 @@ class StoreContentRequest extends FormRequest
             'external_url.url' => 'External URL must be a valid URL.',
             'youtube_url.required_if' => 'YouTube URL is required for YouTube content type.',
             'youtube_url.url' => 'YouTube URL must be a valid URL.',
-            'required_duration.required_if' => 'Required duration is required for YouTube content type.',
             'required_duration.integer' => 'Required duration must be a number.',
             'required_duration.min' => 'Required duration must be at least 1 second.',
         ];

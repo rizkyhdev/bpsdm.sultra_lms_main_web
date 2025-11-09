@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Instructor\UpdateEnrollmentRequest;
 use App\Models\Course;
 use App\Models\UserEnrollment;
+use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -81,7 +82,43 @@ class InstructorEnrollmentController extends Controller
         $enrollment = UserEnrollment::with(['user', 'course.modules.subModules'])
             ->findOrFail($id);
         $this->authorize('view', $enrollment);
-        return view('instructor.enrollments.show', compact('enrollment'));
+        
+        // Calculate progress per module
+        $progress = [];
+        $modules = $enrollment->course->modules;
+        
+        // Get all completed sub-module IDs for this user in one query
+        $subModuleIds = $modules->flatMap(function ($module) {
+            return $module->subModules->pluck('id');
+        })->toArray();
+        
+        $completedSubModuleIds = UserProgress::where('user_id', $enrollment->user_id)
+            ->whereIn('sub_module_id', $subModuleIds)
+            ->where('is_completed', true)
+            ->pluck('sub_module_id')
+            ->toArray();
+        
+        foreach ($modules as $moduleItem) {
+            $totalSubModules = $moduleItem->subModules->count();
+            $completedSubModules = 0;
+            
+            foreach ($moduleItem->subModules as $subModule) {
+                if (in_array($subModule->id, $completedSubModuleIds)) {
+                    $completedSubModules++;
+                }
+            }
+            
+            $completion = $totalSubModules > 0 
+                ? round(($completedSubModules / $totalSubModules) * 100, 2) 
+                : 0;
+            
+            $progress[] = [
+                'judul' => $moduleItem->judul,
+                'completion' => $completion
+            ];
+        }
+        
+        return view('instructor.enrollments.show', compact('enrollment', 'progress'));
     }
 
     /**

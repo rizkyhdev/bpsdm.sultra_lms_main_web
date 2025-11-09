@@ -49,7 +49,7 @@
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.progress') ? 'active' : '' }}">
         <a class="nav-link text-black" href="#" onclick="event.preventDefault();">
-          <i class="fas fa-tasks me-2"></i>Progress
+          <i class="fas fa-tasks me-2"></i>Certificates
         </a>
       </li>
      

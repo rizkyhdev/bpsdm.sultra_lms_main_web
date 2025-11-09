@@ -83,7 +83,13 @@ class StudentContentController extends Controller
         $subModuleProgress = $content->subModule->userProgress()->where('user_id', $user->id)->first();
 
         // Periksa apakah konten dapat ditandai sebagai selesai
+        // If required_duration is set, check if time spent meets requirement
+        // Otherwise, allow manual completion
         $canMarkComplete = $progress->progress_percentage >= 100;
+        if ($content->required_duration) {
+            $timeSpent = $progress->time_spent ?? 0;
+            $canMarkComplete = $timeSpent >= $content->required_duration;
+        }
 
         return view('student.contents.show', compact(
             'content',

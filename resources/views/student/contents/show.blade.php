@@ -182,8 +182,8 @@
                 @if($nextContent)
                     @php
                         $canProceed = $progress->is_completed;
-                        if ($content->tipe === 'youtube' && $content->required_duration) {
-                            // Check if required duration has elapsed
+                        if ($content->required_duration) {
+                            // Check if required duration has elapsed for any content type
                             $timeSpent = $progress->time_spent ?? 0;
                             $canProceed = $timeSpent >= $content->required_duration;
                         }
@@ -194,14 +194,24 @@
                        onclick="return checkCanProceed();">
                         Konten Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
                     </a>
-                    @if($content->tipe === 'youtube' && $content->required_duration && !$canProceed)
+                    @if($content->required_duration && !$canProceed)
                         <div class="alert alert-warning mt-2 mb-0">
-                            <small><i class="bi bi-clock me-1"></i>Anda harus menonton video selama {{ gmdate('H:i:s', $content->required_duration) }} sebelum dapat melanjutkan.</small>
+                            <small><i class="bi bi-clock me-1"></i>Anda harus menghabiskan waktu minimal {{ gmdate('H:i:s', $content->required_duration) }} sebelum dapat melanjutkan.</small>
                         </div>
                     @endif
                 @else
                     <button class="btn btn-primary" disabled>
                         Konten Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                    </button>
+                @endif
+                
+                {{-- Mark as Complete Button (shown if duration is not set) --}}
+                @if(!$content->required_duration && !$progress->is_completed)
+                    <button type="button" 
+                            class="btn btn-success mt-2" 
+                            id="markCompleteBtn"
+                            onclick="markContentComplete()">
+                        <i class="bi bi-check-circle me-1"></i>Tandai sebagai Selesai
                     </button>
                 @endif
             </div>
@@ -244,6 +254,20 @@
                         <dt class="col-sm-5 text-muted small">Selesai</dt>
                         <dd class="col-sm-7 small">{{ $progress->completed_at->diffForHumans() }}</dd>
                         @endif
+                        
+                        @if($content->required_duration)
+                        <dt class="col-sm-5 text-muted small">Durasi Diperlukan</dt>
+                        <dd class="col-sm-7 small">{{ gmdate('H:i:s', $content->required_duration) }}</dd>
+                        
+                        <dt class="col-sm-5 text-muted small">Waktu Dihabiskan</dt>
+                        <dd class="col-sm-7 small">{{ gmdate('H:i:s', $progress->time_spent ?? 0) }}</dd>
+                        @else
+                        <dt class="col-sm-5 text-muted small">Durasi</dt>
+                        <dd class="col-sm-7 small">
+                            <span class="badge bg-info">Tidak ditentukan</span>
+                            <br><small class="text-muted">Anda dapat langsung menandai sebagai selesai</small>
+                        </dd>
+                        @endif
                     </dl>
                 </div>
             </div>
@@ -268,6 +292,192 @@
     </div>
 </div>
 
+<script>
+// Global functions for all content types
+function markContentComplete() {
+    if (confirm('Apakah Anda yakin ingin menandai konten ini sebagai selesai?')) {
+        fetch('{{ route("student.contents.mark-complete", $content->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI
+                const progressBar = document.querySelector('.progress-bar');
+                if (progressBar) {
+                    progressBar.classList.remove('bg-warning');
+                    progressBar.classList.add('bg-success');
+                    progressBar.style.width = '100%';
+                    progressBar.setAttribute('aria-valuenow', '100');
+                }
+                
+                const progressText = document.querySelector('.small.text-muted');
+                if (progressText) {
+                    progressText.textContent = '100.0%';
+                }
+                
+                const statusBadge = document.querySelector('.badge.bg-warning');
+                if (statusBadge) {
+                    statusBadge.classList.remove('bg-warning');
+                    statusBadge.classList.add('bg-success');
+                    statusBadge.innerHTML = '<i class="bi bi-check-circle me-1"></i>Selesai';
+                }
+                
+                // Hide mark complete button
+                const markCompleteBtn = document.getElementById('markCompleteBtn');
+                if (markCompleteBtn) {
+                    markCompleteBtn.style.display = 'none';
+                }
+                
+                // Enable next button
+                const nextButton = document.getElementById('nextContentBtn');
+                if (nextButton) {
+                    nextButton.classList.remove('disabled');
+                }
+                
+                // Reload page after a short delay to update all UI elements
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            } else {
+                alert('Terjadi kesalahan: ' + (data.message || 'Gagal menandai konten sebagai selesai'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menandai konten sebagai selesai.');
+        });
+    }
+}
+
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hours > 0) {
+        return String(hours).padStart(2, '0') + ':' + 
+               String(minutes).padStart(2, '0') + ':' + 
+               String(secs).padStart(2, '0');
+    }
+    return String(minutes).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+}
+
+@if($content->tipe !== 'youtube' && $content->tipe !== 'video')
+// Time tracking for non-video content types
+let timeSpentGlobal = {{ $progress->time_spent ?? 0 }};
+let startTime = null;
+let timeTrackingInterval = null;
+let requiredDuration = {{ $content->required_duration ?? 0 }};
+
+function startTimeTracking() {
+    if (timeTrackingInterval) {
+        clearInterval(timeTrackingInterval);
+    }
+    
+    if (!startTime) {
+        startTime = Date.now();
+    }
+    
+    // Track time every 30 seconds
+    timeTrackingInterval = setInterval(function() {
+        if (startTime) {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timeSpentGlobal += elapsed;
+            startTime = Date.now();
+            
+            // Update time spent on server
+            updateTimeSpentForAllContent();
+        }
+    }, 30000);
+}
+
+function updateTimeSpentForAllContent() {
+    fetch('{{ route("student.contents.track-progress", $content->id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            progress_percentage: {{ $progress->progress_percentage ?? 0 }},
+            time_spent: timeSpentGlobal
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            timeSpentGlobal = data.time_spent || timeSpentGlobal;
+            
+            // Check required duration
+            if (requiredDuration > 0) {
+                checkRequiredDuration();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error updating time spent:', error);
+    });
+}
+
+function checkRequiredDuration() {
+    if (requiredDuration > 0) {
+        const remainingTime = requiredDuration - timeSpentGlobal;
+        const nextButton = document.getElementById('nextContentBtn');
+        
+        if (nextButton) {
+            if (timeSpentGlobal >= requiredDuration) {
+                nextButton.classList.remove('disabled');
+                const warningAlert = document.querySelector('.alert-warning');
+                if (warningAlert) {
+                    warningAlert.style.display = 'none';
+                }
+            } else {
+                nextButton.classList.add('disabled');
+                const warningAlert = document.querySelector('.alert-warning');
+                if (warningAlert) {
+                    const remainingFormatted = formatTime(remainingTime);
+                    warningAlert.querySelector('small').innerHTML = 
+                        '<i class="bi bi-clock me-1"></i>Anda harus menghabiskan waktu minimal ' + 
+                        formatTime(requiredDuration) + ' sebelum dapat melanjutkan. Waktu tersisa: ' + remainingFormatted;
+                }
+            }
+        }
+    }
+}
+
+// Stop time tracking when page is hidden
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        if (timeTrackingInterval) {
+            clearInterval(timeTrackingInterval);
+            timeTrackingInterval = null;
+        }
+        if (startTime) {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timeSpentGlobal += elapsed;
+            startTime = null;
+            updateTimeSpentForAllContent();
+        }
+    } else {
+        startTimeTracking();
+    }
+});
+
+// Start tracking when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    startTimeTracking();
+    if (requiredDuration > 0) {
+        checkRequiredDuration();
+    }
+});
+</script>
+@endif
+
 @if($content->tipe === 'youtube' && $content->youtube_embed_url)
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
@@ -284,6 +494,8 @@ let requiredDuration = {{ $content->required_duration ?? 0 }};
 let startTime = null;
 let isPlaying = false;
 let playStartTime = null;
+let timeSpentGlobal = {{ $progress->time_spent ?? 0 }};
+let timeTrackingInterval = null;
 
 function onYouTubeIframeAPIReady() {
     if (!videoId) {
@@ -515,7 +727,7 @@ function checkRequiredDuration() {
                 if (warningAlert) {
                     const remainingFormatted = formatTime(remainingTime);
                     warningAlert.querySelector('small').innerHTML = 
-                        '<i class="bi bi-clock me-1"></i>Anda harus menonton video selama ' + 
+                        '<i class="bi bi-clock me-1"></i>Anda harus menghabiskan waktu minimal ' + 
                         formatTime(requiredDuration) + ' sebelum dapat melanjutkan. Waktu tersisa: ' + remainingFormatted;
                 }
             }
@@ -523,18 +735,79 @@ function checkRequiredDuration() {
     }
 }
 
-function formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    
-    if (hours > 0) {
-        return String(hours).padStart(2, '0') + ':' + 
-               String(minutes).padStart(2, '0') + ':' + 
-               String(secs).padStart(2, '0');
+// Start time tracking for all content types when page loads
+function startTimeTracking() {
+    if (timeTrackingInterval) {
+        clearInterval(timeTrackingInterval);
     }
-    return String(minutes).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    
+    if (!startTime) {
+        startTime = Date.now();
+    }
+    
+    // Track time every 30 seconds for all content types
+    timeTrackingInterval = setInterval(function() {
+        if (startTime) {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timeSpentGlobal += elapsed;
+            startTime = Date.now();
+            
+            // Update time spent on server
+            updateTimeSpentForAllContent();
+        }
+    }, 30000); // Track every 30 seconds
 }
+
+function updateTimeSpentForAllContent() {
+    fetch('{{ route("student.contents.track-progress", $content->id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            progress_percentage: {{ $progress->progress_percentage ?? 0 }},
+            time_spent: timeSpentGlobal
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            timeSpentGlobal = data.time_spent || timeSpentGlobal;
+            
+            // Check required duration
+            if (requiredDuration > 0) {
+                checkRequiredDuration();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error updating time spent:', error);
+    });
+}
+
+// Stop time tracking when page is hidden
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        if (timeTrackingInterval) {
+            clearInterval(timeTrackingInterval);
+            timeTrackingInterval = null;
+        }
+        if (startTime) {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timeSpentGlobal += elapsed;
+            startTime = null;
+            updateTimeSpentForAllContent();
+        }
+    } else {
+        startTimeTracking();
+    }
+});
+
+// Start tracking when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    startTimeTracking();
+});
 
 function enableNextButton() {
     const nextButton = document.getElementById('nextContentBtn');
@@ -544,13 +817,17 @@ function enableNextButton() {
 }
 
 function checkCanProceed() {
+    const requiredDuration = {{ $content->required_duration ?? 0 }};
+    const timeSpent = {{ $progress->time_spent ?? 0 }};
+    const isCompleted = {{ $progress->is_completed ? 'true' : 'false' }};
+    
     if (requiredDuration > 0 && timeSpent < requiredDuration) {
         const remainingTime = requiredDuration - timeSpent;
-        alert('Anda harus menonton video selama ' + formatTime(requiredDuration) + 
+        alert('Anda harus menghabiskan waktu minimal ' + formatTime(requiredDuration) + 
               ' sebelum dapat melanjutkan. Waktu tersisa: ' + formatTime(remainingTime));
         return false;
     }
-    if (!isCompleted) {
+    if (!isCompleted && requiredDuration > 0) {
         alert('Anda harus menyelesaikan konten ini terlebih dahulu!');
         return false;
     }

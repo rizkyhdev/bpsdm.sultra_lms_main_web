@@ -119,11 +119,11 @@
             @error('youtube_url')<small class="text-danger d-block">{{ $message }}</small>@enderror
           </div>
 
-          <!-- Required Duration Field (for youtube type) -->
-          <div class="mb-3" id="requiredDurationField" style="display: none;">
-            <label class="form-label">Durasi Video yang Diperlukan (detik) <span class="text-danger">*</span></label>
+          <!-- Required Duration Field (for all content types) -->
+          <div class="mb-3" id="requiredDurationField">
+            <label class="form-label">Durasi yang Diperlukan (detik) <span class="text-muted">(Opsional)</span></label>
             <input type="number" name="required_duration" value="{{ old('required_duration') }}" class="form-control" min="1" placeholder="Contoh: 300 (untuk 5 menit)">
-            <small class="text-muted">Masukkan durasi video dalam detik. Siswa harus menonton video selama durasi ini sebelum dapat melanjutkan ke konten berikutnya.</small>
+            <small class="text-muted">Masukkan durasi dalam detik. Jika diisi, siswa harus menghabiskan waktu minimal ini sebelum dapat melanjutkan. Jika dikosongkan, siswa dapat langsung menandai konten sebagai selesai.</small>
             @error('required_duration')<small class="text-danger d-block">{{ $message }}</small>@enderror
           </div>
 
@@ -219,8 +219,7 @@ function validateStep2() {
     }
   } else if (tipe === 'youtube') {
     const youtubeUrl = document.querySelector('input[name="youtube_url"]').value;
-    const requiredDuration = document.querySelector('input[name="required_duration"]').value;
-    if (!youtubeUrl || !requiredDuration) {
+    if (!youtubeUrl) {
       isValid = false;
     }
   }
@@ -249,17 +248,15 @@ function toggleFields() {
   fileUploadField.style.display = 'none';
   externalUrlField.style.display = 'none';
   youtubeUrlField.style.display = 'none';
-  requiredDurationField.style.display = 'none';
+  // Note: requiredDurationField is always visible now
   
   // Remove required attributes
   if (htmlContent) htmlContent.removeAttribute('required');
   if (fileInput) fileInput.removeAttribute('required');
   const externalUrlInput = document.querySelector('[name="external_url"]');
   const youtubeUrlInput = document.querySelector('[name="youtube_url"]');
-  const requiredDurationInput = document.querySelector('[name="required_duration"]');
   if (externalUrlInput) externalUrlInput.removeAttribute('required');
-  if (youtubeUrlInput) youtubeUrlInput.removeAttribute('required');
-  if (requiredDurationInput) requiredDurationInput.removeAttribute('required');
+  if (youtubeUrlInput) youtubeUrlInput.setAttribute('required', 'required');
   
   // Show and configure fields based on type
   if (selectedType === 'text' || selectedType === 'html') {
@@ -294,9 +291,7 @@ function toggleFields() {
     if (externalUrlInput) externalUrlInput.setAttribute('required', 'required');
   } else if (selectedType === 'youtube') {
     youtubeUrlField.style.display = 'block';
-    requiredDurationField.style.display = 'block';
     if (youtubeUrlInput) youtubeUrlInput.setAttribute('required', 'required');
-    if (requiredDurationInput) requiredDurationInput.setAttribute('required', 'required');
   }
 }
 
@@ -309,21 +304,25 @@ function updateReview() {
   const detailsDiv = document.getElementById('reviewDetails');
   detailsDiv.innerHTML = '';
   
+  const requiredDuration = document.querySelector('input[name="required_duration"]').value;
+  let durationText = requiredDuration ? `${requiredDuration} seconds` : 'Not set (students can mark as complete)';
+  
   if (tipe === 'text' || tipe === 'html') {
     const htmlContent = document.querySelector('textarea[name="html_content"]').value;
-    detailsDiv.innerHTML = `<p><strong>Content:</strong> ${htmlContent.substring(0, 100)}${htmlContent.length > 100 ? '...' : ''}</p>`;
+    detailsDiv.innerHTML = `<p><strong>Content:</strong> ${htmlContent.substring(0, 100)}${htmlContent.length > 100 ? '...' : ''}</p><p><strong>Required Duration:</strong> ${durationText}</p>`;
   } else if (tipe === 'video' || tipe === 'audio' || tipe === 'pdf' || tipe === 'image') {
     const fileInput = document.querySelector('input[name="file_path"]');
+    let fileText = '';
     if (fileInput.files && fileInput.files.length > 0) {
-      detailsDiv.innerHTML = `<p><strong>File:</strong> ${fileInput.files[0].name}</p>`;
+      fileText = `<p><strong>File:</strong> ${fileInput.files[0].name}</p>`;
     }
+    detailsDiv.innerHTML = fileText + `<p><strong>Required Duration:</strong> ${durationText}</p>`;
   } else if (tipe === 'link') {
     const externalUrl = document.querySelector('input[name="external_url"]').value;
-    detailsDiv.innerHTML = `<p><strong>External URL:</strong> ${externalUrl}</p>`;
+    detailsDiv.innerHTML = `<p><strong>External URL:</strong> ${externalUrl}</p><p><strong>Required Duration:</strong> ${durationText}</p>`;
   } else if (tipe === 'youtube') {
     const youtubeUrl = document.querySelector('input[name="youtube_url"]').value;
-    const requiredDuration = document.querySelector('input[name="required_duration"]').value;
-    detailsDiv.innerHTML = `<p><strong>YouTube URL:</strong> ${youtubeUrl}</p><p><strong>Required Duration:</strong> ${requiredDuration} seconds</p>`;
+    detailsDiv.innerHTML = `<p><strong>YouTube URL:</strong> ${youtubeUrl}</p><p><strong>Required Duration:</strong> ${durationText}</p>`;
   }
 }
 
