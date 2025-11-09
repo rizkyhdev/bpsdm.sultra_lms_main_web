@@ -203,6 +203,51 @@
           <i class="bi bi-plus-circle"></i> Tambah Content
         </button>
       </div>
+      
+      <div class="mb-3">
+        <button type="button" class="btn btn-sm btn-info" onclick="toggleQuizzes(this)">
+          <i class="bi bi-chevron-down"></i> Quizzes
+        </button>
+      </div>
+      
+      <div class="quizzes-container" style="display: none;">
+        <div class="quizzes-list"></div>
+        <button type="button" class="btn btn-sm btn-success" onclick="addQuiz(this)">
+          <i class="bi bi-plus-circle"></i> Tambah Quiz
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Quiz Template (Hidden) -->
+<template id="quizTemplate">
+  <div class="card mb-3 quiz-item" data-quiz-index="">
+    <div class="card-header bg-info d-flex justify-content-between align-items-center">
+      <span>Quiz <span class="quiz-number"></span></span>
+      <button type="button" class="btn btn-sm btn-danger" onclick="removeQuiz(this)">
+        <i class="bi bi-trash"></i> Hapus
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label">Judul Quiz <span class="text-danger">*</span></label>
+        <input type="text" name="modules[][sub_modules][][quizzes][][judul]" class="form-control quiz-judul" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Deskripsi</label>
+        <textarea name="modules[][sub_modules][][quizzes][][deskripsi]" class="form-control quiz-deskripsi" rows="2"></textarea>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Nilai Minimum <span class="text-danger">*</span></label>
+          <input type="number" name="modules[][sub_modules][][quizzes][][nilai_minimum]" class="form-control quiz-nilai-minimum" min="0" max="100" step="0.01" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Maks Attempts <span class="text-danger">*</span></label>
+          <input type="number" name="modules[][sub_modules][][quizzes][][max_attempts]" class="form-control quiz-max-attempts" min="1" value="3" required>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -278,6 +323,7 @@
 let moduleIndex = 0;
 let subModuleIndex = {};
 let contentIndex = {};
+let quizIndex = {};
 
 function nextStep(step) {
   // Validate current step
@@ -429,6 +475,11 @@ function addSubModule(btn) {
     contentIndex[moduleIdx] = {};
   }
   contentIndex[moduleIdx][subIdx] = 0;
+  
+  if (!quizIndex[moduleIdx]) {
+    quizIndex[moduleIdx] = {};
+  }
+  quizIndex[moduleIdx][subIdx] = 0;
 }
 
 function updateSubModuleNames(subModuleItem, moduleIdx, subIdx) {
@@ -446,18 +497,37 @@ function updateSubModuleNames(subModuleItem, moduleIdx, subIdx) {
   contents.forEach((content, contentIdx) => {
     updateContentNames(content, moduleIdx, subIdx, contentIdx);
   });
+  
+  // Update quizzes
+  const quizzes = subModuleItem.querySelectorAll('.quiz-item');
+  quizzes.forEach((quiz, quizIdx) => {
+    updateQuizNames(quiz, moduleIdx, subIdx, quizIdx);
+  });
 }
 
 function removeSubModule(btn) {
   const subModuleItem = btn.closest('.sub-module-item');
   const moduleIdx = parseInt(subModuleItem.getAttribute('data-module-index'));
   const subIdx = parseInt(subModuleItem.getAttribute('data-sub-module-index'));
-  delete contentIndex[moduleIdx][subIdx];
+  if (contentIndex[moduleIdx]) {
+    delete contentIndex[moduleIdx][subIdx];
+  }
+  if (quizIndex[moduleIdx]) {
+    delete quizIndex[moduleIdx][subIdx];
+  }
   subModuleItem.remove();
 }
 
 function toggleContents(btn) {
   const container = btn.closest('.card-body').querySelector('.contents-container');
+  container.style.display = container.style.display === 'none' ? 'block' : 'none';
+  const icon = btn.querySelector('i');
+  icon.classList.toggle('bi-chevron-down');
+  icon.classList.toggle('bi-chevron-up');
+}
+
+function toggleQuizzes(btn) {
+  const container = btn.closest('.card-body').querySelector('.quizzes-container');
   container.style.display = container.style.display === 'none' ? 'block' : 'none';
   const icon = btn.querySelector('i');
   icon.classList.toggle('bi-chevron-down');
@@ -528,6 +598,51 @@ function removeContent(btn) {
   contentItem.remove();
 }
 
+function addQuiz(btn) {
+  const subModuleItem = btn.closest('.sub-module-item');
+  const moduleIdx = parseInt(subModuleItem.getAttribute('data-module-index'));
+  const subIdx = parseInt(subModuleItem.getAttribute('data-sub-module-index'));
+  const quizList = subModuleItem.querySelector('.quizzes-list');
+  
+  if (!quizIndex[moduleIdx]) {
+    quizIndex[moduleIdx] = {};
+  }
+  if (!quizIndex[moduleIdx][subIdx]) {
+    quizIndex[moduleIdx][subIdx] = 0;
+  }
+  const quizIdx = quizIndex[moduleIdx][subIdx];
+  
+  const template = document.getElementById('quizTemplate');
+  const clone = template.content.cloneNode(true);
+  const quizItem = clone.querySelector('.quiz-item');
+  quizItem.setAttribute('data-quiz-index', quizIdx);
+  quizItem.setAttribute('data-module-index', moduleIdx);
+  quizItem.setAttribute('data-sub-module-index', subIdx);
+  quizItem.querySelector('.quiz-number').textContent = quizIdx + 1;
+  
+  updateQuizNames(quizItem, moduleIdx, subIdx, quizIdx);
+  
+  quizList.appendChild(clone);
+  quizIndex[moduleIdx][subIdx]++;
+}
+
+function updateQuizNames(quizItem, moduleIdx, subIdx, quizIdx) {
+  const judulInput = quizItem.querySelector('.quiz-judul');
+  const deskripsiInput = quizItem.querySelector('.quiz-deskripsi');
+  const nilaiMinimumInput = quizItem.querySelector('.quiz-nilai-minimum');
+  const maxAttemptsInput = quizItem.querySelector('.quiz-max-attempts');
+  
+  judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][judul]`;
+  deskripsiInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][deskripsi]`;
+  nilaiMinimumInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][nilai_minimum]`;
+  maxAttemptsInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][max_attempts]`;
+}
+
+function removeQuiz(btn) {
+  const quizItem = btn.closest('.quiz-item');
+  quizItem.remove();
+}
+
 function toggleContentFields(select) {
   const contentItem = select.closest('.content-item');
   const htmlField = contentItem.querySelector('.content-html-field');
@@ -595,7 +710,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       // Show all collapsed containers
-      document.querySelectorAll('.sub-modules-container, .contents-container').forEach(container => {
+      document.querySelectorAll('.sub-modules-container, .contents-container, .quizzes-container').forEach(container => {
         container.style.display = 'block';
       });
       
@@ -635,6 +750,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .content-item {
   border-left-color: #ffc107;
+}
+
+.quiz-item {
+  border-left-color: #17a2b8;
 }
 </style>
 @endsection

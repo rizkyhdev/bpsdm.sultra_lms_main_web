@@ -121,6 +121,20 @@ class InstructorCourseController extends Controller
                         $cleanedSubModule['contents'] = $cleanedContents;
                     }
                     
+                    // Clean quizzes - preserve original indices
+                    if (isset($subModuleData['quizzes']) && is_array($subModuleData['quizzes'])) {
+                        $cleanedQuizzes = [];
+                        foreach ($subModuleData['quizzes'] as $quizIndex => $quizData) {
+                            // Skip empty quizzes (missing required fields: judul, nilai_minimum, or max_attempts)
+                            if (empty($quizData['judul']) || empty($quizData['nilai_minimum']) || empty($quizData['max_attempts'])) {
+                                continue;
+                            }
+                            // Preserve original index
+                            $cleanedQuizzes[$quizIndex] = $quizData;
+                        }
+                        $cleanedSubModule['quizzes'] = $cleanedQuizzes;
+                    }
+                    
                     // Preserve original index for file upload keys
                     $cleanedSubModules[$subModuleIndex] = $cleanedSubModule;
                 }
@@ -157,6 +171,11 @@ class InstructorCourseController extends Controller
                 'modules.*.sub_modules.*.contents.*.youtube_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,youtube',
                 'modules.*.sub_modules.*.contents.*.required_duration' => 'nullable|integer|min:1|required_if:modules.*.sub_modules.*.contents.*.tipe,youtube',
                 'modules.*.sub_modules.*.contents.*.file_path' => 'nullable|file|max:102400',
+                'modules.*.sub_modules.*.quizzes' => 'nullable|array',
+                'modules.*.sub_modules.*.quizzes.*.judul' => 'required|string|max:255',
+                'modules.*.sub_modules.*.quizzes.*.deskripsi' => 'nullable|string',
+                'modules.*.sub_modules.*.quizzes.*.nilai_minimum' => 'required|numeric|min:0|max:100',
+                'modules.*.sub_modules.*.quizzes.*.max_attempts' => 'required|integer|min:1',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation failed in wizard', [
@@ -239,6 +258,21 @@ class InstructorCourseController extends Controller
                                 Log::info('Content created', ['content_id' => $content->id, 'sub_module_id' => $subModule->id]);
                             }
                         }
+                        
+                        // Create quizzes for this sub-module
+                        if (isset($subModuleData['quizzes']) && is_array($subModuleData['quizzes']) && count($subModuleData['quizzes']) > 0) {
+                            foreach ($subModuleData['quizzes'] as $quizIndex => $quizData) {
+                                $quiz = new \App\Models\Quiz();
+                                $quiz->sub_module_id = $subModule->id;
+                                $quiz->judul = $quizData['judul'] ?? '';
+                                $quiz->deskripsi = $quizData['deskripsi'] ?? null;
+                                $quiz->nilai_minimum = $quizData['nilai_minimum'] ?? 0;
+                                $quiz->max_attempts = $quizData['max_attempts'] ?? 3;
+                                $quiz->save();
+                                
+                                Log::info('Quiz created', ['quiz_id' => $quiz->id, 'sub_module_id' => $subModule->id]);
+                            }
+                        }
                     }
                 }
             }
@@ -246,7 +280,7 @@ class InstructorCourseController extends Controller
             DB::commit();
             Log::info('Course created via wizard', ['course_id' => $course->id, 'instructor_id' => Auth::id()]);
             return redirect()->route('instructor.courses.show', $course->id)
-                ->with('success', 'Course created successfully with all modules, sub-modules, and contents.');
+                ->with('success', 'Course created successfully with all modules, sub-modules, contents, and quizzes.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create course via wizard', [

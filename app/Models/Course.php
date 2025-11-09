@@ -100,4 +100,12 @@ class Course extends Model
     {
         return $this->userEnrollments();
     }
+
+    /**
+     * Get the quizzes for the course.
+     */
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class);
+    }
 } 

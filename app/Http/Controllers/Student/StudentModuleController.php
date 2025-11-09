@@ -160,6 +160,26 @@ class StudentModuleController extends Controller
             ], 400);
         }
 
+        // Check if module has quiz and if user has passed it
+        $moduleQuizzes = $module->quizzes;
+        if ($moduleQuizzes->count() > 0) {
+            $allModuleQuizzesPassed = true;
+            foreach ($moduleQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allModuleQuizzesPassed = false;
+                    break;
+                }
+            }
+            
+            if (!$allModuleQuizzesPassed) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda harus lulus semua quiz pada modul ini terlebih dahulu.',
+                    'quizzes_required' => true
+                ], 400);
+            }
+        }
+
         try {
             // Mark module as completed by updating all sub-module progress
             foreach ($subModules as $subModule) {
@@ -377,12 +397,36 @@ class StudentModuleController extends Controller
                 })
                 ->count();
 
-            if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules) {
+            // Check if module has quiz and if user has passed it
+            $moduleQuizzes = $module->quizzes;
+            $allModuleQuizzesPassed = true;
+            if ($moduleQuizzes->count() > 0) {
+                foreach ($moduleQuizzes as $quiz) {
+                    if (!$quiz->hasUserPassed($user->id)) {
+                        $allModuleQuizzesPassed = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules && $allModuleQuizzesPassed) {
                 $completedModules++;
             }
         }
 
-        if ($completedModules >= $totalModules) {
+        // Check if course has quiz and if user has passed it
+        $courseQuizzes = $course->quizzes;
+        $allCourseQuizzesPassed = true;
+        if ($courseQuizzes->count() > 0) {
+            foreach ($courseQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allCourseQuizzesPassed = false;
+                    break;
+                }
+            }
+        }
+
+        if ($completedModules >= $totalModules && $allCourseQuizzesPassed) {
             $enrollment->update([
                 'status' => 'completed',
                 'completed_at' => now()

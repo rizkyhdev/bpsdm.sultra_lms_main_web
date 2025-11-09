@@ -50,4 +50,12 @@ class Module extends Model
     {
         return $this->hasMany(SubModule::class);
     }
+
+    /**
+     * Get the quizzes for the module.
+     */
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class);
+    }
 } 

@@ -17,6 +17,8 @@ class Quiz extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'course_id',
+        'module_id',
         'sub_module_id',
         'judul',
         'deskripsi',
@@ -35,6 +37,22 @@ class Quiz extends Model
             'nilai_minimum' => 'float',
             'max_attempts' => 'integer',
         ];
+    }
+
+    /**
+     * Get the course that owns the quiz.
+     */
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    /**
+     * Get the module that owns the quiz.
+     */
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(Module::class);
     }
 
     /**
@@ -59,5 +77,33 @@ class Quiz extends Model
     public function quizAttempts(): HasMany
     {
         return $this->hasMany(QuizAttempt::class);
+    }
+
+    /**
+     * Check if a user has passed this quiz.
+     */
+    public function hasUserPassed($userId): bool
+    {
+        $passedAttempt = $this->quizAttempts()
+            ->where('user_id', $userId)
+            ->where('is_passed', true)
+            ->first();
+        
+        return $passedAttempt !== null;
+    }
+
+    /**
+     * Get the level of this quiz (course, module, or sub_module).
+     */
+    public function getLevel(): string
+    {
+        if ($this->sub_module_id) {
+            return 'sub_module';
+        } elseif ($this->module_id) {
+            return 'module';
+        } elseif ($this->course_id) {
+            return 'course';
+        }
+        return 'unknown';
     }
 } 

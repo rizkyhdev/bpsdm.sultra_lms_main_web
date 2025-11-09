@@ -597,7 +597,19 @@ class StudentContentController extends Controller
             })
             ->count();
 
-        if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules) {
+        // Check if module has quiz and if user has passed it
+        $moduleQuizzes = $module->quizzes;
+        $allModuleQuizzesPassed = true;
+        if ($moduleQuizzes->count() > 0) {
+            foreach ($moduleQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allModuleQuizzesPassed = false;
+                    break;
+                }
+            }
+        }
+
+        if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules && $allModuleQuizzesPassed) {
             // Module is completed, check if course is completed
             $this->checkCourseCompletion($user, $module->course_id);
         }
@@ -630,12 +642,36 @@ class StudentContentController extends Controller
                 })
                 ->count();
 
-            if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules) {
+            // Check if module has quiz and if user has passed it
+            $moduleQuizzes = $module->quizzes;
+            $allModuleQuizzesPassed = true;
+            if ($moduleQuizzes->count() > 0) {
+                foreach ($moduleQuizzes as $quiz) {
+                    if (!$quiz->hasUserPassed($user->id)) {
+                        $allModuleQuizzesPassed = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules && $allModuleQuizzesPassed) {
                 $completedModules++;
             }
         }
 
-        if ($completedModules >= $totalModules) {
+        // Check if course has quiz and if user has passed it
+        $courseQuizzes = $course->quizzes;
+        $allCourseQuizzesPassed = true;
+        if ($courseQuizzes->count() > 0) {
+            foreach ($courseQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allCourseQuizzesPassed = false;
+                    break;
+                }
+            }
+        }
+
+        if ($completedModules >= $totalModules && $allCourseQuizzesPassed) {
             $enrollment->update([
                 'status' => 'completed',
                 'completed_at' => now()

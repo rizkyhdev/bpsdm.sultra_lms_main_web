@@ -26,6 +26,11 @@
           <i class="fas fa-book-open me-2"></i>Pelatihan
         </a>
       </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.quizzes') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('instructor.quizzes.index-all') }}">
+          <i class="fas fa-question-circle me-2"></i>Quizzes
+        </a>
+      </li>
       <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.modules') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('instructor.courses.index') }}">
           <i class="fas fa-layer-group me-2"></i>Modules

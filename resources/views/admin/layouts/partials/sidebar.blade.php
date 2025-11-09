@@ -46,12 +46,12 @@
           <i class="far fa-file-alt me-2"></i>Contents
         </a>
       </li>
-      <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.quizzes') ? 'active' : '' }}">
-        <a class="nav-link text-black" href="{{ route('admin.enrollments.index') }}">
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.quizzes') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.quizzes.index-all') }}">
           <i class="fas fa-question-circle me-2"></i>Quizzes
         </a>
       </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.questions') ? 'active' : '' }}">
+      <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.questions') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.enrollments.index') }}">
           <i class="fas fa-list-ol me-2"></i>Questions
         </a>

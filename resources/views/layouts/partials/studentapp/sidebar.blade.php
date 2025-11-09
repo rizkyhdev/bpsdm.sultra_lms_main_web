@@ -26,6 +26,11 @@
               <i class="fas fa-book me-2"></i>Pelatihan Saya
           </a>
       </li>
+      <li class="nav-item {{ Route::is('student.courses.*') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.courses.index') }}">
+              <i class="fas fa-question-circle me-2"></i>Kuis Saya
+          </a>
+      </li>
       @if(auth()->check() && auth()->user()->role === 'admin')
       <li class="nav-item">
           <a class="nav-link text-black" href="{{ route('admin.dashboard') }}">
@@ -47,8 +52,6 @@
       </li>
      
     
-    
-      <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-pen me-2"></i>Kuis Saya</a></li>
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-shopping-bag me-2"></i>Riwayat Pesanan</a></li>
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Tanya Jawab</a></li>
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-calendar me-2"></i>Kalender</a></li>

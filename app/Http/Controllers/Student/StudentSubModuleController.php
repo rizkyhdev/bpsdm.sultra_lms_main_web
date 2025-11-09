@@ -105,15 +105,27 @@ class StudentSubModuleController extends Controller
         $module = $subModule->module;
         $course = $module->course;
 
+        // Check if sub-module has quiz and if user has passed it
+        $subModuleQuizzes = $subModule->quizzes;
+        $allSubModuleQuizzesPassed = true;
+        if ($subModuleQuizzes->count() > 0) {
+            foreach ($subModuleQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allSubModuleQuizzesPassed = false;
+                    break;
+                }
+            }
+        }
+
         // Periksa apakah sub-modul dapat ditandai sebagai selesai
-        $canMarkComplete = $totalContents > 0 && $completedContents >= $totalContents;
+        $canMarkComplete = $totalContents > 0 && $completedContents >= $totalContents && $allSubModuleQuizzesPassed;
         
-        // Check if sub-module is completed (all contents are completed)
-        $isSubModuleCompleted = $totalContents > 0 && $completedContents >= $totalContents;
+        // Check if sub-module is completed (all contents are completed and all quizzes passed)
+        $isSubModuleCompleted = $totalContents > 0 && $completedContents >= $totalContents && $allSubModuleQuizzesPassed;
         
         // If sub-module is completed, check if module is completed
         if ($isSubModuleCompleted && $progress && !$progress->is_completed) {
-            // Auto-mark sub-module as complete if all contents are done
+            // Auto-mark sub-module as complete if all contents are done and all quizzes passed
             $progress->update([
                 'is_completed' => true,
                 'progress_percentage' => 100,
@@ -151,7 +163,9 @@ class StudentSubModuleController extends Controller
             'previousSubModule',
             'canMarkComplete',
             'isSubModuleCompleted',
-            'nextModule'
+            'nextModule',
+            'subModuleQuizzes',
+            'allSubModuleQuizzesPassed'
         ));
     }
 
@@ -195,6 +209,26 @@ class StudentSubModuleController extends Controller
                 'completed' => $completedContents,
                 'total' => $totalContents
             ], 400);
+        }
+
+        // Check if sub-module has quiz and if user has passed it
+        $subModuleQuizzes = $subModule->quizzes;
+        if ($subModuleQuizzes->count() > 0) {
+            $allQuizzesPassed = true;
+            foreach ($subModuleQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allQuizzesPassed = false;
+                    break;
+                }
+            }
+            
+            if (!$allQuizzesPassed) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda harus lulus semua quiz pada sub-modul ini terlebih dahulu.',
+                    'quizzes_required' => true
+                ], 400);
+            }
         }
 
         try {
@@ -470,7 +504,19 @@ class StudentSubModuleController extends Controller
             })
             ->count();
 
-        if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules) {
+        // Check if module has quiz and if user has passed it
+        $moduleQuizzes = $module->quizzes;
+        $allModuleQuizzesPassed = true;
+        if ($moduleQuizzes->count() > 0) {
+            foreach ($moduleQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allModuleQuizzesPassed = false;
+                    break;
+                }
+            }
+        }
+
+        if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules && $allModuleQuizzesPassed) {
             // Module is completed, check if course is completed
             $this->checkCourseCompletion($user, $module->course_id);
         }
@@ -503,12 +549,36 @@ class StudentSubModuleController extends Controller
                 })
                 ->count();
 
-            if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules) {
+            // Check if module has quiz and if user has passed it
+            $moduleQuizzes = $module->quizzes;
+            $allModuleQuizzesPassed = true;
+            if ($moduleQuizzes->count() > 0) {
+                foreach ($moduleQuizzes as $quiz) {
+                    if (!$quiz->hasUserPassed($user->id)) {
+                        $allModuleQuizzesPassed = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($totalSubModules > 0 && $completedSubModules >= $totalSubModules && $allModuleQuizzesPassed) {
                 $completedModules++;
             }
         }
 
-        if ($completedModules >= $totalModules) {
+        // Check if course has quiz and if user has passed it
+        $courseQuizzes = $course->quizzes;
+        $allCourseQuizzesPassed = true;
+        if ($courseQuizzes->count() > 0) {
+            foreach ($courseQuizzes as $quiz) {
+                if (!$quiz->hasUserPassed($user->id)) {
+                    $allCourseQuizzesPassed = false;
+                    break;
+                }
+            }
+        }
+
+        if ($completedModules >= $totalModules && $allCourseQuizzesPassed) {
             $enrollment->update([
                 'status' => 'completed',
                 'completed_at' => now()

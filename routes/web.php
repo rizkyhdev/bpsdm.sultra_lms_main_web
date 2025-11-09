@@ -185,6 +185,20 @@ Route::group([
     Route::get('/contents/{id}/download', [InstructorContentController::class, 'download'])->name('contents.download');
     Route::post('/contents/reorder', [InstructorContentController::class, 'reorder'])->name('contents.reorder');
 
+    // All quizzes
+    Route::get('/quizzes', [InstructorQuizController::class, 'indexAll'])->name('quizzes.index-all');
+    
+    // Course level quizzes
+    Route::get('/courses/{courseId}/quizzes', [InstructorQuizController::class, 'indexCourse'])->name('quizzes.index-course');
+    Route::get('/courses/{courseId}/quizzes/create', [InstructorQuizController::class, 'createCourse'])->name('quizzes.create-course');
+    Route::post('/courses/{courseId}/quizzes', [InstructorQuizController::class, 'storeCourse'])->name('quizzes.store-course');
+    
+    // Module level quizzes
+    Route::get('/modules/{moduleId}/quizzes', [InstructorQuizController::class, 'indexModule'])->name('quizzes.index-module');
+    Route::get('/modules/{moduleId}/quizzes/create', [InstructorQuizController::class, 'createModule'])->name('quizzes.create-module');
+    Route::post('/modules/{moduleId}/quizzes', [InstructorQuizController::class, 'storeModule'])->name('quizzes.store-module');
+    
+    // Sub-module level quizzes
     Route::get('/sub-modules/{subModuleId}/quizzes', [InstructorQuizController::class, 'index'])->name('quizzes.index');
     Route::get('/sub-modules/{subModuleId}/quizzes/create', [InstructorQuizController::class, 'create'])->name('quizzes.create');
     Route::post('/sub-modules/{subModuleId}/quizzes', [InstructorQuizController::class, 'store'])->name('quizzes.store');
@@ -283,6 +297,20 @@ Route::group([
     Route::post('/contents/{id}/reorder', [AdminContentController::class, 'reorder'])->name('contents.reorder');
 
     // Quizzes
+    // All quizzes
+    Route::get('/quizzes', [AdminQuizController::class, 'indexAll'])->name('quizzes.index-all');
+    
+    // Course level quizzes
+    Route::get('/courses/{courseId}/quizzes', [AdminQuizController::class, 'indexCourse'])->name('quizzes.index-course');
+    Route::get('/courses/{courseId}/quizzes/create', [AdminQuizController::class, 'createCourse'])->name('quizzes.create-course');
+    Route::post('/courses/{courseId}/quizzes', [AdminQuizController::class, 'storeCourse'])->name('quizzes.store-course');
+    
+    // Module level quizzes
+    Route::get('/modules/{moduleId}/quizzes', [AdminQuizController::class, 'indexModule'])->name('quizzes.index-module');
+    Route::get('/modules/{moduleId}/quizzes/create', [AdminQuizController::class, 'createModule'])->name('quizzes.create-module');
+    Route::post('/modules/{moduleId}/quizzes', [AdminQuizController::class, 'storeModule'])->name('quizzes.store-module');
+    
+    // Sub-module level quizzes
     Route::get('/sub-modules/{subModuleId}/quizzes', [AdminQuizController::class, 'index'])->name('quizzes.index');
     Route::get('/sub-modules/{subModuleId}/quizzes/create', [AdminQuizController::class, 'create'])->name('quizzes.create');
     Route::post('/sub-modules/{subModuleId}/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');

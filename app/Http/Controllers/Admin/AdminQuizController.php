@@ -7,6 +7,8 @@ use App\Models\SubModule;
 use App\Models\Quiz;
 use App\Models\Question;
 use App\Models\QuizAttempt;
+use App\Models\Module;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +27,35 @@ class AdminQuizController extends Controller
     }
 
     /**
+     * Menampilkan daftar semua kuis.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function indexAll(Request $request)
+    {
+        try {
+            $q = trim($request->get('q'));
+            $perPage = (int) $request->get('per_page', 15);
+
+            $quizzes = Quiz::query()
+                ->with(['course', 'module', 'subModule'])
+                ->withCount(['questions', 'quizAttempts'])
+                ->when($q, function ($query) use ($q) {
+                    $query->where('judul', 'like', "%$q%");
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage)
+                ->appends($request->query());
+
+            return view('admin.quizzes.index-all', compact('quizzes'));
+        } catch (\Exception $e) {
+            Log::error('Error in AdminQuizController@indexAll: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memuat data kuis.');
+        }
+    }
+
+    /**
      * Menampilkan daftar kuis dengan paginasi untuk sub-modul tertentu.
      *
      * @param int $subModuleId
@@ -34,6 +65,8 @@ class AdminQuizController extends Controller
     {
         try {
             $subModule = SubModule::with('module.course')->findOrFail($subModuleId);
+            $this->authorize('create', [\App\Models\Quiz::class, $subModule]);
+            
             $quizzes = Quiz::where('sub_module_id', $subModuleId)
                            ->withCount(['questions', 'quizAttempts'])
                            ->orderBy('created_at', 'desc')
@@ -56,6 +89,8 @@ class AdminQuizController extends Controller
     {
         try {
             $subModule = SubModule::with('module.course')->findOrFail($subModuleId);
+            $this->authorize('create', [\App\Models\Quiz::class, $subModule]);
+            
             return view('admin.quizzes.create', compact('subModule'));
         } catch (\Exception $e) {
             Log::error('Error in AdminQuizController@create: ' . $e->getMessage());
@@ -73,6 +108,9 @@ class AdminQuizController extends Controller
     public function store(Request $request, $subModuleId)
     {
         try {
+            $subModule = SubModule::with('module.course')->findOrFail($subModuleId);
+            $this->authorize('create', [\App\Models\Quiz::class, $subModule]);
+            
             $validated = $request->validate([
                 'judul' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
@@ -111,6 +149,8 @@ class AdminQuizController extends Controller
                 'questions.answerOptions',
                 'quizAttempts.user'
             ])->findOrFail($id);
+            
+            $this->authorize('view', $quiz);
 
             $stats = [
                 'total_questions' => $quiz->questions->count(),
@@ -149,6 +189,8 @@ class AdminQuizController extends Controller
     {
         try {
             $quiz = Quiz::with('subModule.module.course')->findOrFail($id);
+            $this->authorize('update', $quiz);
+            
             return view('admin.quizzes.edit', compact('quiz'));
         } catch (\Exception $e) {
             Log::error('Error in AdminQuizController@edit: ' . $e->getMessage());
@@ -167,6 +209,7 @@ class AdminQuizController extends Controller
     {
         try {
             $quiz = Quiz::findOrFail($id);
+            $this->authorize('update', $quiz);
 
             $validated = $request->validate([
                 'judul' => 'required|string|max:255',
@@ -201,6 +244,8 @@ class AdminQuizController extends Controller
     {
         try {
             $quiz = Quiz::with(['questions.answerOptions', 'quizAttempts'])->findOrFail($id);
+            $this->authorize('delete', $quiz);
+            
             $subModuleId = $quiz->sub_module_id;
             $quizTitle = $quiz->judul;
 
@@ -241,6 +286,8 @@ class AdminQuizController extends Controller
                 'subModule.module.course',
                 'quizAttempts.user'
             ])->findOrFail($id);
+            
+            $this->authorize('view', $quiz);
 
             $attempts = $quiz->quizAttempts()
                              ->with('user')
@@ -399,6 +446,167 @@ class AdminQuizController extends Controller
         } catch (\Exception $e) {
             Log::error('Error in AdminQuizController@duplicate: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat menduplikasi kuis.');
+        }
+    }
+
+    /**
+     * Menampilkan daftar kuis dengan paginasi untuk course tertentu.
+     *
+     * @param int $courseId
+     * @return \Illuminate\View\View
+     */
+    public function indexCourse($courseId)
+    {
+        try {
+            $course = Course::findOrFail($courseId);
+            $this->authorize('create', [\App\Models\Quiz::class, $course]);
+            
+            $quizzes = Quiz::where('course_id', $courseId)
+                           ->whereNull('module_id')
+                           ->whereNull('sub_module_id')
+                           ->withCount(['questions', 'quizAttempts'])
+                           ->orderBy('created_at', 'desc')
+                           ->paginate(15);
+
+            return view('admin.quizzes.index-course', compact('course', 'quizzes'));
+        } catch (\Exception $e) {
+            Log::error('Error in AdminQuizController@indexCourse: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memuat data kuis.');
+        }
+    }
+
+    /**
+     * Menampilkan formulir untuk membuat kuis baru untuk course.
+     *
+     * @param int $courseId
+     * @return \Illuminate\View\View
+     */
+    public function createCourse($courseId)
+    {
+        try {
+            $course = Course::findOrFail($courseId);
+            $this->authorize('create', [\App\Models\Quiz::class, $course]);
+            
+            return view('admin.quizzes.create-course', compact('course'));
+        } catch (\Exception $e) {
+            Log::error('Error in AdminQuizController@createCourse: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memuat form kuis.');
+        }
+    }
+
+    /**
+     * Menyimpan kuis yang baru dibuat untuk course.
+     *
+     * @param Request $request
+     * @param int $courseId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeCourse(Request $request, $courseId)
+    {
+        try {
+            $course = Course::findOrFail($courseId);
+            $this->authorize('create', [\App\Models\Quiz::class, $course]);
+            
+            $validated = $request->validate([
+                'judul' => 'required|string|max:255',
+                'deskripsi' => 'required|string',
+                'nilai_minimum' => 'required|numeric|min:0|max:100',
+                'max_attempts' => 'required|integer|min:1',
+            ]);
+
+            $validated['course_id'] = $courseId;
+            $validated['module_id'] = null;
+            $validated['sub_module_id'] = null;
+
+            Quiz::create($validated);
+
+            Log::info('Admin created new course quiz: ' . $validated['judul'] . ' for course ID: ' . $courseId);
+            return redirect()->route('admin.quizzes.index-course', $courseId)
+                           ->with('success', 'Kuis berhasil dibuat.');
+
+        } catch (\Exception $e) {
+            Log::error('Error in AdminQuizController@storeCourse: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat membuat kuis.');
+        }
+    }
+
+    /**
+     * Menampilkan daftar kuis dengan paginasi untuk module tertentu.
+     *
+     * @param int $moduleId
+     * @return \Illuminate\View\View
+     */
+    public function indexModule($moduleId)
+    {
+        try {
+            $module = Module::with('course')->findOrFail($moduleId);
+            $this->authorize('create', [\App\Models\Quiz::class, $module]);
+            
+            $quizzes = Quiz::where('module_id', $moduleId)
+                           ->whereNull('sub_module_id')
+                           ->withCount(['questions', 'quizAttempts'])
+                           ->orderBy('created_at', 'desc')
+                           ->paginate(15);
+
+            return view('admin.quizzes.index-module', compact('module', 'quizzes'));
+        } catch (\Exception $e) {
+            Log::error('Error in AdminQuizController@indexModule: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memuat data kuis.');
+        }
+    }
+
+    /**
+     * Menampilkan formulir untuk membuat kuis baru untuk module.
+     *
+     * @param int $moduleId
+     * @return \Illuminate\View\View
+     */
+    public function createModule($moduleId)
+    {
+        try {
+            $module = Module::with('course')->findOrFail($moduleId);
+            $this->authorize('create', [\App\Models\Quiz::class, $module]);
+            
+            return view('admin.quizzes.create-module', compact('module'));
+        } catch (\Exception $e) {
+            Log::error('Error in AdminQuizController@createModule: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memuat form kuis.');
+        }
+    }
+
+    /**
+     * Menyimpan kuis yang baru dibuat untuk module.
+     *
+     * @param Request $request
+     * @param int $moduleId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeModule(Request $request, $moduleId)
+    {
+        try {
+            $module = Module::with('course')->findOrFail($moduleId);
+            $this->authorize('create', [\App\Models\Quiz::class, $module]);
+            
+            $validated = $request->validate([
+                'judul' => 'required|string|max:255',
+                'deskripsi' => 'required|string',
+                'nilai_minimum' => 'required|numeric|min:0|max:100',
+                'max_attempts' => 'required|integer|min:1',
+            ]);
+
+            $validated['course_id'] = $module->course_id;
+            $validated['module_id'] = $moduleId;
+            $validated['sub_module_id'] = null;
+
+            Quiz::create($validated);
+
+            Log::info('Admin created new module quiz: ' . $validated['judul'] . ' for module ID: ' . $moduleId);
+            return redirect()->route('admin.quizzes.index-module', $moduleId)
+                           ->with('success', 'Kuis berhasil dibuat.');
+
+        } catch (\Exception $e) {
+            Log::error('Error in AdminQuizController@storeModule: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat membuat kuis.');
         }
     }
 }
