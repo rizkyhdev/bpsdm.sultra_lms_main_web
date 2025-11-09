@@ -177,18 +177,25 @@ class AdminUserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            $validated = $request->validate([
+            $rules = [
                 'nip' => 'required|string|max:50|' . Rule::unique('users')->ignore($id),
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255|' . Rule::unique('users')->ignore($id),
-                'password' => 'nullable|string|min:8|confirmed',
                 'jabatan' => 'required|string|max:255',
                 'unit_kerja' => 'required|string|max:255',
                 'role' => 'required|in:admin,instructor,student',
                 'is_validated' => 'boolean'
-            ]);
+            ];
 
-            if (isset($validated['password'])) {
+            // Only validate password if it's provided
+            if ($request->filled('password')) {
+                $rules['password'] = 'required|string|min:8|confirmed';
+            }
+
+            $validated = $request->validate($rules);
+
+            // Only update password if it's provided and not empty
+            if (!empty($validated['password'])) {
                 $validated['password'] = Hash::make($validated['password']);
             } else {
                 unset($validated['password']);
