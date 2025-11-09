@@ -4,10 +4,10 @@
 # Exit the script if any command fails
 set -e
 
-# composer install
-npm install
-composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
-npm run build
+# RUN BUILD
+# npm install
+# composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+# npm run build
 
 # Run migrations
 php artisan migrate --force
