@@ -137,10 +137,22 @@
                         @endif
                     @endif
 
+                    @if($quiz->subModule)
                     <a href="{{ route('student.sub_modules.show', $quiz->subModule->id) }}" 
                        class="btn btn-outline-secondary w-100 mt-2">
                         <i class="bi bi-arrow-left me-1"></i>Kembali ke Sub-Modul
                     </a>
+                    @elseif($quiz->module)
+                    <a href="{{ route('student.modules.show', $quiz->module->id) }}" 
+                       class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="bi bi-arrow-left me-1"></i>Kembali ke Modul
+                    </a>
+                    @elseif($quiz->course)
+                    <a href="{{ route('student.courses.show', $quiz->course->id) }}" 
+                       class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="bi bi-arrow-left me-1"></i>Kembali ke Kursus
+                    </a>
+                    @endif
                 </div>
             </div>
         </div>

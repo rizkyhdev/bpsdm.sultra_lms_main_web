@@ -1040,10 +1040,13 @@ class StudentQuizController extends Controller
             if (!$quiz->subModule || !$quiz->subModule->relationLoaded('module')) {
                 $quiz->load('subModule.module');
             }
-            if ($quiz->subModule && !$quiz->subModule->module->relationLoaded('course')) {
-                $quiz->subModule->load('module.course');
+            if ($quiz->subModule && $quiz->subModule->module) {
+                if (!$quiz->subModule->module->relationLoaded('course')) {
+                    $quiz->subModule->load('module.course');
+                }
+                return $quiz->subModule->module->course_id ?? null;
             }
-            return $quiz->subModule->module->course_id ?? null;
+            return null;
         }
         
         return null;
