@@ -48,6 +48,9 @@
               <td class="text-truncate" style="max-width: 420px;">{{ $sm->deskripsi }}</td>
               <td class="text-right">
                 <a href="{{ route('instructor.sub_modules.show', $sm->id) }}" class="btn btn-sm btn-outline-primary">Show</a>
+                @can('create', [App\Models\SubModule::class, $module])
+                  <a href="{{ route('instructor.sub_modules.create', $module->id) }}" class="btn btn-sm btn-outline-success">Tambah</a>
+                @endcan
                 @can('update', $sm)
                   <a href="{{ route('instructor.sub_modules.edit', $sm->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @endcan

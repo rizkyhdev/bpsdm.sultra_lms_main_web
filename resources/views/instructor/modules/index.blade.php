@@ -51,6 +51,9 @@
               <td class="text-truncate" style="max-width: 420px;">{{ $m->deskripsi }}</td>
               <td class="text-right">
                 <a href="{{ route('instructor.modules.show', $m) }}" class="btn btn-sm btn-outline-primary">Show</a>
+                @can('create', [App\Models\Module::class, $course])
+                  <a href="{{ route('instructor.modules.create', $course->id) }}" class="btn btn-sm btn-outline-success">Tambah</a>
+                @endcan
                 @can('update', $m)
                   <a href="{{ route('instructor.modules.edit', $m) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @endcan

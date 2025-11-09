@@ -56,6 +56,9 @@
                         <td class="text-right">
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('admin.modules.show', $m) }}" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></a>
+                                @if(isset($course))
+                                    <a href="{{ route('admin.modules.create', ['course' => $course->id]) }}" class="btn btn-outline-success" title="Tambah"><i class="fas fa-plus"></i></a>
+                                @endif
                                 <a href="{{ route('admin.modules.edit', $m) }}" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
                                 <button class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmDeleteModal" data-action="{{ route('admin.modules.destroy', $m) }}"><i class="fas fa-trash"></i></button>
                             </div>

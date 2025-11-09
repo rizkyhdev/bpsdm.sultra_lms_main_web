@@ -26,7 +26,7 @@
           <i class="fas fa-book-open me-2"></i>Courses
         </a>
       </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.modules') ? 'active' : '' }}">
+      <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.modules') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('instructor.courses.index') }}">
           <i class="fas fa-layer-group me-2"></i>Modules
         </a>
@@ -40,7 +40,7 @@
         <a class="nav-link text-black" href="{{ route('instructor.courses.index') }}">
           <i class="far fa-file-alt me-2"></i>Contents
         </a>
-      </li>
+      </li> -->
     
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.enrollments') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('instructor.enrollments.index') }}">

@@ -82,6 +82,7 @@
                         <td class="text-right">
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('admin.contents.show', $c) }}" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('admin.contents.create', ['sub_module' => $subModule->id]) }}" class="btn btn-outline-success" title="Tambah"><i class="fas fa-plus"></i></a>
                                 <a href="{{ route('admin.contents.edit', $c) }}" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
                                 <button class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmDeleteModal" data-action="{{ route('admin.contents.destroy', $c) }}"><i class="fas fa-trash"></i></button>
                             </div>

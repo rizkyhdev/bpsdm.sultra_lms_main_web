@@ -72,6 +72,9 @@
               </td>
               <td class="text-right">
                   <a href="{{ route('instructor.contents.show', $c->id) }}" class="btn btn-sm btn-outline-primary">Show</a>
+                @can('create', [App\Models\Content::class, $subModule])
+                  <a href="{{ route('instructor.contents.create', $subModule->id) }}" class="btn btn-sm btn-outline-success">Tambah</a>
+                @endcan
                 @can('update', $c)
                   <a href="{{ route('instructor.contents.edit', $c->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @endcan
