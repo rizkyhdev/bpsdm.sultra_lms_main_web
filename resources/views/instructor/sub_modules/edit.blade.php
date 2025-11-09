@@ -16,7 +16,6 @@
 
 @section('content')
 @php
-  $subModule = $sub ?? $subModule;
   $subModule->load('contents');
 @endphp
 <div class="container-fluid">
