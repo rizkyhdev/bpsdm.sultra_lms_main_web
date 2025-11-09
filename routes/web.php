@@ -164,6 +164,7 @@ Route::group([
     Route::get('/courses/{id}', [InstructorCourseController::class, 'show'])->name('courses.show');
     Route::get('/courses/{id}/edit', [InstructorCourseController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{id}', [InstructorCourseController::class, 'update'])->name('courses.update');
+    Route::put('/courses/{id}/wizard', [InstructorCourseController::class, 'updateWizard'])->name('courses.update-wizard');
     Route::delete('/courses/{id}', [InstructorCourseController::class, 'destroy'])->name('courses.destroy');
     Route::post('/courses/{id}/duplicate', [InstructorCourseController::class, 'duplicate'])->name('courses.duplicate');
 

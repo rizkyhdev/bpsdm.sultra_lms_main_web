@@ -224,12 +224,22 @@
 <template id="quizTemplate">
   <div class="card mb-3 quiz-item" data-quiz-index="">
     <div class="card-header bg-info d-flex justify-content-between align-items-center">
-      <span>Quiz <span class="quiz-number"></span></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="removeQuiz(this)">
-        <i class="bi bi-trash"></i> Hapus
-      </button>
+      <div class="d-flex align-items-center">
+        <button type="button" class="btn btn-sm btn-link text-white p-0 me-2" onclick="toggleQuizCollapse(this)" style="text-decoration: none;">
+          <i class="bi bi-chevron-down quiz-toggle-icon"></i>
+        </button>
+        <span>Quiz <span class="quiz-number"></span></span>
+      </div>
+      <div>
+        <button type="button" class="btn btn-sm btn-warning me-2" onclick="editQuiz(this)" title="Edit Quiz">
+          <i class="bi bi-pencil"></i> Edit
+        </button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="removeQuiz(this)" title="Hapus Quiz">
+          <i class="bi bi-trash"></i> Hapus
+        </button>
+      </div>
     </div>
-    <div class="card-body">
+    <div class="card-body quiz-body">
       <div class="mb-3">
         <label class="form-label">Judul Quiz <span class="text-danger">*</span></label>
         <input type="text" name="modules[][sub_modules][][quizzes][][judul]" class="form-control quiz-judul" required>
@@ -891,8 +901,62 @@ function validateCorrectAnswer(checkbox) {
 }
 
 function removeQuiz(btn) {
+  if (confirm('Apakah Anda yakin ingin menghapus quiz ini? Semua pertanyaan yang terkait juga akan dihapus.')) {
+    const quizItem = btn.closest('.quiz-item');
+    const moduleIdx = parseInt(quizItem.getAttribute('data-module-index'));
+    const subIdx = parseInt(quizItem.getAttribute('data-sub-module-index'));
+    const quizIdx = parseInt(quizItem.getAttribute('data-quiz-index'));
+    
+    // Remove from quizIndex if needed
+    if (quizIndex[moduleIdx] && quizIndex[moduleIdx][subIdx] !== undefined) {
+      // Reindex remaining quizzes
+      const subModuleItem = quizItem.closest('.sub-module-item');
+      const remainingQuizzes = subModuleItem.querySelectorAll('.quiz-item');
+      remainingQuizzes.forEach((quiz) => {
+        const currentQuizIdx = parseInt(quiz.getAttribute('data-quiz-index'));
+        if (currentQuizIdx > quizIdx) {
+          const newIdx = currentQuizIdx - 1;
+          quiz.setAttribute('data-quiz-index', newIdx);
+          updateQuizNames(quiz, moduleIdx, subIdx, newIdx);
+          quiz.querySelector('.quiz-number').textContent = newIdx + 1;
+        }
+      });
+      // Decrement index if this was the last quiz
+      if (quizIndex[moduleIdx][subIdx] > quizIdx) {
+        quizIndex[moduleIdx][subIdx]--;
+      }
+    }
+    
+    quizItem.remove();
+  }
+}
+
+function editQuiz(btn) {
   const quizItem = btn.closest('.quiz-item');
-  quizItem.remove();
+  const quizBody = quizItem.querySelector('.quiz-body');
+  const inputs = quizBody.querySelectorAll('input, textarea');
+  
+  // In wizard, fields are always editable, so just focus on first input
+  if (inputs.length > 0) {
+    inputs[0].focus();
+    inputs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function toggleQuizCollapse(btn) {
+  const quizItem = btn.closest('.quiz-item');
+  const quizBody = quizItem.querySelector('.quiz-body');
+  const icon = btn.querySelector('.quiz-toggle-icon');
+  
+  if (quizBody.style.display === 'none') {
+    quizBody.style.display = 'block';
+    icon.classList.remove('bi-chevron-right');
+    icon.classList.add('bi-chevron-down');
+  } else {
+    quizBody.style.display = 'none';
+    icon.classList.remove('bi-chevron-down');
+    icon.classList.add('bi-chevron-right');
+  }
 }
 
 function toggleContentFields(select) {
