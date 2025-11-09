@@ -230,10 +230,11 @@
                                 $quizAttempts = $user->quizAttempts()
                                     ->where('quiz_id', $quiz->id)
                                     ->get();
-                                $passedAttempt = $quizAttempts->where('status', 'passed')->first();
-                                $activeAttempt = $quizAttempts->where('status', 'in_progress')->first();
+                                $passedAttempt = $quizAttempts->where('is_passed', true)->first();
+                                $activeAttempt = $quizAttempts->whereNull('completed_at')->first();
                                 $isPassed = $passedAttempt !== null;
-                                $canTakeQuiz = !$isPassed && (!$quiz->max_attempts || $quizAttempts->where('status', '!=', 'in_progress')->count() < $quiz->max_attempts);
+                                $completedAttempts = $quizAttempts->whereNotNull('completed_at')->count();
+                                $canTakeQuiz = !$isPassed && (!$quiz->max_attempts || $completedAttempts < $quiz->max_attempts);
                             @endphp
                             <div class="list-group-item border-0 px-0 py-3">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -255,7 +256,7 @@
                                             <span><i class="bi bi-arrow-repeat me-1"></i>Maks Attempts: {{ $quiz->max_attempts }}</span>
                                             @endif
                                             @if($passedAttempt)
-                                            <span><i class="bi bi-trophy me-1"></i>Nilai: {{ number_format($passedAttempt->score, 1) }}%</span>
+                                            <span><i class="bi bi-trophy me-1"></i>Nilai: {{ number_format($passedAttempt->nilai, 1) }}%</span>
                                             @endif
                                         </div>
                                     </div>

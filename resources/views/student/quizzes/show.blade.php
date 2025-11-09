@@ -85,10 +85,10 @@
                                         </span>
                                     </div>
                                     <div class="d-flex gap-2 align-items-center">
-                                        <span class="badge {{ $attempt->status === 'passed' ? 'bg-success' : 'bg-danger' }}">
-                                            {{ $attempt->status === 'passed' ? 'Lulus' : 'Tidak Lulus' }}
+                                        <span class="badge {{ $attempt->is_passed ? 'bg-success' : 'bg-danger' }}">
+                                            {{ $attempt->is_passed ? 'Lulus' : 'Tidak Lulus' }}
                                         </span>
-                                        <span class="fw-bold">{{ number_format($attempt->score, 1) }}%</span>
+                                        <span class="fw-bold">{{ number_format($attempt->nilai, 1) }}%</span>
                                         <a href="{{ route('student.quizzes.review', $attempt->id) }}" 
                                            class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-eye me-1"></i>Review
@@ -117,14 +117,14 @@
                             </button>
                         @endif
                     @else
-                        @php
-                            $passedAttempt = $previousAttempts->where('status', 'passed')->first();
-                        @endphp
-                        @if($passedAttempt)
-                            <div class="alert alert-success">
-                                <i class="bi bi-check-circle me-2"></i>
-                                <strong>Selamat!</strong> Anda telah lulus quiz ini dengan nilai {{ number_format($passedAttempt->score, 1) }}%.
-                            </div>
+                            @php
+                                $passedAttempt = $previousAttempts->where('is_passed', true)->first();
+                            @endphp
+                            @if($passedAttempt)
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    <strong>Selamat!</strong> Anda telah lulus quiz ini dengan nilai {{ number_format($passedAttempt->nilai, 1) }}%.
+                                </div>
                             <a href="{{ route('student.quizzes.review', $passedAttempt->id) }}" 
                                class="btn btn-outline-success w-100">
                                 <i class="bi bi-eye me-1"></i>Lihat Hasil
@@ -169,7 +169,7 @@
                             $user = auth()->user();
                             $attemptCount = $user->quizAttempts()
                                 ->where('quiz_id', $quiz->id)
-                                ->where('status', '!=', 'in_progress')
+                                ->whereNotNull('completed_at')
                                 ->count();
                         @endphp
                         <dt class="col-sm-5 text-muted small">Attempts Digunakan</dt>

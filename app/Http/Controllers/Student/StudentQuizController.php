@@ -44,7 +44,7 @@ class StudentQuizController extends Controller
 
         $enrollment = $user->userEnrollments()
             ->where('course_id', $subModule->module->course_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -73,26 +73,33 @@ class StudentQuizController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled in the course
+        // Get course ID from quiz (quiz can be at course, module, or sub-module level)
+        $courseId = $this->getCourseIdFromQuiz($quiz);
+        
+        if (!$courseId) {
+            abort(404, 'Kursus tidak ditemukan untuk quiz ini.');
+        }
+        
+        // Check if user is enrolled in the course (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
-            ->where('course_id', $quiz->subModule->module->course_id)
-            ->where('status', 'active')
+            ->where('course_id', $courseId)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
             abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses quiz.');
         }
 
-        // Check if user has active attempts
+        // Check if user has active attempts (not completed yet)
         $activeAttempt = $user->quizAttempts()
             ->where('quiz_id', $quiz->id)
-            ->where('status', 'in_progress')
+            ->whereNull('completed_at')
             ->first();
 
-        // Get user's previous attempts
+        // Get user's previous attempts (completed attempts)
         $previousAttempts = $user->quizAttempts()
             ->where('quiz_id', $quiz->id)
-            ->where('status', '!=', 'in_progress')
+            ->whereNotNull('completed_at')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -115,10 +122,20 @@ class StudentQuizController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Get course ID from quiz
+        $courseId = $this->getCourseIdFromQuiz($quiz);
+        
+        if (!$courseId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kursus tidak ditemukan untuk quiz ini.'
+            ], 404);
+        }
+        
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
-            ->where('course_id', $quiz->subModule->module->course_id)
-            ->where('status', 'active')
+            ->where('course_id', $courseId)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -139,12 +156,20 @@ class StudentQuizController extends Controller
         try {
             DB::beginTransaction();
 
+            // Get the next attempt number
+            $attemptNumber = $user->quizAttempts()
+                ->where('quiz_id', $quiz->id)
+                ->max('attempt_number') ?? 0;
+            $attemptNumber++;
+
             // Create new quiz attempt
             $attempt = $user->quizAttempts()->create([
                 'quiz_id' => $quiz->id,
-                'status' => 'in_progress',
+                'nilai' => 0,
+                'is_passed' => false,
+                'attempt_number' => $attemptNumber,
                 'started_at' => now(),
-                'score' => 0
+                'completed_at' => null
             ]);
 
             // Get quiz questions with answer options
@@ -190,10 +215,20 @@ class StudentQuizController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Get course ID from quiz
+        $courseId = $this->getCourseIdFromQuiz($quiz);
+        
+        if (!$courseId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kursus tidak ditemukan untuk quiz ini.'
+            ], 404);
+        }
+        
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
-            ->where('course_id', $quiz->subModule->module->course_id)
-            ->where('status', 'active')
+            ->where('course_id', $courseId)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -213,11 +248,11 @@ class StudentQuizController extends Controller
         try {
             DB::beginTransaction();
 
-            // Get the quiz attempt
+            // Get the quiz attempt (must be in progress, i.e., not completed)
             $attempt = $user->quizAttempts()
                 ->where('id', $request->attempt_id)
                 ->where('quiz_id', $quiz->id)
-                ->where('status', 'in_progress')
+                ->whereNull('completed_at')
                 ->first();
 
             if (!$attempt) {
@@ -268,12 +303,11 @@ class StudentQuizController extends Controller
             
             // Determine if passed
             $isPassed = $score >= $quiz->nilai_minimum;
-            $status = $isPassed ? 'passed' : 'failed';
 
             // Update attempt
             $attempt->update([
-                'status' => $status,
-                'score' => $score,
+                'nilai' => $score,
+                'is_passed' => $isPassed,
                 'completed_at' => now()
             ]);
 
@@ -319,10 +353,17 @@ class StudentQuizController extends Controller
             abort(403, 'Anda tidak dapat mengakses hasil quiz ini.');
         }
 
-        // Check if user is enrolled
+        // Get course ID from quiz
+        $courseId = $this->getCourseIdFromQuiz($attempt->quiz);
+        
+        if (!$courseId) {
+            abort(404, 'Kursus tidak ditemukan untuk quiz ini.');
+        }
+
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
-            ->where('course_id', $attempt->quiz->subModule->module->course_id)
-            ->where('status', 'active')
+            ->where('course_id', $courseId)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -336,8 +377,8 @@ class StudentQuizController extends Controller
 
         $totalQuestions = $userAnswers->count();
         $correctAnswers = $userAnswers->where('is_correct', true)->count();
-        $score = $attempt->score;
-        $isPassed = $attempt->status === 'passed';
+        $score = $attempt->nilai;
+        $isPassed = $attempt->is_passed === true;
 
         return view('student.quizzes.result', compact(
             'attempt',
@@ -361,10 +402,17 @@ class StudentQuizController extends Controller
             abort(403, 'Anda tidak dapat mengakses attempt quiz ini.');
         }
 
-        // Check if user is enrolled
+        // Get course ID from quiz
+        $courseId = $this->getCourseIdFromQuiz($attempt->quiz);
+        
+        if (!$courseId) {
+            abort(404, 'Kursus tidak ditemukan untuk quiz ini.');
+        }
+
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
-            ->where('course_id', $attempt->quiz->subModule->module->course_id)
-            ->where('status', 'active')
+            ->where('course_id', $courseId)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -378,8 +426,8 @@ class StudentQuizController extends Controller
 
         $totalQuestions = $userAnswers->count();
         $correctAnswers = $userAnswers->where('is_correct', true)->count();
-        $score = $attempt->score;
-        $isPassed = $attempt->status === 'passed';
+        $score = $attempt->nilai;
+        $isPassed = $attempt->is_passed === true;
 
         return view('student.quizzes.review', compact(
             'attempt',
@@ -398,10 +446,20 @@ class StudentQuizController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Get course ID from quiz
+        $courseId = $this->getCourseIdFromQuiz($quiz);
+        
+        if (!$courseId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kursus tidak ditemukan untuk quiz ini.'
+            ], 404);
+        }
+        
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
-            ->where('course_id', $quiz->subModule->module->course_id)
-            ->where('status', 'active')
+            ->where('course_id', $courseId)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -411,10 +469,10 @@ class StudentQuizController extends Controller
             ], 403);
         }
 
-        // Get active attempt
+        // Get active attempt (not completed yet)
         $activeAttempt = $user->quizAttempts()
             ->where('quiz_id', $quiz->id)
-            ->where('status', 'in_progress')
+            ->whereNull('completed_at')
             ->first();
 
         if (!$activeAttempt) {
@@ -472,10 +530,20 @@ class StudentQuizController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is enrolled
+        // Get course ID from quiz
+        $courseId = $this->getCourseIdFromQuiz($quiz);
+        
+        if (!$courseId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kursus tidak ditemukan untuk quiz ini.'
+            ], 404);
+        }
+        
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
         $enrollment = $user->userEnrollments()
-            ->where('course_id', $quiz->subModule->module->course_id)
-            ->where('status', 'active')
+            ->where('course_id', $courseId)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -493,11 +561,11 @@ class StudentQuizController extends Controller
         ]);
 
         try {
-            // Get the quiz attempt
+            // Get the quiz attempt (must be in progress, i.e., not completed)
             $attempt = $user->quizAttempts()
                 ->where('id', $request->attempt_id)
                 ->where('quiz_id', $quiz->id)
-                ->where('status', 'in_progress')
+                ->whereNull('completed_at')
                 ->first();
 
             if (!$attempt) {
@@ -536,20 +604,20 @@ class StudentQuizController extends Controller
      */
     private function canTakeQuiz($user, Quiz $quiz): bool
     {
-        // Check if user has reached max attempts
+        // Check if user has reached max attempts (only count completed attempts)
         $attemptCount = $user->quizAttempts()
             ->where('quiz_id', $quiz->id)
-            ->where('status', '!=', 'in_progress')
+            ->whereNotNull('completed_at')
             ->count();
 
         if ($quiz->max_attempts && $attemptCount >= $quiz->max_attempts) {
             return false;
         }
 
-        // Check if user has active attempt
+        // Check if user has active attempt (not completed yet)
         $activeAttempt = $user->quizAttempts()
             ->where('quiz_id', $quiz->id)
-            ->where('status', 'in_progress')
+            ->whereNull('completed_at')
             ->first();
 
         if ($activeAttempt) {
@@ -559,7 +627,7 @@ class StudentQuizController extends Controller
         // Check if user has passed the quiz
         $passedAttempt = $user->quizAttempts()
             ->where('quiz_id', $quiz->id)
-            ->where('status', 'passed')
+            ->where('is_passed', true)
             ->first();
 
         if ($passedAttempt) {
@@ -580,7 +648,9 @@ class StudentQuizController extends Controller
         $totalQuizzes = $subModule->quizzes()->count();
         $passedQuizzes = $subModule->quizzes()
             ->whereHas('quizAttempts', function ($query) use ($user) {
-                $query->where('user_id', $user->id)->where('status', 'passed');
+                $query->where('user_id', $user->id)
+                      ->where('is_passed', true)
+                      ->whereNotNull('completed_at');
             })
             ->count();
 
@@ -669,7 +739,7 @@ class StudentQuizController extends Controller
     {
         $enrollment = $user->userEnrollments()
             ->where('course_id', $courseId)
-            ->where('status', 'active')
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
             ->first();
 
         if (!$enrollment) {
@@ -748,5 +818,42 @@ class StudentQuizController extends Controller
                 'recorded_at' => now()
             ]);
         }
+    }
+
+    /**
+     * Get course ID from quiz (quiz can be at course, module, or sub-module level).
+     */
+    private function getCourseIdFromQuiz(Quiz $quiz): ?int
+    {
+        // Load relationships if not already loaded
+        if (!$quiz->relationLoaded('course')) {
+            $quiz->load('course');
+        }
+        if (!$quiz->relationLoaded('module')) {
+            $quiz->load('module');
+        }
+        if (!$quiz->relationLoaded('subModule')) {
+            $quiz->load('subModule');
+        }
+        
+        // Quiz can be at course, module, or sub-module level
+        if ($quiz->course_id) {
+            return $quiz->course_id;
+        } elseif ($quiz->module_id) {
+            if (!$quiz->module || !$quiz->module->relationLoaded('course')) {
+                $quiz->load('module.course');
+            }
+            return $quiz->module->course_id ?? null;
+        } elseif ($quiz->sub_module_id) {
+            if (!$quiz->subModule || !$quiz->subModule->relationLoaded('module')) {
+                $quiz->load('subModule.module');
+            }
+            if ($quiz->subModule && !$quiz->subModule->module->relationLoaded('course')) {
+                $quiz->subModule->load('module.course');
+            }
+            return $quiz->subModule->module->course_id ?? null;
+        }
+        
+        return null;
     }
 } 

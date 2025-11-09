@@ -290,20 +290,20 @@ trait StudentControllerTrait
             return false;
         }
 
-        // Periksa apakah user sudah mencapai maksimal percobaan
+        // Periksa apakah user sudah mencapai maksimal percobaan (hanya hitung percobaan yang selesai)
         $attemptCount = $user->quizAttempts()
             ->where('quiz_id', $quizId)
-            ->where('status', '!=', 'in_progress')
+            ->whereNotNull('completed_at')
             ->count();
 
         if ($quiz->max_attempts && $attemptCount >= $quiz->max_attempts) {
             return false;
         }
 
-        // Periksa apakah user memiliki percobaan aktif
+        // Periksa apakah user memiliki percobaan aktif (belum selesai)
         $activeAttempt = $user->quizAttempts()
             ->where('quiz_id', $quizId)
-            ->where('status', 'in_progress')
+            ->whereNull('completed_at')
             ->first();
 
         if ($activeAttempt) {
@@ -313,7 +313,7 @@ trait StudentControllerTrait
         // Periksa apakah user sudah lulus quiz
         $passedAttempt = $user->quizAttempts()
             ->where('quiz_id', $quizId)
-            ->where('status', 'passed')
+            ->where('is_passed', true)
             ->first();
 
         if ($passedAttempt) {
@@ -350,8 +350,8 @@ trait StudentControllerTrait
         $completedCourses = $user->userEnrollments()->whereNotNull('completed_at')->count();
         $totalJp = $this->getUserTotalJp();
         $averageQuizScore = $user->quizAttempts()
-            ->where('status', 'completed')
-            ->avg('score') ?? 0;
+            ->whereNotNull('completed_at')
+            ->avg('nilai') ?? 0;
 
         return [
             'total_courses' => $totalCourses,
