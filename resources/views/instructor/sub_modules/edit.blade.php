@@ -143,7 +143,7 @@
 
           <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-secondary" onclick="prevStep(3)">← Back</button>
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success" id="submitBtn" onclick="return handleFormSubmit(event);">
               <i class="bi bi-check-circle"></i> Update Sub-Module
             </button>
           </div>
@@ -962,6 +962,40 @@ function validateCorrectAnswer(checkbox) {
   }
 }
 
+function handleFormSubmit(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  // Show all wizard steps so all form fields are visible
+  document.querySelectorAll('.wizard-step').forEach(step => {
+    step.style.display = 'block';
+  });
+  
+  // Show all hidden content fields
+  document.querySelectorAll('.content-html-field, .content-file-field, .content-url-field, .content-youtube-field, .content-required-duration-field').forEach(field => {
+    field.style.display = 'block';
+  });
+  
+  // Show all answer options sections
+  document.querySelectorAll('.answer-options-section').forEach(field => {
+    field.style.display = 'block';
+  });
+  
+  // Validate required fields
+  if (!validateStep1()) {
+    alert('Please fill in all required fields before submitting.');
+    return false;
+  }
+  
+  // Submit the form
+  const form = document.getElementById('subModuleWizardForm');
+  if (form) {
+    form.submit();
+  }
+  
+  return false;
+}
+
 function updateReview() {
   document.getElementById('reviewJudul').textContent = document.querySelector('input[name="judul"]').value;
   document.getElementById('reviewDeskripsi').textContent = document.querySelector('textarea[name="deskripsi"]').value || '(Tidak ada deskripsi)';
@@ -1008,27 +1042,12 @@ document.addEventListener('DOMContentLoaded', function() {
   loadExistingContents();
   loadExistingQuizzes();
   
-  const form = document.getElementById('subModuleWizardForm');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      document.querySelectorAll('.wizard-step').forEach(step => {
-        step.style.display = 'block';
-      });
-      
-      document.querySelectorAll('.content-html-field, .content-file-field, .content-url-field, .content-youtube-field, .content-required-duration-field').forEach(field => {
-        field.style.display = 'block';
-      });
-      
-      document.querySelectorAll('.answer-options-section').forEach(field => {
-        field.style.display = 'block';
-      });
-      
-      if (!validateStep1()) {
-        e.preventDefault();
-        alert('Please fill in all required fields before submitting.');
-        return false;
-      }
-    });
+  // Ensure submit button is enabled
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.style.pointerEvents = 'auto';
+    submitBtn.style.cursor = 'pointer';
   }
 });
 </script>
@@ -1045,6 +1064,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .content-item {
   border-left: 4px solid #ffc107;
+}
+
+.quiz-item {
+  border-left: 4px solid #17a2b8;
+}
+
+.question-item {
+  border-left: 4px solid #6c757d;
+}
+
+button[type="submit"] {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 10;
 }
 </style>
 @endsection
