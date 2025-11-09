@@ -6,6 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('Courses') }} - {{ config('app.name', 'Sobat AURA') }}</title>
     
+    <!-- Bootstrap CSS (required for course-card component) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
     <!-- Tailwind CSS CDN as fallback -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -18,6 +22,16 @@
     <style>
         /* Ensure Alpine.js x-show works properly */
         [x-cloak] { display: none !important; }
+        
+        /* Hover card effect to match student dashboard */
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -258,9 +272,11 @@
 
                     {{-- Results --}}
                     @if ($courses->count() > 0)
-                        <div x-show="view === 'grid'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div x-show="view === 'grid'" x-cloak class="row g-4">
                             @foreach ($courses as $course)
-                                <x-course-card :course="$course" view="grid" />
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <x-course-card :course="$course" view="grid" :actions="true" />
+                                </div>
                             @endforeach
                         </div>
                         <div x-show="view === 'list'" x-cloak class="space-y-4">
