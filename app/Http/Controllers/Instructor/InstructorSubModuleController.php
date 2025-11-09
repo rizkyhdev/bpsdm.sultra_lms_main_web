@@ -37,7 +37,7 @@ class InstructorSubModuleController extends Controller
         $q = trim($request->get('q'));
         $perPage = (int) $request->get('per_page', 15);
 
-        $subs = SubModule::query()
+        $subs = SubModule::withCount(['contents', 'quizzes'])
             ->where('module_id', $module->id)
             ->when($q, function ($query) use ($q) {
                 $query->where('judul', 'like', "%$q%");

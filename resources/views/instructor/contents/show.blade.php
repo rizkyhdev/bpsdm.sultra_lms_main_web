@@ -16,17 +16,42 @@
 
 @section('content')
 <div class="container-fluid">
+  @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Success!</strong> {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+  
+  @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error!</strong> {{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">{{ $content->judul }}</h4>
     <div>
+      <h4 class="mb-0">{{ $content->judul }}</h4>
+      <small class="text-muted">{{ ucfirst($content->tipe) }} Content</small>
+    </div>
+    <div>
+      <a href="{{ route('instructor.contents.index', $content->subModule->id) }}" class="btn btn-light btn-sm me-2">
+        <i class="bi bi-arrow-left"></i> Back to Contents
+      </a>
       @can('update', $content)
-        <a href="{{ route('instructor.contents.edit', $content->id) }}" class="btn btn-primary btn-sm">Edit</a>
+        <a href="{{ route('instructor.contents.edit', $content->id) }}" class="btn btn-outline-secondary btn-sm me-2">
+          <i class="bi bi-pencil"></i> Edit
+        </a>
       @endcan
       @can('delete', $content)
-        <form action="{{ route('instructor.contents.destroy', $content->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus konten ini?');">
+        <form action="{{ route('instructor.contents.destroy', $content->id) }}" method="POST" class="d-inline" 
+              onsubmit="return confirm('Are you sure you want to delete this content?\n\nThis action cannot be undone!');">
           @csrf
           @method('DELETE')
-          <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+          <button type="submit" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-trash"></i> Delete
+          </button>
         </form>
       @endcan
     </div>

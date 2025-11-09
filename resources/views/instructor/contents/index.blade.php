@@ -16,6 +16,20 @@
 
 @section('content')
 <div class="container-fluid">
+  @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Success!</strong> {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+  
+  @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error!</strong> {{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+
   <div class="card mb-3">
     <div class="card-body">
       <form class="form-inline" method="get" action="{{ route('instructor.contents.index', $subModule->id) }}">
@@ -79,10 +93,13 @@
                   <a href="{{ route('instructor.contents.edit', $c->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @endcan
                 @can('delete', $c)
-                  <form action="{{ route('instructor.contents.destroy', $c->id) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus konten ini?')">
+                  <form action="{{ route('instructor.contents.destroy', $c->id) }}" method="post" class="d-inline" 
+                        onsubmit="return confirm('Are you sure you want to delete this content?\n\nThis action cannot be undone!');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
                   </form>
                 @endcan
               </td>

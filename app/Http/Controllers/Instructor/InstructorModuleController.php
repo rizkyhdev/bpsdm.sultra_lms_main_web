@@ -37,7 +37,7 @@ class InstructorModuleController extends Controller
         $q = trim($request->get('q'));
         $perPage = (int) $request->get('per_page', 15);
 
-        $modules = Module::query()
+        $modules = Module::withCount('subModules')
             ->where('course_id', $course->id)
             ->when($q, function ($query) use ($q) {
                 $query->where('judul', 'like', "%$q%");

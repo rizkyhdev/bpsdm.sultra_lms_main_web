@@ -80,7 +80,7 @@ class InstructorQuizController extends Controller
         $q = trim($request->get('q'));
         $perPage = (int) $request->get('per_page', 15);
 
-        $quizzes = Quiz::query()
+        $quizzes = Quiz::withCount('questions')
             ->where('sub_module_id', $sub->id)
             ->when($q, function ($query) use ($q) {
                 $query->where('judul', 'like', "%$q%");
