@@ -9,6 +9,16 @@
     <!-- Bootstrap CSS (required for course-card component) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- custom css -->
+    <link href="{{ asset('./css/custom.css') }}" rel="stylesheet">
+    <link href="{{ asset('./css/custom-style.css') }}" rel="stylesheet">
+    <link href="{{ asset('./css/pelatihan.css') }}" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons (via CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" href="{{ asset('image/LOGO AURA 1.png') }}" type="image/png">
     
     <!-- Tailwind CSS CDN as fallback -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,7 +44,9 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-light d-flex flex-column min-vh-100">
+    @include('layouts.partials.courses.header')
+    
     <div x-data="{
         view: '{{ request('view', 'grid') }}',
         categoriesOpen: true,
@@ -87,14 +99,7 @@
             this.view = 'grid';
             this.submitForm();
         }
-    }" class="min-h-screen">
-        {{-- Header --}}
-        <header class="bg-white shadow-sm border-b border-gray-200">
-            <div class="container mx-auto px-4 py-4">
-                <h1 class="text-2xl font-bold text-gray-900">{{ __('Pelatihan') }}</h1>
-            </div>
-        </header>
-
+    }" class="min-h-screen flex-fill">
         <div class="container mx-auto px-4 py-6">
             <form id="filter-form" method="GET" action="{{ route('courses.index') }}" class="hidden">
                 <input type="text" name="q" x-model="q">
@@ -302,6 +307,13 @@
             </div>
         </div>
     </div>
+    
+    @include('layouts.partials.courses.footer')
+    
+    <!-- JS files -->
+    <script src="{{ asset('./js/sidebar-toggle.js') }}"></script>
+    <script src="{{ asset('./js/page-transition.js') }}"></script>
+    <script src="{{ asset('./js/tabs.js') }}"></script>
 </body>
 </html>
 
