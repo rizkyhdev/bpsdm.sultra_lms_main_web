@@ -130,11 +130,11 @@
 
 <body>
   <!-- Preloader -->
-  <div id="preloader">
+  <!-- <div id="preloader">
     <div class="preloader-logo">
       <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" />
     </div>
-  </div>
+  </div> -->
  <div class="container-fluid p-0">
     <div class="login-container">
       <!-- Left -->

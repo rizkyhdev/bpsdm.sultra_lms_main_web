@@ -26,11 +26,11 @@
 
   <body style="padding-top:80px;">
   {{-- Preload --}}
-     <div id="preloader">
+     <!-- <div id="preloader">
         <div class="preloader-logo">
             <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" />
         </div>
-    </div>
+    </div> -->
 
 {{-- Navbar --}}
 <nav class="navbar navbar-expand-lg fixed-top" style="background-color:#FFFFFF;  box-shadow: 0px 5px 5px rgba(0.2, 0.2, 0.2, 0.2);">
