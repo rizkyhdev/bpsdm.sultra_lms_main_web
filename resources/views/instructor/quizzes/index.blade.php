@@ -42,7 +42,7 @@
         <a href="{{ route('instructor.quizzes.create', $sub->id) }}" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-circle"></i> Add Quiz
         </a>
-      @endcan
+    @endcan
     </div>
   </div>
   
@@ -84,21 +84,21 @@
                   <a href="{{ route('instructor.quizzes.show', $q) }}" class="btn btn-outline-primary" title="View">
                     <i class="bi bi-eye"></i>
                   </a>
-                  @can('update', $q)
+                @can('update', $q)
                     <a href="{{ route('instructor.quizzes.edit', $q) }}" class="btn btn-outline-secondary" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </a>
-                  @endcan
-                  @can('delete', $q)
+                @endcan
+                @can('delete', $q)
                     <form action="{{ route('instructor.quizzes.destroy', $q) }}" method="post" class="d-inline" 
                           onsubmit="return confirm('Are you sure you want to delete this quiz?\n\nThis will also delete:\n- All questions\n- All answer options\n\nThis action cannot be undone!');">
-                      @csrf
-                      @method('DELETE')
+                    @csrf
+                    @method('DELETE')
                       <button type="submit" class="btn btn-outline-danger" title="Delete">
                         <i class="bi bi-trash"></i>
                       </button>
-                    </form>
-                  @endcan
+                  </form>
+                @endcan
                   <a href="{{ route('instructor.quizzes.results', $q) }}" class="btn btn-outline-info" title="Results">
                     <i class="bi bi-bar-chart"></i>
                   </a>

@@ -32,7 +32,7 @@
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <h4 class="mb-0">{{ $content->judul }}</h4>
+    <h4 class="mb-0">{{ $content->judul }}</h4>
       <small class="text-muted">{{ ucfirst($content->tipe) }} Content</small>
     </div>
     <div>

@@ -53,11 +53,11 @@
           </button>
         </form>
       @endcan
-      @can('create', [App\Models\SubModule::class, $module])
+    @can('create', [App\Models\SubModule::class, $module])
         <a href="{{ route('instructor.sub_modules.create', $module->id) }}" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-circle"></i> Add Sub-Module
         </a>
-      @endcan
+    @endcan
     </div>
   </div>
 

@@ -45,30 +45,30 @@
           $showOptions = in_array($selectedType, ['multiple_choice', 'true_false']);
         @endphp
         <div id="answerOptionsSection" style="display: {{ $showOptions ? 'block' : 'none' }};">
-          <h6>Opsi Jawaban (untuk Multiple Choice / True False)</h6>
-          <div id="optionsContainer">
-            {{-- Dynamic repeatable group: name="answer_options[index][teks_jawaban]" & answer_options[index][is_correct] --}}
-            @php $oldOptions = old('answer_options', []); @endphp
-            @if(!empty($oldOptions))
-              @foreach($oldOptions as $idx => $opt)
-                <div class="form-row align-items-center mb-2 option-row">
-                  <div class="col">
-                    <input type="text" class="form-control" name="answer_options[{{ $idx }}][teks_jawaban]" value="{{ $opt['teks_jawaban'] ?? '' }}" placeholder="Teks jawaban">
-                  </div>
-                  <div class="col-auto">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="answer_options[{{ $idx }}][is_correct]" value="1" {{ !empty($opt['is_correct']) ? 'checked' : '' }}>
-                      <label class="form-check-label">Benar?</label>
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-option">Hapus</button>
+        <h6>Opsi Jawaban (untuk Multiple Choice / True False)</h6>
+        <div id="optionsContainer">
+          {{-- Dynamic repeatable group: name="answer_options[index][teks_jawaban]" & answer_options[index][is_correct] --}}
+          @php $oldOptions = old('answer_options', []); @endphp
+          @if(!empty($oldOptions))
+            @foreach($oldOptions as $idx => $opt)
+              <div class="form-row align-items-center mb-2 option-row">
+                <div class="col">
+                  <input type="text" class="form-control" name="answer_options[{{ $idx }}][teks_jawaban]" value="{{ $opt['teks_jawaban'] ?? '' }}" placeholder="Teks jawaban">
+                </div>
+                <div class="col-auto">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="answer_options[{{ $idx }}][is_correct]" value="1" {{ !empty($opt['is_correct']) ? 'checked' : '' }}>
+                    <label class="form-check-label">Benar?</label>
                   </div>
                 </div>
-              @endforeach
-            @endif
-          </div>
-          <button type="button" id="addOptionBtn" class="btn btn-sm btn-outline-primary">Tambah Opsi</button>
+                <div class="col-auto">
+                  <button type="button" class="btn btn-sm btn-outline-danger remove-option">Hapus</button>
+                </div>
+              </div>
+            @endforeach
+          @endif
+        </div>
+        <button type="button" id="addOptionBtn" class="btn btn-sm btn-outline-primary">Tambah Opsi</button>
         </div>
 
         <div class="d-flex justify-content-between mt-3">
@@ -142,8 +142,8 @@
         var row = e.target.closest('.option-row');
         if (row) {
           row.remove();
-        }
       }
+    }
     }
     
     // Initialize on page load

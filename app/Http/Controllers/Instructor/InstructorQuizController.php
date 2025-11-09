@@ -213,15 +213,53 @@ class InstructorQuizController extends Controller
         $quiz = Quiz::with('subModule.module.course')->findOrFail($id);
         $this->authorize('view', $quiz);
 
+        // Get all attempts with user relationship
         $attempts = QuizAttempt::where('quiz_id', $quiz->id)
+            ->with('user')
+            ->whereNotNull('completed_at')
             ->latest('completed_at')
             ->paginate(15);
-        $avgScore = QuizAttempt::where('quiz_id', $quiz->id)->avg('nilai');
-        $passRate = QuizAttempt::where('quiz_id', $quiz->id)->where('is_passed', 1)->count();
-        $totalAttempts = QuizAttempt::where('quiz_id', $quiz->id)->count();
-        $passRate = $totalAttempts > 0 ? round(($passRate / $totalAttempts) * 100, 2) : 0.0;
 
-        return view('instructor.quizzes.results', compact('quiz', 'attempts', 'avgScore', 'passRate'));
+        // Calculate statistics
+        $allAttempts = QuizAttempt::where('quiz_id', $quiz->id)
+            ->whereNotNull('completed_at')
+            ->get();
+        
+        $totalAttempts = $allAttempts->count();
+        $passedAttempts = $allAttempts->where('is_passed', true)->count();
+        $failedAttempts = $allAttempts->where('is_passed', false)->count();
+        $avgScore = $allAttempts->avg('nilai') ?? 0;
+        $highestScore = $allAttempts->max('nilai') ?? 0;
+        $lowestScore = $allAttempts->min('nilai') ?? 0;
+        $passRate = $totalAttempts > 0 ? round(($passedAttempts / $totalAttempts) * 100, 2) : 0.0;
+        
+        // Get unique users count
+        $uniqueUsers = $allAttempts->unique('user_id')->count();
+        
+        // Calculate standard deviation
+        $scores = $allAttempts->pluck('nilai')->toArray();
+        $stdDev = 0;
+        if (count($scores) > 1) {
+            $variance = 0;
+            foreach ($scores as $score) {
+                $variance += pow($score - $avgScore, 2);
+            }
+            $stdDev = sqrt($variance / count($scores));
+        }
+
+        return view('instructor.quizzes.results', compact(
+            'quiz', 
+            'attempts', 
+            'totalAttempts',
+            'passedAttempts',
+            'failedAttempts',
+            'avgScore', 
+            'highestScore',
+            'lowestScore',
+            'passRate',
+            'uniqueUsers',
+            'stdDev'
+        ));
     }
 
     /**

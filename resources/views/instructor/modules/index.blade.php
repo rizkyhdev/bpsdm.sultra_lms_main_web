@@ -38,11 +38,11 @@
       <a href="{{ route('instructor.courses.show', $course) }}" class="btn btn-light btn-sm me-2">
         <i class="bi bi-arrow-left"></i> Back to Course
       </a>
-      @can('create', [App\Models\Module::class, $course])
+    @can('create', [App\Models\Module::class, $course])
         <a href="{{ route('instructor.modules.create', $course->id) }}" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-circle"></i> Add Module
         </a>
-      @endcan
+    @endcan
     </div>
   </div>
 
@@ -51,7 +51,7 @@
       <span>Modules List ({{ $modules->total() }})</span>
     </div>
     <div class="card-body p-0">
-      <div class="table-responsive">
+    <div class="table-responsive">
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
@@ -62,9 +62,9 @@
               <th width="200" class="text-center">Actions</th>
             </tr>
           </thead>
-          <tbody>
-            @forelse($modules as $m)
-              <tr>
+        <tbody>
+          @forelse($modules as $m)
+            <tr>
                 <td class="text-center">
                   <span class="badge bg-secondary">{{ $m->urutan }}</span>
                 </td>
@@ -82,25 +82,25 @@
                     <a href="{{ route('instructor.modules.show', $m) }}" class="btn btn-outline-primary" title="View">
                       <i class="bi bi-eye"></i>
                     </a>
-                    @can('update', $m)
+                @can('update', $m)
                       <a href="{{ route('instructor.modules.edit', $m) }}" class="btn btn-outline-secondary" title="Edit">
                         <i class="bi bi-pencil"></i>
                       </a>
-                    @endcan
-                    @can('delete', $m)
+                @endcan
+                @can('delete', $m)
                       <form action="{{ route('instructor.modules.destroy', $m) }}" method="post" class="d-inline" 
                             onsubmit="return confirm('Are you sure you want to delete this module?\n\nThis will also delete:\n- All sub-modules\n- All contents\n- All quizzes and questions\n\nThis action cannot be undone!');">
-                        @csrf
-                        @method('DELETE')
+                    @csrf
+                    @method('DELETE')
                         <button type="submit" class="btn btn-outline-danger" title="Delete">
                           <i class="bi bi-trash"></i>
                         </button>
-                      </form>
-                    @endcan
+                  </form>
+                @endcan
                   </div>
-                </td>
-              </tr>
-            @empty
+              </td>
+            </tr>
+          @empty
               <tr>
                 <td colspan="5" class="text-center py-4">
                   <div class="text-muted">
@@ -114,10 +114,10 @@
                   </div>
                 </td>
               </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
     </div>
     @if($modules->hasPages())
       <div class="card-footer">
