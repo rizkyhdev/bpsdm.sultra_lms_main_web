@@ -65,6 +65,118 @@ class InstructorCourseController extends Controller
     }
 
     /**
+     * Tampilkan wizard pembuatan course lengkap dengan modules, sub-modules, dan contents.
+     * @return \Illuminate\Http\Response
+     */
+    public function createWizard()
+    {
+        $this->authorize('create', Course::class);
+        return view('instructor.courses.create-wizard');
+    }
+
+    /**
+     * Simpan course lengkap dengan modules, sub-modules, dan contents melalui wizard.
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeWizard(Request $request)
+    {
+        $this->authorize('create', Course::class);
+
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'jp_value' => 'required|integer|min:1',
+            'bidang_kompetensi' => 'required|string',
+            'modules' => 'required|array|min:1',
+            'modules.*.judul' => 'required|string|max:255',
+            'modules.*.deskripsi' => 'nullable|string',
+            'modules.*.urutan' => 'required|integer|min:1',
+            'modules.*.sub_modules' => 'nullable|array',
+            'modules.*.sub_modules.*.judul' => 'required_with:modules.*.sub_modules|string|max:255',
+            'modules.*.sub_modules.*.deskripsi' => 'nullable|string',
+            'modules.*.sub_modules.*.urutan' => 'required_with:modules.*.sub_modules|integer|min:1',
+            'modules.*.sub_modules.*.contents' => 'nullable|array',
+            'modules.*.sub_modules.*.contents.*.judul' => 'required_with:modules.*.sub_modules.*.contents|string|max:255',
+            'modules.*.sub_modules.*.contents.*.tipe' => 'required_with:modules.*.sub_modules.*.contents|in:text,html,pdf,video,audio,image,link',
+            'modules.*.sub_modules.*.contents.*.urutan' => 'required_with:modules.*.sub_modules.*.contents|integer|min:1',
+            'modules.*.sub_modules.*.contents.*.html_content' => 'nullable|string|required_if:modules.*.sub_modules.*.contents.*.tipe,html,text',
+            'modules.*.sub_modules.*.contents.*.external_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,link',
+            'modules.*.sub_modules.*.contents.*.file_path' => 'nullable|file|max:102400',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Create course
+            $course = new Course();
+            $course->judul = $request->judul;
+            $course->deskripsi = $request->deskripsi;
+            $course->jp_value = $request->jp_value;
+            $course->bidang_kompetensi = $request->bidang_kompetensi;
+            $course->user_id = Auth::id();
+            $course->save();
+
+            // Create modules, sub-modules, and contents
+            $moduleIndex = 0;
+            foreach ($request->modules as $moduleData) {
+                $subModuleIndex = 0;
+                $module = new \App\Models\Module();
+                $module->course_id = $course->id;
+                $module->judul = $moduleData['judul'];
+                $module->deskripsi = $moduleData['deskripsi'] ?? '';
+                $module->urutan = $moduleData['urutan'];
+                $module->save();
+
+                if (isset($moduleData['sub_modules']) && is_array($moduleData['sub_modules'])) {
+                    foreach ($moduleData['sub_modules'] as $subModuleData) {
+                        $subModule = new \App\Models\SubModule();
+                        $subModule->module_id = $module->id;
+                        $subModule->judul = $subModuleData['judul'];
+                        $subModule->deskripsi = $subModuleData['deskripsi'] ?? '';
+                        $subModule->urutan = $subModuleData['urutan'];
+                        $subModule->save();
+
+                        if (isset($subModuleData['contents']) && is_array($subModuleData['contents'])) {
+                            foreach ($subModuleData['contents'] as $contentIndex => $contentData) {
+                                $content = new \App\Models\Content();
+                                $content->sub_module_id = $subModule->id;
+                                $content->judul = $contentData['judul'] ?? '';
+                                $content->tipe = $contentData['tipe'] ?? 'text';
+                                $content->urutan = $contentData['urutan'] ?? 1;
+                                $content->html_content = $contentData['html_content'] ?? null;
+                                $content->external_url = $contentData['external_url'] ?? null;
+
+                                // Handle file upload - access from request files array
+                                $fileKey = "modules.{$moduleIndex}.sub_modules.{$subModuleIndex}.contents.{$contentIndex}.file_path";
+                                if ($request->hasFile($fileKey)) {
+                                    $file = $request->file($fileKey);
+                                    if ($file && $file->isValid()) {
+                                        $path = $file->store('contents/' . date('Y/m/d'), 'public');
+                                        $content->file_path = $path;
+                                    }
+                                }
+
+                                $content->save();
+                            }
+                        }
+                        $subModuleIndex++;
+                    }
+                }
+                $moduleIndex++;
+            }
+
+            DB::commit();
+            Log::info('Course created via wizard', ['course_id' => $course->id, 'instructor_id' => Auth::id()]);
+            return redirect()->route('instructor.courses.show', $course->id)
+                ->with('success', 'Course created successfully with all modules, sub-modules, and contents.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to create course via wizard', ['error' => $e->getMessage()]);
+            return redirect()->back()->withInput()->with('error', 'Failed to create course: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Simpan kursus baru yang dimiliki instruktur saat ini.
      * @param StoreCourseRequest $request
      * @return \Illuminate\Http\RedirectResponse

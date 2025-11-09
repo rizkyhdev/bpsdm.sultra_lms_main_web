@@ -39,7 +39,10 @@
         </div>
         <button type="submit" class="btn btn-primary mb-2">Filter</button>
         @can('create', App\Models\Course::class)
-          <a href="{{ route('instructor.courses.create') }}" class="btn btn-success mb-2 ml-auto">Buat Course</a>
+          <a href="{{ route('instructor.courses.create') }}" class="btn btn-success mb-2 ml-2">Buat Course</a>
+          <a href="{{ route('instructor.courses.create-wizard') }}" class="btn btn-info mb-2 ml-2">
+            <i class="bi bi-magic"></i> Buat Course (Wizard)
+          </a>
         @endcan
       </form>
     </div>

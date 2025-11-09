@@ -20,6 +20,8 @@ class Content extends Model
         'judul',
         'tipe',
         'file_path',
+        'html_content',
+        'external_url',
         'urutan',
     ];
 

@@ -15,6 +15,9 @@
 
 @section('content')
 <div class="container-fluid">
+  <div class="alert alert-info mb-3">
+    <i class="bi bi-info-circle"></i> <strong>Tip:</strong> Gunakan <a href="{{ route('instructor.courses.create-wizard') }}" class="alert-link">Course Creation Wizard</a> untuk membuat course lengkap dengan modules, sub-modules, dan contents dalam satu alur.
+  </div>
   <div class="card">
     <div class="card-body">
       <form action="{{ route('instructor.courses.store') }}" method="post">

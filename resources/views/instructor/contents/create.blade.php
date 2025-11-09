@@ -17,46 +17,133 @@
 @section('content')
 <div class="container-fluid">
   <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Tambah Content Baru</h5>
+    </div>
     <div class="card-body">
-      <form action="{{ route('instructor.contents.store', $subModule->id) }}" method="post" enctype="multipart/form-data">
+      <form action="{{ route('instructor.contents.store', $subModule->id) }}" method="post" enctype="multipart/form-data" id="contentForm">
         @csrf
-        <div class="form-group">
-          <label>Judul</label>
+        <div class="mb-3">
+          <label class="form-label">Judul Content <span class="text-danger">*</span></label>
           <input type="text" name="judul" value="{{ old('judul') }}" class="form-control" required>
-          @error('judul')<small class="text-danger">{{ $message }}</small>@enderror
+          @error('judul')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
-        <div class="form-group">
-          <label>Tipe</label>
-          <select name="tipe" class="form-control" required>
-            @foreach(['text','pdf','video','audio','image'] as $t)
-              <option value="{{ $t }}" {{ old('tipe')==$t ? 'selected' : '' }}>{{ ucfirst($t) }}</option>
-            @endforeach
+
+        <div class="mb-3">
+          <label class="form-label">Tipe Content <span class="text-danger">*</span></label>
+          <select name="tipe" id="contentType" class="form-control" required>
+            <option value="">Pilih Tipe</option>
+            <option value="text" {{ old('tipe')=='text' ? 'selected' : '' }}>Text (Plain Text)</option>
+            <option value="html" {{ old('tipe')=='html' ? 'selected' : '' }}>HTML (Rich Text)</option>
+            <option value="video" {{ old('tipe')=='video' ? 'selected' : '' }}>Video</option>
+            <option value="audio" {{ old('tipe')=='audio' ? 'selected' : '' }}>Audio</option>
+            <option value="pdf" {{ old('tipe')=='pdf' ? 'selected' : '' }}>PDF File</option>
+            <option value="image" {{ old('tipe')=='image' ? 'selected' : '' }}>Image</option>
+            <option value="link" {{ old('tipe')=='link' ? 'selected' : '' }}>External Link (PDF/File)</option>
           </select>
-          @error('tipe')<small class="text-danger">{{ $message }}</small>@enderror
+          @error('tipe')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
-        <div class="form-group">
-          <label>File (opsional untuk tipe non-text)</label>
-          <input type="file" name="file" class="form-control-file">
-          @error('file')<small class="text-danger">{{ $message }}</small>@enderror
+
+        <!-- HTML Content Field (for text and html types) -->
+        <div class="mb-3" id="htmlContentField" style="display: none;">
+          <label class="form-label">Konten HTML/Text <span class="text-danger">*</span></label>
+          <textarea name="html_content" id="htmlContent" class="form-control" rows="10">{{ old('html_content') }}</textarea>
+          <small class="text-muted">Gunakan HTML untuk format yang lebih kaya. Untuk plain text, cukup ketik teks biasa.</small>
+          @error('html_content')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
-        <div class="form-group">
-          <label>Urutan</label>
-          <input type="number" name="urutan" value="{{ old('urutan') }}" class="form-control" min="1">
-          @error('urutan')<small class="text-danger">{{ $message }}</small>@enderror
+
+        <!-- File Upload Field (for video, audio, pdf, image) -->
+        <div class="mb-3" id="fileUploadField" style="display: none;">
+          <label class="form-label">Upload File <span class="text-danger">*</span></label>
+          <input type="file" name="file_path" id="fileInput" class="form-control" accept="">
+          <small class="text-muted">Maksimal ukuran file: 100MB</small>
+          @error('file_path')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
-        <div class="form-group">
-          <label>Konten Teks (untuk tipe text)</label>
-          <textarea name="teks" class="form-control" rows="4">{{ old('teks') }}</textarea>
-          @error('teks')<small class="text-danger">{{ $message }}</small>@enderror
+
+        <!-- External URL Field (for link type) -->
+        <div class="mb-3" id="externalUrlField" style="display: none;">
+          <label class="form-label">External URL <span class="text-danger">*</span></label>
+          <input type="url" name="external_url" value="{{ old('external_url') }}" class="form-control" placeholder="https://example.com/file.pdf">
+          <small class="text-muted">Masukkan URL lengkap ke file PDF atau resource eksternal lainnya</small>
+          @error('external_url')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
+
+        <div class="mb-3">
+          <label class="form-label">Urutan <span class="text-danger">*</span></label>
+          <input type="number" name="urutan" value="{{ old('urutan', 1) }}" class="form-control" min="1" required>
+          <small class="text-muted">Urutan tampil content dalam sub-module</small>
+          @error('urutan')<small class="text-danger d-block">{{ $message }}</small>@enderror
+        </div>
+
         <div class="d-flex justify-content-between">
-          <a href="{{ route('instructor.sub_modules.show', $subModule) }}" class="btn btn-light">Batal</a>
-          <button type="submit" class="btn btn-primary">Simpan</button>
+          <a href="{{ route('instructor.contents.index', $subModule->id) }}" class="btn btn-light">Batal</a>
+          <button type="submit" class="btn btn-primary">Simpan Content</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const contentTypeSelect = document.getElementById('contentType');
+    const htmlContentField = document.getElementById('htmlContentField');
+    const fileUploadField = document.getElementById('fileUploadField');
+    const externalUrlField = document.getElementById('externalUrlField');
+    const fileInput = document.getElementById('fileInput');
+    const htmlContent = document.getElementById('htmlContent');
+
+    function toggleFields() {
+        const selectedType = contentTypeSelect.value;
+        
+        // Hide all fields first
+        htmlContentField.style.display = 'none';
+        fileUploadField.style.display = 'none';
+        externalUrlField.style.display = 'none';
+        
+        // Remove required attributes
+        htmlContent.removeAttribute('required');
+        fileInput.removeAttribute('required');
+        document.querySelector('[name="external_url"]').removeAttribute('required');
+        
+        // Show and configure fields based on type
+        if (selectedType === 'text' || selectedType === 'html') {
+            htmlContentField.style.display = 'block';
+            htmlContent.setAttribute('required', 'required');
+        } else if (selectedType === 'video') {
+            fileUploadField.style.display = 'block';
+            fileInput.setAttribute('accept', 'video/*');
+            fileInput.setAttribute('required', 'required');
+        } else if (selectedType === 'audio') {
+            fileUploadField.style.display = 'block';
+            fileInput.setAttribute('accept', 'audio/*');
+            fileInput.setAttribute('required', 'required');
+        } else if (selectedType === 'pdf') {
+            fileUploadField.style.display = 'block';
+            fileInput.setAttribute('accept', '.pdf');
+            fileInput.setAttribute('required', 'required');
+        } else if (selectedType === 'image') {
+            fileUploadField.style.display = 'block';
+            fileInput.setAttribute('accept', 'image/*');
+            fileInput.setAttribute('required', 'required');
+        } else if (selectedType === 'link') {
+            externalUrlField.style.display = 'block';
+            document.querySelector('[name="external_url"]').setAttribute('required', 'required');
+        }
+    }
+
+    // Initial toggle
+    toggleFields();
+    
+    // Toggle on change
+    contentTypeSelect.addEventListener('change', toggleFields);
+    
+    // Set initial value if old input exists
+    @if(old('tipe'))
+        toggleFields();
+    @endif
+});
+</script>
 @endsection
 
 
