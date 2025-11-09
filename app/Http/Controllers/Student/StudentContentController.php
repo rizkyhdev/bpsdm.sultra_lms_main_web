@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Content;
+use App\Models\ContentProgress;
 use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,12 +49,15 @@ class StudentContentController extends Controller
         }
 
         // Mendapatkan progress user untuk konten ini
-        $progress = $content->userProgress()->where('user_id', $user->id)->first();
+        $progress = ContentProgress::where('content_id', $content->id)
+            ->where('user_id', $user->id)
+            ->first();
         
         if (!$progress) {
             // Inisialisasi progress jika tidak ada
-            $progress = $content->userProgress()->create([
+            $progress = ContentProgress::create([
                 'user_id' => $user->id,
+                'content_id' => $content->id,
                 'is_completed' => false,
                 'progress_percentage' => 0,
                 'started_at' => now()
@@ -114,15 +118,20 @@ class StudentContentController extends Controller
         $request->validate([
             'progress_percentage' => 'required|numeric|min:0|max:100',
             'time_spent' => 'nullable|numeric|min:0',
-            'current_position' => 'nullable|numeric|min:0'
+            'current_position' => 'nullable|numeric|min:0',
+            'video_duration' => 'nullable|numeric|min:0',
+            'watched_duration' => 'nullable|numeric|min:0'
         ]);
 
         try {
-            $progress = $content->userProgress()->where('user_id', $user->id)->first();
+            $progress = ContentProgress::where('content_id', $content->id)
+                ->where('user_id', $user->id)
+                ->first();
             
             if (!$progress) {
-                $progress = $content->userProgress()->create([
+                $progress = ContentProgress::create([
                     'user_id' => $user->id,
+                    'content_id' => $content->id,
                     'is_completed' => false,
                     'progress_percentage' => 0,
                     'started_at' => now()
@@ -134,8 +143,10 @@ class StudentContentController extends Controller
             $progress->update([
                 'progress_percentage' => $request->progress_percentage,
                 'is_completed' => $isCompleted,
-                'time_spent' => $request->time_spent ?? $progress->time_spent,
-                'current_position' => $request->current_position ?? $progress->current_position
+                'time_spent' => $request->time_spent ?? $progress->time_spent ?? 0,
+                'current_position' => $request->current_position ?? $progress->current_position ?? 0,
+                'video_duration' => $request->video_duration ?? $progress->video_duration,
+                'watched_duration' => $request->watched_duration ?? $progress->watched_duration ?? 0
             ]);
 
             if ($isCompleted) {
@@ -182,11 +193,14 @@ class StudentContentController extends Controller
         }
 
         try {
-            $progress = $content->userProgress()->where('user_id', $user->id)->first();
+            $progress = ContentProgress::where('content_id', $content->id)
+                ->where('user_id', $user->id)
+                ->first();
             
             if (!$progress) {
-                $progress = $content->userProgress()->create([
+                $progress = ContentProgress::create([
                     'user_id' => $user->id,
+                    'content_id' => $content->id,
                     'is_completed' => false,
                     'progress_percentage' => 0,
                     'started_at' => now()
@@ -240,11 +254,14 @@ class StudentContentController extends Controller
         }
 
         // Track download progress
-        $progress = $content->userProgress()->where('user_id', $user->id)->first();
+        $progress = ContentProgress::where('content_id', $content->id)
+            ->where('user_id', $user->id)
+            ->first();
         
         if (!$progress) {
-            $progress = $content->userProgress()->create([
+            $progress = ContentProgress::create([
                 'user_id' => $user->id,
+                'content_id' => $content->id,
                 'is_completed' => false,
                 'progress_percentage' => 0,
                 'started_at' => now()
@@ -283,11 +300,14 @@ class StudentContentController extends Controller
         }
 
         // Track video access
-        $progress = $content->userProgress()->where('user_id', $user->id)->first();
+        $progress = ContentProgress::where('content_id', $content->id)
+            ->where('user_id', $user->id)
+            ->first();
         
         if (!$progress) {
-            $progress = $content->userProgress()->create([
+            $progress = ContentProgress::create([
                 'user_id' => $user->id,
+                'content_id' => $content->id,
                 'is_completed' => false,
                 'progress_percentage' => 0,
                 'started_at' => now()
@@ -350,7 +370,9 @@ class StudentContentController extends Controller
             ], 403);
         }
 
-        $progress = $content->userProgress()->where('user_id', $user->id)->first();
+        $progress = ContentProgress::where('content_id', $content->id)
+            ->where('user_id', $user->id)
+            ->first();
 
         if (!$progress) {
             return response()->json([
@@ -465,7 +487,7 @@ class StudentContentController extends Controller
             return true;
         }
 
-        $previousProgress = $previousContent->userProgress()
+        $previousProgress = ContentProgress::where('content_id', $previousContent->id)
             ->where('user_id', $user->id)
             ->where('is_completed', true)
             ->first();

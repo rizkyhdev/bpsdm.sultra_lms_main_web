@@ -91,6 +91,7 @@ class InstructorContentController extends Controller
             $content->sub_module_id = $subModule->id;
             $content->html_content = $data['html_content'] ?? null;
             $content->external_url = $data['external_url'] ?? null;
+            $content->youtube_url = $data['youtube_url'] ?? null;
 
             if ($request->hasFile('file_path')) {
                 $file = $request->file('file_path');
@@ -152,6 +153,7 @@ class InstructorContentController extends Controller
             $content->urutan = $data['urutan'];
             $content->html_content = $data['html_content'] ?? null;
             $content->external_url = $data['external_url'] ?? null;
+            $content->youtube_url = $data['youtube_url'] ?? null;
 
             if ($request->hasFile('file_path')) {
                 if ($content->file_path && Storage::disk('public')->exists($content->file_path)) {

@@ -89,6 +89,11 @@ Route::group([
     // Sub-Modules
     Route::get('/sub-modules/{subModule}', [\App\Http\Controllers\Student\StudentSubModuleController::class, 'show'])->name('sub_modules.show');
 
+    // Contents
+    Route::get('/contents/{content}', [\App\Http\Controllers\Student\StudentContentController::class, 'show'])->name('contents.show');
+    Route::post('/contents/{content}/track-progress', [\App\Http\Controllers\Student\StudentContentController::class, 'trackProgress'])->name('contents.track-progress');
+    Route::post('/contents/{content}/mark-complete', [\App\Http\Controllers\Student\StudentContentController::class, 'markComplete'])->name('contents.mark-complete');
+
     // Progress
     Route::get('/progress', function () {
         $summary = (object) ['enrolled' => 0, 'completed' => 0, 'in_progress' => 0];

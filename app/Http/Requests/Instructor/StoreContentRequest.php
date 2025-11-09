@@ -15,10 +15,11 @@ class StoreContentRequest extends FormRequest
     {
         return [
             'judul' => 'required|string|max:255',
-            'tipe' => 'required|in:text,html,pdf,video,audio,image,link',
+            'tipe' => 'required|in:text,html,pdf,video,audio,image,link,youtube',
             'file_path' => 'nullable|file|max:102400', // Max 100MB
             'html_content' => 'nullable|string|required_if:tipe,html,text',
             'external_url' => 'nullable|url|required_if:tipe,link',
+            'youtube_url' => 'nullable|url|required_if:tipe,youtube',
             'urutan' => 'required|integer|min:1',
         ];
     }
@@ -29,6 +30,8 @@ class StoreContentRequest extends FormRequest
             'html_content.required_if' => 'HTML content is required for HTML and text content types.',
             'external_url.required_if' => 'External URL is required for link content type.',
             'external_url.url' => 'External URL must be a valid URL.',
+            'youtube_url.required_if' => 'YouTube URL is required for YouTube content type.',
+            'youtube_url.url' => 'YouTube URL must be a valid URL.',
         ];
     }
 }

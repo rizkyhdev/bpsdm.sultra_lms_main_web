@@ -83,30 +83,50 @@ class InstructorCourseController extends Controller
     {
         $this->authorize('create', Course::class);
 
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'jp_value' => 'required|integer|min:1',
-            'bidang_kompetensi' => 'required|string',
-            'modules' => 'required|array|min:1',
-            'modules.*.judul' => 'required|string|max:255',
-            'modules.*.deskripsi' => 'nullable|string',
-            'modules.*.urutan' => 'required|integer|min:1',
-            'modules.*.sub_modules' => 'nullable|array',
-            'modules.*.sub_modules.*.judul' => 'required_with:modules.*.sub_modules|string|max:255',
-            'modules.*.sub_modules.*.deskripsi' => 'nullable|string',
-            'modules.*.sub_modules.*.urutan' => 'required_with:modules.*.sub_modules|integer|min:1',
-            'modules.*.sub_modules.*.contents' => 'nullable|array',
-            'modules.*.sub_modules.*.contents.*.judul' => 'required_with:modules.*.sub_modules.*.contents|string|max:255',
-            'modules.*.sub_modules.*.contents.*.tipe' => 'required_with:modules.*.sub_modules.*.contents|in:text,html,pdf,video,audio,image,link',
-            'modules.*.sub_modules.*.contents.*.urutan' => 'required_with:modules.*.sub_modules.*.contents|integer|min:1',
-            'modules.*.sub_modules.*.contents.*.html_content' => 'nullable|string|required_if:modules.*.sub_modules.*.contents.*.tipe,html,text',
-            'modules.*.sub_modules.*.contents.*.external_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,link',
-            'modules.*.sub_modules.*.contents.*.file_path' => 'nullable|file|max:102400',
-        ]);
+        try {
+            $validated = $request->validate([
+                'judul' => 'required|string|max:255',
+                'deskripsi' => 'required|string',
+                'jp_value' => 'required|integer|min:1',
+                'bidang_kompetensi' => 'required|string',
+                'modules' => 'required|array|min:1',
+                'modules.*.judul' => 'required|string|max:255',
+                'modules.*.deskripsi' => 'nullable|string',
+                'modules.*.urutan' => 'required|integer|min:1',
+                'modules.*.sub_modules' => 'nullable|array',
+                'modules.*.sub_modules.*.judul' => 'required_with:modules.*.sub_modules|string|max:255',
+                'modules.*.sub_modules.*.deskripsi' => 'nullable|string',
+                'modules.*.sub_modules.*.urutan' => 'required_with:modules.*.sub_modules|integer|min:1',
+                'modules.*.sub_modules.*.contents' => 'nullable|array',
+                'modules.*.sub_modules.*.contents.*.judul' => 'required_with:modules.*.sub_modules.*.contents|string|max:255',
+                'modules.*.sub_modules.*.contents.*.tipe' => 'required_with:modules.*.sub_modules.*.contents|in:text,html,pdf,video,audio,image,link,youtube',
+                'modules.*.sub_modules.*.contents.*.urutan' => 'required_with:modules.*.sub_modules.*.contents|integer|min:1',
+                'modules.*.sub_modules.*.contents.*.html_content' => 'nullable|string|required_if:modules.*.sub_modules.*.contents.*.tipe,html,text',
+                'modules.*.sub_modules.*.contents.*.external_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,link',
+                'modules.*.sub_modules.*.contents.*.youtube_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,youtube',
+                'modules.*.sub_modules.*.contents.*.file_path' => 'nullable|file|max:102400',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed in wizard', [
+                'errors' => $e->errors(),
+                'request_data' => $request->except(['_token'])
+            ]);
+            return redirect()->back()
+                ->withInput()
+                ->withErrors($e->errors())
+                ->with('error', 'Validation failed. Please check the form for errors.');
+        }
 
         DB::beginTransaction();
         try {
+            // Log received data for debugging
+            Log::info('Wizard submission received', [
+                'modules_count' => count($request->modules ?? []),
+                'has_modules' => $request->has('modules'),
+                'modules_data' => $request->modules,
+                'all_request_keys' => array_keys($request->all())
+            ]);
+
             // Create course
             $course = new Course();
             $course->judul = $request->judul;
@@ -116,35 +136,41 @@ class InstructorCourseController extends Controller
             $course->user_id = Auth::id();
             $course->save();
 
+            Log::info('Course created', ['course_id' => $course->id]);
+
             // Create modules, sub-modules, and contents
-            $moduleIndex = 0;
-            foreach ($request->modules as $moduleData) {
+            foreach ($request->modules as $moduleIndex => $moduleData) {
                 $subModuleIndex = 0;
                 $module = new \App\Models\Module();
                 $module->course_id = $course->id;
-                $module->judul = $moduleData['judul'];
+                $module->judul = $moduleData['judul'] ?? '';
                 $module->deskripsi = $moduleData['deskripsi'] ?? '';
-                $module->urutan = $moduleData['urutan'];
+                $module->urutan = $moduleData['urutan'] ?? ($moduleIndex + 1);
                 $module->save();
 
-                if (isset($moduleData['sub_modules']) && is_array($moduleData['sub_modules'])) {
-                    foreach ($moduleData['sub_modules'] as $subModuleData) {
+                Log::info('Module created', ['module_id' => $module->id, 'module_index' => $moduleIndex]);
+
+                if (isset($moduleData['sub_modules']) && is_array($moduleData['sub_modules']) && count($moduleData['sub_modules']) > 0) {
+                    foreach ($moduleData['sub_modules'] as $subModuleIndex => $subModuleData) {
                         $subModule = new \App\Models\SubModule();
                         $subModule->module_id = $module->id;
-                        $subModule->judul = $subModuleData['judul'];
+                        $subModule->judul = $subModuleData['judul'] ?? '';
                         $subModule->deskripsi = $subModuleData['deskripsi'] ?? '';
-                        $subModule->urutan = $subModuleData['urutan'];
+                        $subModule->urutan = $subModuleData['urutan'] ?? ($subModuleIndex + 1);
                         $subModule->save();
 
-                        if (isset($subModuleData['contents']) && is_array($subModuleData['contents'])) {
+                        Log::info('SubModule created', ['sub_module_id' => $subModule->id, 'module_id' => $module->id]);
+
+                        if (isset($subModuleData['contents']) && is_array($subModuleData['contents']) && count($subModuleData['contents']) > 0) {
                             foreach ($subModuleData['contents'] as $contentIndex => $contentData) {
                                 $content = new \App\Models\Content();
                                 $content->sub_module_id = $subModule->id;
                                 $content->judul = $contentData['judul'] ?? '';
                                 $content->tipe = $contentData['tipe'] ?? 'text';
-                                $content->urutan = $contentData['urutan'] ?? 1;
+                                $content->urutan = $contentData['urutan'] ?? ($contentIndex + 1);
                                 $content->html_content = $contentData['html_content'] ?? null;
                                 $content->external_url = $contentData['external_url'] ?? null;
+                                $content->youtube_url = $contentData['youtube_url'] ?? null;
 
                                 // Handle file upload - access from request files array
                                 $fileKey = "modules.{$moduleIndex}.sub_modules.{$subModuleIndex}.contents.{$contentIndex}.file_path";
@@ -157,12 +183,11 @@ class InstructorCourseController extends Controller
                                 }
 
                                 $content->save();
+                                Log::info('Content created', ['content_id' => $content->id, 'sub_module_id' => $subModule->id]);
                             }
                         }
-                        $subModuleIndex++;
                     }
                 }
-                $moduleIndex++;
             }
 
             DB::commit();
@@ -171,8 +196,15 @@ class InstructorCourseController extends Controller
                 ->with('success', 'Course created successfully with all modules, sub-modules, and contents.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to create course via wizard', ['error' => $e->getMessage()]);
-            return redirect()->back()->withInput()->with('error', 'Failed to create course: ' . $e->getMessage());
+            Log::error('Failed to create course via wizard', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to create course: ' . $e->getMessage() . ' Please check the logs for more details.');
         }
     }
 

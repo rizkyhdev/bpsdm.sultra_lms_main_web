@@ -20,6 +20,25 @@
       <small>Buat course lengkap dengan modules, sub-modules, dan contents dalam satu alur</small>
     </div>
     <div class="card-body">
+      @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>Error!</strong> {{ session('error') }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
+      
+      @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>Validation Errors:</strong>
+          <ul class="mb-0">
+            @foreach($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
+      
       <form action="{{ route('instructor.courses.store-wizard') }}" method="post" enctype="multipart/form-data" id="courseWizardForm">
         @csrf
         
@@ -209,6 +228,7 @@
           <option value="text">Text (Plain Text)</option>
           <option value="html">HTML (Rich Text)</option>
           <option value="video">Video</option>
+          <option value="youtube">YouTube Video</option>
           <option value="audio">Audio</option>
           <option value="pdf">PDF File</option>
           <option value="image">Image</option>
@@ -236,6 +256,12 @@
       <div class="mb-3 content-url-field" style="display: none;">
         <label class="form-label">External URL <span class="text-danger">*</span></label>
         <input type="url" name="modules[][sub_modules][][contents][][external_url]" class="form-control" placeholder="https://example.com/file.pdf">
+      </div>
+      
+      <!-- YouTube URL Field -->
+      <div class="mb-3 content-youtube-field" style="display: none;">
+        <label class="form-label">YouTube URL <span class="text-danger">*</span></label>
+        <input type="url" name="modules[][sub_modules][][contents][][youtube_url]" class="form-control" placeholder="https://www.youtube.com/watch?v=VIDEO_ID atau https://youtu.be/VIDEO_ID">
       </div>
     </div>
   </div>
@@ -466,6 +492,7 @@ function updateContentNames(contentItem, moduleIdx, subIdx, contentIdx) {
   const htmlContentInput = contentItem.querySelector('textarea[name*="html_content"]');
   const fileInput = contentItem.querySelector('.content-file');
   const urlInput = contentItem.querySelector('input[name*="external_url"]');
+  const youtubeUrlInput = contentItem.querySelector('input[name*="youtube_url"]');
   
   judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][judul]`;
   tipeInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][tipe]`;
@@ -480,6 +507,9 @@ function updateContentNames(contentItem, moduleIdx, subIdx, contentIdx) {
   }
   if (urlInput) {
     urlInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][external_url]`;
+  }
+  if (youtubeUrlInput) {
+    youtubeUrlInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][youtube_url]`;
   }
 }
 
@@ -496,11 +526,13 @@ function toggleContentFields(select) {
   const htmlField = contentItem.querySelector('.content-html-field');
   const fileField = contentItem.querySelector('.content-file-field');
   const urlField = contentItem.querySelector('.content-url-field');
+  const youtubeField = contentItem.querySelector('.content-youtube-field');
   
   // Hide all fields
   htmlField.style.display = 'none';
   fileField.style.display = 'none';
   urlField.style.display = 'none';
+  if (youtubeField) youtubeField.style.display = 'none';
   
   // Show relevant field based on type
   const type = select.value;
@@ -515,6 +547,8 @@ function toggleContentFields(select) {
     else if (type === 'image') fileInput.setAttribute('accept', 'image/*');
   } else if (type === 'link') {
     urlField.style.display = 'block';
+  } else if (type === 'youtube') {
+    if (youtubeField) youtubeField.style.display = 'block';
   }
 }
 
@@ -540,6 +574,34 @@ function updateReview() {
 // Initialize with one module
 document.addEventListener('DOMContentLoaded', function() {
   addModule();
+  
+  // Ensure all form fields are submitted even if hidden
+  const form = document.getElementById('courseWizardForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      // Show all wizard steps to ensure all fields are included
+      document.querySelectorAll('.wizard-step').forEach(step => {
+        step.style.display = 'block';
+      });
+      
+      // Show all collapsed containers
+      document.querySelectorAll('.sub-modules-container, .contents-container').forEach(container => {
+        container.style.display = 'block';
+      });
+      
+      // Show all content type fields
+      document.querySelectorAll('.content-html-field, .content-file-field, .content-url-field, .content-youtube-field').forEach(field => {
+        field.style.display = 'block';
+      });
+      
+      // Validate before submit
+      if (!validateStep1() || !validateStep2()) {
+        e.preventDefault();
+        alert('Please fill in all required fields before submitting.');
+        return false;
+      }
+    });
+  }
 });
 </script>
 

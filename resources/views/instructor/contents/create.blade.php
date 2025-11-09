@@ -36,6 +36,7 @@
             <option value="text" {{ old('tipe')=='text' ? 'selected' : '' }}>Text (Plain Text)</option>
             <option value="html" {{ old('tipe')=='html' ? 'selected' : '' }}>HTML (Rich Text)</option>
             <option value="video" {{ old('tipe')=='video' ? 'selected' : '' }}>Video</option>
+            <option value="youtube" {{ old('tipe')=='youtube' ? 'selected' : '' }}>YouTube Video</option>
             <option value="audio" {{ old('tipe')=='audio' ? 'selected' : '' }}>Audio</option>
             <option value="pdf" {{ old('tipe')=='pdf' ? 'selected' : '' }}>PDF File</option>
             <option value="image" {{ old('tipe')=='image' ? 'selected' : '' }}>Image</option>
@@ -68,6 +69,14 @@
           @error('external_url')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
 
+        <!-- YouTube URL Field (for youtube type) -->
+        <div class="mb-3" id="youtubeUrlField" style="display: none;">
+          <label class="form-label">YouTube URL <span class="text-danger">*</span></label>
+          <input type="url" name="youtube_url" value="{{ old('youtube_url') }}" class="form-control" placeholder="https://www.youtube.com/watch?v=VIDEO_ID atau https://youtu.be/VIDEO_ID">
+          <small class="text-muted">Masukkan URL lengkap video YouTube (format: youtube.com/watch?v=... atau youtu.be/...)</small>
+          @error('youtube_url')<small class="text-danger d-block">{{ $message }}</small>@enderror
+        </div>
+
         <div class="mb-3">
           <label class="form-label">Urutan <span class="text-danger">*</span></label>
           <input type="number" name="urutan" value="{{ old('urutan', 1) }}" class="form-control" min="1" required>
@@ -90,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const htmlContentField = document.getElementById('htmlContentField');
     const fileUploadField = document.getElementById('fileUploadField');
     const externalUrlField = document.getElementById('externalUrlField');
+    const youtubeUrlField = document.getElementById('youtubeUrlField');
     const fileInput = document.getElementById('fileInput');
     const htmlContent = document.getElementById('htmlContent');
 
@@ -100,11 +110,15 @@ document.addEventListener('DOMContentLoaded', function() {
         htmlContentField.style.display = 'none';
         fileUploadField.style.display = 'none';
         externalUrlField.style.display = 'none';
+        youtubeUrlField.style.display = 'none';
         
         // Remove required attributes
         htmlContent.removeAttribute('required');
         fileInput.removeAttribute('required');
-        document.querySelector('[name="external_url"]').removeAttribute('required');
+        const externalUrlInput = document.querySelector('[name="external_url"]');
+        const youtubeUrlInput = document.querySelector('[name="youtube_url"]');
+        if (externalUrlInput) externalUrlInput.removeAttribute('required');
+        if (youtubeUrlInput) youtubeUrlInput.removeAttribute('required');
         
         // Show and configure fields based on type
         if (selectedType === 'text' || selectedType === 'html') {
@@ -128,7 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
             fileInput.setAttribute('required', 'required');
         } else if (selectedType === 'link') {
             externalUrlField.style.display = 'block';
-            document.querySelector('[name="external_url"]').setAttribute('required', 'required');
+            if (externalUrlInput) externalUrlInput.setAttribute('required', 'required');
+        } else if (selectedType === 'youtube') {
+            youtubeUrlField.style.display = 'block';
+            if (youtubeUrlInput) youtubeUrlInput.setAttribute('required', 'required');
         }
     }
 
