@@ -57,7 +57,7 @@
     <ul class="nav flex-column">
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-gear me-2"></i>Ubah Profil</a></li>
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="far fa-user me-2"></i>Keamanan</a></li>
-      <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a></li>
+      <!-- <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a></li> -->
     </ul>
   </nav>
 </aside>
