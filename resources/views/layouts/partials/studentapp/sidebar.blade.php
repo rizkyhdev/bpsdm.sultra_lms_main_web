@@ -21,6 +21,11 @@
               <i class="fas fa-home me-2"></i>Dasbor
           </a>
       </li>
+      <li class="nav-item {{ Route::is('student.courses.*') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.courses.index') }}">
+              <i class="fas fa-book me-2"></i>Pelatihan Saya
+          </a>
+      </li>
       @if(auth()->check() && auth()->user()->role === 'admin')
       <li class="nav-item">
           <a class="nav-link text-black" href="{{ route('admin.dashboard') }}">
