@@ -263,6 +263,13 @@
         <label class="form-label">YouTube URL <span class="text-danger">*</span></label>
         <input type="url" name="modules[][sub_modules][][contents][][youtube_url]" class="form-control" placeholder="https://www.youtube.com/watch?v=VIDEO_ID atau https://youtu.be/VIDEO_ID">
       </div>
+      
+      <!-- Required Duration Field (for YouTube videos) -->
+      <div class="mb-3 content-required-duration-field" style="display: none;">
+        <label class="form-label">Durasi Video yang Diperlukan (detik) <span class="text-danger">*</span></label>
+        <input type="number" name="modules[][sub_modules][][contents][][required_duration]" class="form-control" min="1" placeholder="Contoh: 300 (untuk 5 menit)">
+        <small class="text-muted">Masukkan durasi video dalam detik. Siswa harus menonton video selama durasi ini sebelum dapat melanjutkan ke konten berikutnya.</small>
+      </div>
     </div>
   </div>
 </template>
@@ -527,12 +534,14 @@ function toggleContentFields(select) {
   const fileField = contentItem.querySelector('.content-file-field');
   const urlField = contentItem.querySelector('.content-url-field');
   const youtubeField = contentItem.querySelector('.content-youtube-field');
+  const requiredDurationField = contentItem.querySelector('.content-required-duration-field');
   
   // Hide all fields
   htmlField.style.display = 'none';
   fileField.style.display = 'none';
   urlField.style.display = 'none';
   if (youtubeField) youtubeField.style.display = 'none';
+  if (requiredDurationField) requiredDurationField.style.display = 'none';
   
   // Show relevant field based on type
   const type = select.value;
@@ -549,6 +558,7 @@ function toggleContentFields(select) {
     urlField.style.display = 'block';
   } else if (type === 'youtube') {
     if (youtubeField) youtubeField.style.display = 'block';
+    if (requiredDurationField) requiredDurationField.style.display = 'block';
   }
 }
 
@@ -590,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       // Show all content type fields
-      document.querySelectorAll('.content-html-field, .content-file-field, .content-url-field, .content-youtube-field').forEach(field => {
+      document.querySelectorAll('.content-html-field, .content-file-field, .content-url-field, .content-youtube-field, .content-required-duration-field').forEach(field => {
         field.style.display = 'block';
       });
       

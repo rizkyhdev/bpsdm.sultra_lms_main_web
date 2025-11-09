@@ -104,6 +104,7 @@ class InstructorCourseController extends Controller
                 'modules.*.sub_modules.*.contents.*.html_content' => 'nullable|string|required_if:modules.*.sub_modules.*.contents.*.tipe,html,text',
                 'modules.*.sub_modules.*.contents.*.external_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,link',
                 'modules.*.sub_modules.*.contents.*.youtube_url' => 'nullable|url|required_if:modules.*.sub_modules.*.contents.*.tipe,youtube',
+                'modules.*.sub_modules.*.contents.*.required_duration' => 'nullable|integer|min:1|required_if:modules.*.sub_modules.*.contents.*.tipe,youtube',
                 'modules.*.sub_modules.*.contents.*.file_path' => 'nullable|file|max:102400',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -171,6 +172,7 @@ class InstructorCourseController extends Controller
                                 $content->html_content = $contentData['html_content'] ?? null;
                                 $content->external_url = $contentData['external_url'] ?? null;
                                 $content->youtube_url = $contentData['youtube_url'] ?? null;
+                                $content->required_duration = $contentData['required_duration'] ?? null;
 
                                 // Handle file upload - access from request files array
                                 $fileKey = "modules.{$moduleIndex}.sub_modules.{$subModuleIndex}.contents.{$contentIndex}.file_path";

@@ -123,6 +123,9 @@ class StudentContentController extends Controller
             'video_duration' => 'nullable|numeric|min:0',
             'watched_duration' => 'nullable|numeric|min:0'
         ]);
+        
+        // Get time_spent from request, default to watched_duration if not provided
+        $timeSpent = $request->time_spent ?? $request->watched_duration ?? 0;
 
         try {
             $progress = ContentProgress::where('content_id', $content->id)
@@ -144,7 +147,7 @@ class StudentContentController extends Controller
             $progress->update([
                 'progress_percentage' => $request->progress_percentage,
                 'is_completed' => $isCompleted,
-                'time_spent' => $request->time_spent ?? $progress->time_spent ?? 0,
+                'time_spent' => $timeSpent,
                 'current_position' => $request->current_position ?? $progress->current_position ?? 0,
                 'video_duration' => $request->video_duration ?? $progress->video_duration,
                 'watched_duration' => $request->watched_duration ?? $progress->watched_duration ?? 0
@@ -153,7 +156,7 @@ class StudentContentController extends Controller
             if ($isCompleted) {
                 $progress->update(['completed_at' => now()]);
             }
-
+            
             // Check if sub-module is completed
             $this->checkSubModuleCompletion($user, $content->sub_module_id);
 
@@ -162,7 +165,7 @@ class StudentContentController extends Controller
                 'message' => 'Progress berhasil diperbarui.',
                 'progress_percentage' => $request->progress_percentage,
                 'is_completed' => $isCompleted,
-                'time_spent' => $request->time_spent ?? $progress->time_spent
+                'time_spent' => $timeSpent
             ]);
 
         } catch (\Exception $e) {

@@ -23,6 +23,7 @@ class Content extends Model
         'html_content',
         'external_url',
         'youtube_url',
+        'required_duration',
         'urutan',
     ];
 
@@ -35,6 +36,7 @@ class Content extends Model
     {
         return [
             'urutan' => 'integer',
+            'required_duration' => 'integer',
         ];
     }
 

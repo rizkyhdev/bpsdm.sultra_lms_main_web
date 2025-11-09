@@ -77,6 +77,14 @@
           @error('youtube_url')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
 
+        <!-- Required Duration Field (for youtube type) -->
+        <div class="mb-3" id="requiredDurationField" style="display: none;">
+          <label class="form-label">Durasi Video yang Diperlukan (detik) <span class="text-danger">*</span></label>
+          <input type="number" name="required_duration" value="{{ old('required_duration') }}" class="form-control" min="1" placeholder="Contoh: 300 (untuk 5 menit)">
+          <small class="text-muted">Masukkan durasi video dalam detik. Siswa harus menonton video selama durasi ini sebelum dapat melanjutkan ke konten berikutnya.</small>
+          @error('required_duration')<small class="text-danger d-block">{{ $message }}</small>@enderror
+        </div>
+
         <div class="mb-3">
           <label class="form-label">Urutan <span class="text-danger">*</span></label>
           <input type="number" name="urutan" value="{{ old('urutan', 1) }}" class="form-control" min="1" required>
@@ -100,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileUploadField = document.getElementById('fileUploadField');
     const externalUrlField = document.getElementById('externalUrlField');
     const youtubeUrlField = document.getElementById('youtubeUrlField');
+    const requiredDurationField = document.getElementById('requiredDurationField');
     const fileInput = document.getElementById('fileInput');
     const htmlContent = document.getElementById('htmlContent');
 
@@ -111,14 +120,17 @@ document.addEventListener('DOMContentLoaded', function() {
         fileUploadField.style.display = 'none';
         externalUrlField.style.display = 'none';
         youtubeUrlField.style.display = 'none';
+        requiredDurationField.style.display = 'none';
         
         // Remove required attributes
         htmlContent.removeAttribute('required');
         fileInput.removeAttribute('required');
         const externalUrlInput = document.querySelector('[name="external_url"]');
         const youtubeUrlInput = document.querySelector('[name="youtube_url"]');
+        const requiredDurationInput = document.querySelector('[name="required_duration"]');
         if (externalUrlInput) externalUrlInput.removeAttribute('required');
         if (youtubeUrlInput) youtubeUrlInput.removeAttribute('required');
+        if (requiredDurationInput) requiredDurationInput.removeAttribute('required');
         
         // Show and configure fields based on type
         if (selectedType === 'text' || selectedType === 'html') {
@@ -145,7 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (externalUrlInput) externalUrlInput.setAttribute('required', 'required');
         } else if (selectedType === 'youtube') {
             youtubeUrlField.style.display = 'block';
+            requiredDurationField.style.display = 'block';
             if (youtubeUrlInput) youtubeUrlInput.setAttribute('required', 'required');
+            if (requiredDurationInput) requiredDurationInput.setAttribute('required', 'required');
         }
     }
 

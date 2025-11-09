@@ -180,11 +180,25 @@
                 @endif
 
                 @if($nextContent)
+                    @php
+                        $canProceed = $progress->is_completed;
+                        if ($content->tipe === 'youtube' && $content->required_duration) {
+                            // Check if required duration has elapsed
+                            $timeSpent = $progress->time_spent ?? 0;
+                            $canProceed = $timeSpent >= $content->required_duration;
+                        }
+                    @endphp
                     <a href="{{ route('student.contents.show', $nextContent->id) }}" 
-                       class="btn btn-primary {{ !$progress->is_completed ? 'disabled' : '' }}"
-                       onclick="return {{ $progress->is_completed ? 'true' : 'alert(\'Anda harus menyelesaikan konten ini terlebih dahulu!\'); return false;' }}">
+                       id="nextContentBtn"
+                       class="btn btn-primary {{ !$canProceed ? 'disabled' : '' }}"
+                       onclick="return checkCanProceed();">
                         Konten Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
                     </a>
+                    @if($content->tipe === 'youtube' && $content->required_duration && !$canProceed)
+                        <div class="alert alert-warning mt-2 mb-0">
+                            <small><i class="bi bi-clock me-1"></i>Anda harus menonton video selama {{ gmdate('H:i:s', $content->required_duration) }} sebelum dapat melanjutkan.</small>
+                        </div>
+                    @endif
                 @else
                     <button class="btn btn-primary" disabled>
                         Konten Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
@@ -262,9 +276,14 @@ let progressTrackingInterval;
 let lastTrackedPosition = {{ $progress->current_position ?? 0 }};
 let videoDuration = {{ $progress->video_duration ?? 0 }};
 let watchedDuration = {{ $progress->watched_duration ?? 0 }};
+let timeSpent = {{ $progress->time_spent ?? 0 }};
 let isCompleted = {{ $progress->is_completed ? 'true' : 'false' }};
 let maxSeekPosition = lastTrackedPosition; // Prevent skipping ahead
 let videoId = '{{ $content->youtube_video_id }}';
+let requiredDuration = {{ $content->required_duration ?? 0 }};
+let startTime = null;
+let isPlaying = false;
+let playStartTime = null;
 
 function onYouTubeIframeAPIReady() {
     if (!videoId) {
@@ -312,20 +331,45 @@ function onPlayerReady(event) {
         player.seekTo(lastTrackedPosition, true);
     }
     
+    // Initialize start time
+    if (!startTime) {
+        startTime = Date.now();
+    }
+    
+    // Check required duration on load
+    checkRequiredDuration();
+    
     // Start tracking progress
     startProgressTracking();
 }
 
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
+        if (!isPlaying) {
+            isPlaying = true;
+            playStartTime = Date.now();
+            if (!startTime) {
+                startTime = Date.now();
+            }
+        }
         startProgressTracking();
     } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+        if (isPlaying && playStartTime) {
+            // Add time spent while playing
+            const playDuration = Math.floor((Date.now() - playStartTime) / 1000);
+            timeSpent += playDuration;
+            playStartTime = null;
+        }
+        isPlaying = false;
         stopProgressTracking();
         
         if (event.data === YT.PlayerState.ENDED) {
             // Video completed
             markVideoComplete();
         }
+        
+        // Update time spent on server
+        updateTimeSpent();
     }
 }
 
@@ -361,6 +405,9 @@ function startProgressTracking() {
             
             // Update last tracked position
             lastTrackedPosition = currentTime;
+            
+            // Check required duration periodically
+            checkRequiredDuration();
         }
     }, 5000); // Track every 5 seconds
 }
@@ -373,48 +420,141 @@ function stopProgressTracking() {
 }
 
 function trackProgress(progressPercentage, currentPosition, duration, watchedDuration) {
-    fetch('{{ route("student.contents.track-progress", $content->id) }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({
-            progress_percentage: progressPercentage,
-            current_position: currentPosition,
-            video_duration: duration,
-            watched_duration: watchedDuration,
-            time_spent: watchedDuration
+    // Update time spent if playing
+    if (isPlaying && playStartTime) {
+        const playDuration = Math.floor((Date.now() - playStartTime) / 1000);
+        const currentTimeSpent = timeSpent + playDuration;
+        
+        fetch('{{ route("student.contents.track-progress", $content->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                progress_percentage: progressPercentage,
+                current_position: currentPosition,
+                video_duration: duration,
+                watched_duration: watchedDuration,
+                time_spent: currentTimeSpent
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update progress bar
-            const progressBar = document.querySelector('.progress-bar');
-            const progressText = document.querySelector('.small.text-muted');
-            if (progressBar) {
-                progressBar.style.width = data.progress_percentage + '%';
-                progressBar.setAttribute('aria-valuenow', data.progress_percentage);
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                timeSpent = data.time_spent || currentTimeSpent;
+                
+                // Update progress bar
+                const progressBar = document.querySelector('.progress-bar');
+                const progressText = document.querySelector('.small.text-muted');
+                if (progressBar) {
+                    progressBar.style.width = data.progress_percentage + '%';
+                    progressBar.setAttribute('aria-valuenow', data.progress_percentage);
+                }
+                if (progressText) {
+                    progressText.textContent = data.progress_percentage.toFixed(1) + '%';
+                }
+                
+                // Check if required duration has elapsed
+                checkRequiredDuration();
+                
+                // If completed, allow navigation
+                if (data.is_completed) {
+                    isCompleted = true;
+                    enableNextButton();
+                }
             }
-            if (progressText) {
-                progressText.textContent = data.progress_percentage.toFixed(1) + '%';
+        })
+        .catch(error => {
+            console.error('Error tracking progress:', error);
+        });
+    }
+}
+
+function updateTimeSpent() {
+    if (timeSpent > 0) {
+        fetch('{{ route("student.contents.track-progress", $content->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                progress_percentage: {{ $progress->progress_percentage ?? 0 }},
+                current_position: lastTrackedPosition,
+                video_duration: videoDuration,
+                watched_duration: watchedDuration,
+                time_spent: timeSpent
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                timeSpent = data.time_spent || timeSpent;
+                checkRequiredDuration();
             }
-            
-            // If completed, allow navigation
-            if (data.is_completed) {
-                isCompleted = true;
-                const nextButton = document.querySelector('.btn-primary');
-                if (nextButton && nextButton.classList.contains('disabled')) {
-                    nextButton.classList.remove('disabled');
-                    nextButton.onclick = null;
+        });
+    }
+}
+
+function checkRequiredDuration() {
+    if (requiredDuration > 0) {
+        const remainingTime = requiredDuration - timeSpent;
+        const nextButton = document.getElementById('nextContentBtn');
+        
+        if (nextButton) {
+            if (timeSpent >= requiredDuration) {
+                nextButton.classList.remove('disabled');
+                const warningAlert = document.querySelector('.alert-warning');
+                if (warningAlert) {
+                    warningAlert.style.display = 'none';
+                }
+            } else {
+                nextButton.classList.add('disabled');
+                const warningAlert = document.querySelector('.alert-warning');
+                if (warningAlert) {
+                    const remainingFormatted = formatTime(remainingTime);
+                    warningAlert.querySelector('small').innerHTML = 
+                        '<i class="bi bi-clock me-1"></i>Anda harus menonton video selama ' + 
+                        formatTime(requiredDuration) + ' sebelum dapat melanjutkan. Waktu tersisa: ' + remainingFormatted;
                 }
             }
         }
-    })
-    .catch(error => {
-        console.error('Error tracking progress:', error);
-    });
+    }
+}
+
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hours > 0) {
+        return String(hours).padStart(2, '0') + ':' + 
+               String(minutes).padStart(2, '0') + ':' + 
+               String(secs).padStart(2, '0');
+    }
+    return String(minutes).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+}
+
+function enableNextButton() {
+    const nextButton = document.getElementById('nextContentBtn');
+    if (nextButton) {
+        nextButton.classList.remove('disabled');
+    }
+}
+
+function checkCanProceed() {
+    if (requiredDuration > 0 && timeSpent < requiredDuration) {
+        const remainingTime = requiredDuration - timeSpent;
+        alert('Anda harus menonton video selama ' + formatTime(requiredDuration) + 
+              ' sebelum dapat melanjutkan. Waktu tersisa: ' + formatTime(remainingTime));
+        return false;
+    }
+    if (!isCompleted) {
+        alert('Anda harus menyelesaikan konten ini terlebih dahulu!');
+        return false;
+    }
+    return true;
 }
 
 function updateVideoDuration(duration) {
