@@ -15,7 +15,7 @@ class UpdateSubModuleRequest extends FormRequest
     {
         return [
             'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
+            'deskripsi' => 'nullable|string',
             'urutan' => 'required|integer',
         ];
     }
