@@ -116,7 +116,7 @@ class InstructorSubModuleController extends Controller
      */
     public function edit($id)
     {
-        $subModule = SubModule::with(['module.course', 'contents'])->findOrFail($id);
+        $subModule = SubModule::with(['module.course', 'contents', 'quizzes.questions.answerOptions'])->findOrFail($id);
         $this->authorize('update', $subModule);
         return view('instructor.sub_modules.edit', compact('subModule'));
     }
@@ -129,16 +129,201 @@ class InstructorSubModuleController extends Controller
      */
     public function update(UpdateSubModuleRequest $request, $id)
     {
-        $sub = SubModule::with('module.course')->findOrFail($id);
+        $sub = SubModule::with(['module.course', 'contents', 'quizzes.questions.answerOptions'])->findOrFail($id);
         $this->authorize('update', $sub);
 
+        DB::beginTransaction();
         try {
-            $sub->update($request->validated());
+            // Update sub-module basic info
+            $sub->update($request->only(['judul', 'deskripsi', 'urutan']));
+
+            // Handle contents
+            if ($request->has('contents') && is_array($request->contents)) {
+                $existingContentIds = $sub->contents->pluck('id')->toArray();
+                $submittedContentIds = [];
+
+                foreach ($request->contents as $contentIndex => $contentData) {
+                    $contentId = $contentData['id'] ?? null;
+
+                    if ($contentId && \App\Models\Content::find($contentId)) {
+                        // Update existing content
+                        $content = \App\Models\Content::find($contentId);
+                        $content->judul = $contentData['judul'] ?? '';
+                        $content->tipe = $contentData['tipe'] ?? 'text';
+                        $content->urutan = $contentData['urutan'] ?? 1;
+                        $content->html_content = $contentData['html_content'] ?? null;
+                        $content->external_url = $contentData['external_url'] ?? null;
+                        $content->youtube_url = $contentData['youtube_url'] ?? null;
+                        $content->required_duration = $contentData['required_duration'] ?? null;
+
+                        // Handle file upload
+                        if ($request->hasFile("contents.{$contentIndex}.file_path")) {
+                            $file = $request->file("contents.{$contentIndex}.file_path");
+                            if ($file && $file->isValid()) {
+                                $path = $file->store('contents/' . date('Y/m/d'), 'public');
+                                $content->file_path = $path;
+                            }
+                        }
+
+                        $content->save();
+                        $submittedContentIds[] = $contentId;
+                    } else {
+                        // Create new content
+                        $content = new \App\Models\Content();
+                        $content->sub_module_id = $sub->id;
+                        $content->judul = $contentData['judul'] ?? '';
+                        $content->tipe = $contentData['tipe'] ?? 'text';
+                        $content->urutan = $contentData['urutan'] ?? 1;
+                        $content->html_content = $contentData['html_content'] ?? null;
+                        $content->external_url = $contentData['external_url'] ?? null;
+                        $content->youtube_url = $contentData['youtube_url'] ?? null;
+                        $content->required_duration = $contentData['required_duration'] ?? null;
+
+                        // Handle file upload
+                        if ($request->hasFile("contents.{$contentIndex}.file_path")) {
+                            $file = $request->file("contents.{$contentIndex}.file_path");
+                            if ($file && $file->isValid()) {
+                                $path = $file->store('contents/' . date('Y/m/d'), 'public');
+                                $content->file_path = $path;
+                            }
+                        }
+
+                        $content->save();
+                        $submittedContentIds[] = $content->id;
+                    }
+                }
+
+                // Delete contents that are no longer in the form
+                $contentsToDelete = array_diff($existingContentIds, $submittedContentIds);
+                foreach ($contentsToDelete as $contentId) {
+                    $content = \App\Models\Content::find($contentId);
+                    if ($content) {
+                        $content->delete();
+                    }
+                }
+            }
+
+            // Handle quizzes
+            if ($request->has('quizzes') && is_array($request->quizzes)) {
+                $existingQuizIds = $sub->quizzes->pluck('id')->toArray();
+                $submittedQuizIds = [];
+
+                foreach ($request->quizzes as $quizIndex => $quizData) {
+                    $quizId = $quizData['id'] ?? null;
+
+                    if ($quizId && \App\Models\Quiz::find($quizId)) {
+                        // Update existing quiz
+                        $quiz = \App\Models\Quiz::find($quizId);
+                        $quiz->judul = $quizData['judul'] ?? '';
+                        $quiz->deskripsi = $quizData['deskripsi'] ?? '';
+                        $quiz->nilai_minimum = $quizData['nilai_minimum'] ?? 0;
+                        $quiz->max_attempts = $quizData['max_attempts'] ?? 3;
+                        $quiz->save();
+                        $submittedQuizIds[] = $quizId;
+                    } else {
+                        // Create new quiz
+                        $quiz = new \App\Models\Quiz();
+                        $quiz->sub_module_id = $sub->id;
+                        $quiz->judul = $quizData['judul'] ?? '';
+                        $quiz->deskripsi = $quizData['deskripsi'] ?? '';
+                        $quiz->nilai_minimum = $quizData['nilai_minimum'] ?? 0;
+                        $quiz->max_attempts = $quizData['max_attempts'] ?? 3;
+                        $quiz->save();
+                        $submittedQuizIds[] = $quiz->id;
+                    }
+
+                    // Handle questions
+                    if (isset($quizData['questions']) && is_array($quizData['questions']) && count($quizData['questions']) > 0) {
+                        $existingQuestionIds = $quiz->questions->pluck('id')->toArray();
+                        $submittedQuestionIds = [];
+
+                        foreach ($quizData['questions'] as $questionIndex => $questionData) {
+                            $questionId = $questionData['id'] ?? null;
+
+                            if ($questionId && \App\Models\Question::find($questionId)) {
+                                // Update existing question
+                                $question = \App\Models\Question::find($questionId);
+                                $question->pertanyaan = $questionData['pertanyaan'] ?? '';
+                                $question->tipe = $questionData['tipe'] ?? 'multiple_choice';
+                                $question->bobot = $questionData['bobot'] ?? 1;
+                                $question->urutan = $questionData['urutan'] ?? ($questionIndex + 1);
+                                $question->save();
+                                $submittedQuestionIds[] = $questionId;
+
+                                // Delete existing answer options
+                                $question->answerOptions()->delete();
+                            } else {
+                                // Create new question
+                                $question = new \App\Models\Question();
+                                $question->quiz_id = $quiz->id;
+                                $question->pertanyaan = $questionData['pertanyaan'] ?? '';
+                                $question->tipe = $questionData['tipe'] ?? 'multiple_choice';
+                                $question->bobot = $questionData['bobot'] ?? 1;
+                                $question->urutan = $questionData['urutan'] ?? ($questionIndex + 1);
+                                $question->save();
+                                $submittedQuestionIds[] = $question->id;
+                            }
+
+                            // Handle answer options
+                            if (isset($questionData['answer_options']) && is_array($questionData['answer_options']) && count($questionData['answer_options']) > 0) {
+                                $correctCount = 0;
+                                foreach ($questionData['answer_options'] as $optionIndex => $optionData) {
+                                    $answerOption = new \App\Models\AnswerOption();
+                                    $answerOption->question_id = $question->id;
+                                    $answerOption->teks_jawaban = $optionData['teks_jawaban'] ?? '';
+                                    $answerOption->is_correct = isset($optionData['is_correct']) && $optionData['is_correct'] == '1' ? true : false;
+                                    $answerOption->save();
+
+                                    if ($answerOption->is_correct) {
+                                        $correctCount++;
+                                    }
+                                }
+
+                                // Validate that exactly one answer is correct for multiple choice
+                                if ($question->tipe === 'multiple_choice' && $correctCount !== 1) {
+                                    throw new \Exception("Question '{$question->pertanyaan}' must have exactly one correct answer. Found {$correctCount} correct answers.");
+                                }
+
+                                // Validate minimum 2 options
+                                if (count($questionData['answer_options']) < 2) {
+                                    throw new \Exception("Question '{$question->pertanyaan}' must have at least 2 answer options.");
+                                }
+                            }
+                        }
+
+                        // Delete questions that are no longer in the form
+                        $questionsToDelete = array_diff($existingQuestionIds, $submittedQuestionIds);
+                        foreach ($questionsToDelete as $questionId) {
+                            $question = \App\Models\Question::find($questionId);
+                            if ($question) {
+                                $question->answerOptions()->delete();
+                                $question->delete();
+                            }
+                        }
+                    }
+                }
+
+                // Delete quizzes that are no longer in the form
+                $quizzesToDelete = array_diff($existingQuizIds, $submittedQuizIds);
+                foreach ($quizzesToDelete as $quizId) {
+                    $quiz = \App\Models\Quiz::find($quizId);
+                    if ($quiz) {
+                        foreach ($quiz->questions as $question) {
+                            $question->answerOptions()->delete();
+                            $question->delete();
+                        }
+                        $quiz->delete();
+                    }
+                }
+            }
+
+            DB::commit();
             Log::info('SubModule updated', ['sub_module_id' => $sub->id, 'instructor_id' => Auth::id()]);
             return redirect()->route('instructor.sub_modules.show', $sub->id)->with('success', 'Sub-module updated successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Failed to update sub-module', ['sub_module_id' => $sub->id, 'error' => $e->getMessage()]);
-            return redirect()->back()->withInput()->with('error', 'Failed to update sub-module.');
+            return redirect()->back()->withInput()->with('error', 'Failed to update sub-module: ' . $e->getMessage());
         }
     }
 
