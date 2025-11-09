@@ -25,9 +25,13 @@ use App\Http\Controllers\Admin\AdminQuestionController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\Admin\AdminCertificateController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\CourseController;
 
 // Public landing (keep; uncertain usage in views)
 Route::get('/', [PelatihanController::class, 'index']);
+
+// Public courses catalog
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 
 Auth::routes();
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Course extends Model
 {
@@ -73,5 +74,13 @@ class Course extends Model
     public function jpRecords(): HasMany
     {
         return $this->hasMany(JpRecord::class);
+    }
+
+    /**
+     * Get the sub modules for the course through modules.
+     */
+    public function subModules(): HasManyThrough
+    {
+        return $this->hasManyThrough(SubModule::class, Module::class);
     }
 } 
