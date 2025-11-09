@@ -248,7 +248,75 @@
           <input type="number" name="modules[][sub_modules][][quizzes][][max_attempts]" class="form-control quiz-max-attempts" min="1" value="3" required>
         </div>
       </div>
+      
+      <!-- Questions Section -->
+      <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="mb-0">Pertanyaan (Pilihan Ganda)</h6>
+          <button type="button" class="btn btn-sm btn-primary" onclick="addQuestion(this)">
+            <i class="bi bi-plus-circle"></i> Tambah Pertanyaan
+          </button>
+        </div>
+        <div class="questions-container"></div>
+      </div>
     </div>
+  </div>
+</template>
+
+<!-- Question Template (Hidden) -->
+<template id="questionTemplate">
+  <div class="card mb-3 question-item" data-question-index="">
+    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+      <span>Pertanyaan <span class="question-number"></span></span>
+      <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion(this)">
+        <i class="bi bi-trash"></i> Hapus
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label">Pertanyaan <span class="text-danger">*</span></label>
+        <textarea name="modules[][sub_modules][][quizzes][][questions][][pertanyaan]" class="form-control question-pertanyaan" rows="2" required></textarea>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Bobot <span class="text-danger">*</span></label>
+          <input type="number" name="modules[][sub_modules][][quizzes][][questions][][bobot]" class="form-control question-bobot" min="1" value="1" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Urutan <span class="text-danger">*</span></label>
+          <input type="number" name="modules[][sub_modules][][quizzes][][questions][][urutan]" class="form-control question-urutan" min="1" required>
+        </div>
+      </div>
+      <input type="hidden" name="modules[][sub_modules][][quizzes][][questions][][tipe]" class="question-tipe" value="multiple_choice">
+      
+      <!-- Answer Options -->
+      <div class="mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <label class="form-label mb-0">Opsi Jawaban (Pilih salah satu yang benar) <span class="text-danger">*</span></label>
+          <button type="button" class="btn btn-sm btn-outline-primary" onclick="addAnswerOption(this)">
+            <i class="bi bi-plus"></i> Tambah Opsi
+          </button>
+        </div>
+        <div class="answer-options-container"></div>
+        <small class="text-muted">Minimal 2 opsi, maksimal 5 opsi. Centang salah satu sebagai jawaban benar.</small>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Answer Option Template (Hidden) -->
+<template id="answerOptionTemplate">
+  <div class="input-group mb-2 answer-option-item" data-option-index="">
+    <input type="text" name="modules[][sub_modules][][quizzes][][questions][][answer_options][][teks_jawaban]" class="form-control answer-option-text" placeholder="Teks jawaban" required>
+    <div class="input-group-text">
+      <div class="form-check">
+        <input class="form-check-input answer-option-correct" type="checkbox" name="modules[][sub_modules][][quizzes][][questions][][answer_options][][is_correct]" value="1" onchange="validateCorrectAnswer(this)">
+        <label class="form-check-label">Benar</label>
+      </div>
+    </div>
+    <button type="button" class="btn btn-outline-danger" onclick="removeAnswerOption(this)">
+      <i class="bi bi-trash"></i>
+    </button>
   </div>
 </template>
 
@@ -324,6 +392,8 @@ let moduleIndex = 0;
 let subModuleIndex = {};
 let contentIndex = {};
 let quizIndex = {};
+let questionIndex = {};
+let answerOptionIndex = {};
 
 function nextStep(step) {
   // Validate current step
@@ -636,6 +706,188 @@ function updateQuizNames(quizItem, moduleIdx, subIdx, quizIdx) {
   deskripsiInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][deskripsi]`;
   nilaiMinimumInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][nilai_minimum]`;
   maxAttemptsInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][max_attempts]`;
+  
+  // Update question names
+  const questions = quizItem.querySelectorAll('.question-item');
+  questions.forEach((question, qIdx) => {
+    updateQuestionNames(question, moduleIdx, subIdx, quizIdx, qIdx);
+  });
+}
+
+function addQuestion(btn) {
+  const quizItem = btn.closest('.quiz-item');
+  const moduleIdx = parseInt(quizItem.getAttribute('data-module-index'));
+  const subIdx = parseInt(quizItem.getAttribute('data-sub-module-index'));
+  const quizIdx = parseInt(quizItem.getAttribute('data-quiz-index'));
+  const questionsContainer = quizItem.querySelector('.questions-container');
+  
+  const key = `${moduleIdx}_${subIdx}_${quizIdx}`;
+  if (!questionIndex[key]) {
+    questionIndex[key] = 0;
+  }
+  const qIdx = questionIndex[key];
+  
+  const template = document.getElementById('questionTemplate');
+  const clone = template.content.cloneNode(true);
+  const questionItem = clone.querySelector('.question-item');
+  questionItem.setAttribute('data-question-index', qIdx);
+  questionItem.setAttribute('data-module-index', moduleIdx);
+  questionItem.setAttribute('data-sub-module-index', subIdx);
+  questionItem.setAttribute('data-quiz-index', quizIdx);
+  questionItem.querySelector('.question-number').textContent = qIdx + 1;
+  
+  updateQuestionNames(questionItem, moduleIdx, subIdx, quizIdx, qIdx);
+  
+  questionsContainer.appendChild(clone);
+  questionIndex[key]++;
+  
+  // Initialize answer options index for this question
+  const questionKey = `${moduleIdx}_${subIdx}_${quizIdx}_${qIdx}`;
+  if (!answerOptionIndex[questionKey]) {
+    answerOptionIndex[questionKey] = 0;
+  }
+  
+  // Add at least 2 answer options by default
+  const answerOptionsContainer = questionItem.querySelector('.answer-options-container');
+  const addOptionBtn = questionItem.querySelector('button[onclick*="addAnswerOption"]');
+  for (let i = 0; i < 2; i++) {
+    if (addOptionBtn) {
+      addAnswerOption(addOptionBtn);
+    }
+  }
+}
+
+function updateQuestionNames(questionItem, moduleIdx, subIdx, quizIdx, qIdx) {
+  const pertanyaanInput = questionItem.querySelector('.question-pertanyaan');
+  const bobotInput = questionItem.querySelector('.question-bobot');
+  const urutanInput = questionItem.querySelector('.question-urutan');
+  const tipeInput = questionItem.querySelector('.question-tipe');
+  
+  pertanyaanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][pertanyaan]`;
+  bobotInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][bobot]`;
+  urutanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][urutan]`;
+  urutanInput.value = qIdx + 1;
+  tipeInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][tipe]`;
+  
+  // Update answer option names
+  const answerOptions = questionItem.querySelectorAll('.answer-option-item');
+  answerOptions.forEach((option, optIdx) => {
+    updateAnswerOptionNames(option, moduleIdx, subIdx, quizIdx, qIdx, optIdx);
+  });
+}
+
+function removeQuestion(btn) {
+  const questionItem = btn.closest('.question-item');
+  const moduleIdx = parseInt(questionItem.getAttribute('data-module-index'));
+  const subIdx = parseInt(questionItem.getAttribute('data-sub-module-index'));
+  const quizIdx = parseInt(questionItem.getAttribute('data-quiz-index'));
+  const qIdx = parseInt(questionItem.getAttribute('data-question-index'));
+  
+  const key = `${moduleIdx}_${subIdx}_${quizIdx}`;
+  const questionKey = `${moduleIdx}_${subIdx}_${quizIdx}_${qIdx}`;
+  delete answerOptionIndex[questionKey];
+  
+  questionItem.remove();
+  
+  // Renumber remaining questions
+  const quizItem = questionItem.closest('.quiz-item');
+  const questions = quizItem.querySelectorAll('.question-item');
+  questions.forEach((q, index) => {
+    const newQIdx = index;
+    q.setAttribute('data-question-index', newQIdx);
+    q.querySelector('.question-number').textContent = newQIdx + 1;
+    updateQuestionNames(q, moduleIdx, subIdx, quizIdx, newQIdx);
+  });
+}
+
+function addAnswerOption(btn) {
+  const questionItem = btn.closest('.question-item');
+  const answerOptionsContainer = questionItem.querySelector('.answer-options-container');
+  
+  const moduleIdx = parseInt(questionItem.getAttribute('data-module-index'));
+  const subIdx = parseInt(questionItem.getAttribute('data-sub-module-index'));
+  const quizIdx = parseInt(questionItem.getAttribute('data-quiz-index'));
+  const qIdx = parseInt(questionItem.getAttribute('data-question-index'));
+  
+  const questionKey = `${moduleIdx}_${subIdx}_${quizIdx}_${qIdx}`;
+  if (!answerOptionIndex[questionKey]) {
+    answerOptionIndex[questionKey] = 0;
+  }
+  const optIdx = answerOptionIndex[questionKey];
+  
+  // Check max 5 options
+  const existingOptions = answerOptionsContainer.querySelectorAll('.answer-option-item');
+  if (existingOptions.length >= 5) {
+    alert('Maksimal 5 opsi jawaban per pertanyaan.');
+    return;
+  }
+  
+  const template = document.getElementById('answerOptionTemplate');
+  const clone = template.content.cloneNode(true);
+  const optionItem = clone.querySelector('.answer-option-item');
+  optionItem.setAttribute('data-option-index', optIdx);
+  
+  updateAnswerOptionNames(optionItem, moduleIdx, subIdx, quizIdx, qIdx, optIdx);
+  
+  answerOptionsContainer.appendChild(clone);
+  answerOptionIndex[questionKey]++;
+}
+
+function updateAnswerOptionNames(optionItem, moduleIdx, subIdx, quizIdx, qIdx, optIdx) {
+  const textInput = optionItem.querySelector('.answer-option-text');
+  const correctInput = optionItem.querySelector('.answer-option-correct');
+  
+  textInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][answer_options][${optIdx}][teks_jawaban]`;
+  correctInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][answer_options][${optIdx}][is_correct]`;
+}
+
+function removeAnswerOption(btn) {
+  const optionItem = btn.closest('.answer-option-item');
+  const questionItem = optionItem.closest('.question-item');
+  const moduleIdx = parseInt(questionItem.getAttribute('data-module-index'));
+  const subIdx = parseInt(questionItem.getAttribute('data-sub-module-index'));
+  const quizIdx = parseInt(questionItem.getAttribute('data-quiz-index'));
+  const qIdx = parseInt(questionItem.getAttribute('data-question-index'));
+  
+  const answerOptionsContainer = questionItem.querySelector('.answer-options-container');
+  const existingOptions = answerOptionsContainer.querySelectorAll('.answer-option-item');
+  
+  // Check min 2 options
+  if (existingOptions.length <= 2) {
+    alert('Minimal 2 opsi jawaban per pertanyaan.');
+    return;
+  }
+  
+  optionItem.remove();
+  
+  // Renumber remaining options
+  const remainingOptions = answerOptionsContainer.querySelectorAll('.answer-option-item');
+  remainingOptions.forEach((opt, index) => {
+    const newOptIdx = index;
+    opt.setAttribute('data-option-index', newOptIdx);
+    updateAnswerOptionNames(opt, moduleIdx, subIdx, quizIdx, qIdx, newOptIdx);
+  });
+}
+
+function validateCorrectAnswer(checkbox) {
+  const questionItem = checkbox.closest('.question-item');
+  const allCheckboxes = questionItem.querySelectorAll('.answer-option-correct');
+  
+  if (checkbox.checked) {
+    // Uncheck all other checkboxes
+    allCheckboxes.forEach(cb => {
+      if (cb !== checkbox) {
+        cb.checked = false;
+      }
+    });
+  } else {
+    // Ensure at least one is checked
+    const hasChecked = Array.from(allCheckboxes).some(cb => cb.checked);
+    if (!hasChecked) {
+      alert('Setidaknya satu opsi harus dipilih sebagai jawaban benar.');
+      checkbox.checked = true;
+    }
+  }
 }
 
 function removeQuiz(btn) {

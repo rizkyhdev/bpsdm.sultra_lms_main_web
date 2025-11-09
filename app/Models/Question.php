@@ -21,6 +21,7 @@ class Question extends Model
         'pertanyaan',
         'tipe',
         'bobot',
+        'urutan',
     ];
 
     /**

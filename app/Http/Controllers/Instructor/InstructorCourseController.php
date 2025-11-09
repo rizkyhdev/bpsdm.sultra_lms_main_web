@@ -176,6 +176,14 @@ class InstructorCourseController extends Controller
                 'modules.*.sub_modules.*.quizzes.*.deskripsi' => 'nullable|string',
                 'modules.*.sub_modules.*.quizzes.*.nilai_minimum' => 'required|numeric|min:0|max:100',
                 'modules.*.sub_modules.*.quizzes.*.max_attempts' => 'required|integer|min:1',
+                'modules.*.sub_modules.*.quizzes.*.questions' => 'nullable|array',
+                'modules.*.sub_modules.*.quizzes.*.questions.*.pertanyaan' => 'required|string',
+                'modules.*.sub_modules.*.quizzes.*.questions.*.tipe' => 'required|in:multiple_choice,true_false,essay',
+                'modules.*.sub_modules.*.quizzes.*.questions.*.bobot' => 'required|integer|min:1',
+                'modules.*.sub_modules.*.quizzes.*.questions.*.urutan' => 'nullable|integer|min:1',
+                'modules.*.sub_modules.*.quizzes.*.questions.*.answer_options' => 'required_if:modules.*.sub_modules.*.quizzes.*.questions.*.tipe,multiple_choice,true_false|array|min:2|max:5',
+                'modules.*.sub_modules.*.quizzes.*.questions.*.answer_options.*.teks_jawaban' => 'required|string',
+                'modules.*.sub_modules.*.quizzes.*.questions.*.answer_options.*.is_correct' => 'nullable|boolean',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation failed in wizard', [
@@ -265,12 +273,55 @@ class InstructorCourseController extends Controller
                                 $quiz = new \App\Models\Quiz();
                                 $quiz->sub_module_id = $subModule->id;
                                 $quiz->judul = $quizData['judul'] ?? '';
-                                $quiz->deskripsi = $quizData['deskripsi'] ?? null;
+                                $quiz->deskripsi = $quizData['deskripsi'] ?? '';
                                 $quiz->nilai_minimum = $quizData['nilai_minimum'] ?? 0;
                                 $quiz->max_attempts = $quizData['max_attempts'] ?? 3;
                                 $quiz->save();
                                 
                                 Log::info('Quiz created', ['quiz_id' => $quiz->id, 'sub_module_id' => $subModule->id]);
+                                
+                                // Create questions for this quiz
+                                if (isset($quizData['questions']) && is_array($quizData['questions']) && count($quizData['questions']) > 0) {
+                                    foreach ($quizData['questions'] as $questionIndex => $questionData) {
+                                        $question = new \App\Models\Question();
+                                        $question->quiz_id = $quiz->id;
+                                        $question->pertanyaan = $questionData['pertanyaan'] ?? '';
+                                        $question->tipe = $questionData['tipe'] ?? 'multiple_choice';
+                                        $question->bobot = $questionData['bobot'] ?? 1;
+                                        $question->urutan = $questionData['urutan'] ?? ($questionIndex + 1);
+                                        $question->save();
+                                        
+                                        Log::info('Question created', ['question_id' => $question->id, 'quiz_id' => $quiz->id]);
+                                        
+                                        // Create answer options for this question
+                                        if (isset($questionData['answer_options']) && is_array($questionData['answer_options']) && count($questionData['answer_options']) > 0) {
+                                            $correctCount = 0;
+                                            foreach ($questionData['answer_options'] as $optionIndex => $optionData) {
+                                                $answerOption = new \App\Models\AnswerOption();
+                                                $answerOption->question_id = $question->id;
+                                                $answerOption->teks_jawaban = $optionData['teks_jawaban'] ?? '';
+                                                $answerOption->is_correct = isset($optionData['is_correct']) && $optionData['is_correct'] == '1' ? true : false;
+                                                $answerOption->save();
+                                                
+                                                if ($answerOption->is_correct) {
+                                                    $correctCount++;
+                                                }
+                                                
+                                                Log::info('Answer option created', ['answer_option_id' => $answerOption->id, 'question_id' => $question->id]);
+                                            }
+                                            
+                                            // Validate that exactly one answer is correct for multiple choice
+                                            if ($question->tipe === 'multiple_choice' && $correctCount !== 1) {
+                                                throw new \Exception("Question '{$question->pertanyaan}' must have exactly one correct answer. Found {$correctCount} correct answers.");
+                                            }
+                                            
+                                            // Validate minimum 2 options
+                                            if (count($questionData['answer_options']) < 2) {
+                                                throw new \Exception("Question '{$question->pertanyaan}' must have at least 2 answer options.");
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
