@@ -9,6 +9,7 @@ use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 
@@ -58,6 +59,89 @@ class StudentCourseController extends Controller
         $bidangKompetensi = Course::distinct()->pluck('bidang_kompetensi')->filter();
 
         return view('student.courses.index', compact('courses', 'bidangKompetensi'));
+    }
+
+    /**
+     * Menampilkan daftar kursus yang sudah didaftarkan oleh user.
+     */
+    public function enrolledCourses(Request $request): View
+    {
+        $user = Auth::user();
+
+        // Fetch enrolled courses
+        $query = $user->userEnrollments()
+            ->with(['course.modules.subModules', 'course.owner']);
+
+        // Filter by status if provided
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        // Search filter
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->whereHas('course', function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%");
+            });
+        }
+
+        // Sorting
+        $sortBy = $request->get('sort_by', 'enrollment_date');
+        $sortOrder = $request->get('sort_order', 'desc');
+        
+        if ($sortBy === 'title') {
+            $query->join('courses', 'user_enrollments.course_id', '=', 'courses.id')
+                  ->orderBy('courses.judul', $sortOrder)
+                  ->select('user_enrollments.*');
+        } else {
+            $query->orderBy('enrollment_date', $sortOrder);
+        }
+
+        $enrollments = $query->paginate(12);
+
+        // Format courses for the view
+        $formattedCourses = $enrollments->getCollection()->map(function ($enrollment) use ($user) {
+            $course = $enrollment->course;
+            
+            // Calculate progress
+            $totalSubModules = 0;
+            $completedSubModules = 0;
+
+            foreach ($course->modules as $module) {
+                foreach ($module->subModules as $subModule) {
+                    $totalSubModules++;
+                    $progress = UserProgress::where('user_id', $user->id)
+                        ->where('sub_module_id', $subModule->id)
+                        ->where('is_completed', true)
+                        ->exists();
+                    
+                    if ($progress) {
+                        $completedSubModules++;
+                    }
+                }
+            }
+
+            $progressPercent = $totalSubModules > 0 
+                ? round(($completedSubModules / $totalSubModules) * 100, 2) 
+                : 0;
+
+            // Format course data to match view expectations
+            return (object) [
+                'id' => $course->id,
+                'title' => $course->judul,
+                'short_description' => Str::limit(strip_tags($course->deskripsi), 150),
+                'cover_url' => asset('image/course-placeholder.png'), // Default placeholder
+                'progress_percent' => $progressPercent,
+                'instructor_name' => $course->owner ? $course->owner->name : __('Instructor'),
+                'updated_at' => $course->updated_at,
+            ];
+        });
+
+        // Set the formatted collection back to the paginator
+        $enrollments->setCollection($formattedCourses);
+
+        return view('student.courses.index', ['courses' => $enrollments]);
     }
 
     /**

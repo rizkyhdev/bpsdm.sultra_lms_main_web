@@ -80,10 +80,7 @@ Route::group([
 ], function () {
 
     // Courses
-    Route::get('/courses', function () {
-        $courses = collect();
-        return view('student.courses.index', compact('courses'));
-    })->name('courses.index');
+    Route::get('/courses', [\App\Http\Controllers\Student\StudentCourseController::class, 'enrolledCourses'])->name('courses.index');
     Route::get('/courses/{id}', function ($id) {
         $course = (object) [
             'id' => $id,
