@@ -232,7 +232,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const activeAttemptId = null;
     @endif
 
+    let currentAttemptId = activeAttemptId;
+
     function startQuiz() {
+        // If there's already an active attempt, use it
+        if (activeAttemptId) {
+            currentAttemptId = activeAttemptId;
+            loadQuizQuestions(activeAttemptId);
+            quizModal.show();
+            return;
+        }
+
+        // Otherwise, start a new attempt
         fetch('{{ route("student.quizzes.start", $quiz->id) }}', {
             method: 'POST',
             headers: {
@@ -243,6 +254,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Store the attempt_id
+                currentAttemptId = data.attempt_id;
                 loadQuizQuestions(data.attempt_id);
                 quizModal.show();
             } else {
@@ -266,6 +279,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Store the attempt_id from the response
+                currentAttemptId = data.data.attempt_id || attemptId;
                 renderQuiz(data.data);
             } else {
                 alert(data.message || 'Gagal memuat pertanyaan quiz.');
@@ -339,10 +354,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        const attemptId = activeAttemptId || document.querySelector('[data-attempt-id]')?.dataset.attemptId;
+        // Get attempt ID from multiple sources
+        const attemptId = currentAttemptId || activeAttemptId || document.querySelector('[data-attempt-id]')?.dataset.attemptId;
         
         if (!attemptId) {
-            alert('Attempt ID tidak ditemukan.');
+            alert('Attempt ID tidak ditemukan. Silakan mulai quiz terlebih dahulu.');
             return;
         }
 
