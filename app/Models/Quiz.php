@@ -87,6 +87,7 @@ class Quiz extends Model
         $passedAttempt = $this->quizAttempts()
             ->where('user_id', $userId)
             ->where('is_passed', true)
+            ->whereNotNull('completed_at')
             ->first();
         
         return $passedAttempt !== null;

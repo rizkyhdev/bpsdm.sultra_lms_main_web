@@ -573,7 +573,61 @@ class StudentContentController extends Controller
             })
             ->count();
 
-        if ($totalContents > 0 && $completedContents >= $totalContents) {
+        // Check quizzes
+        $subModuleQuizzes = $subModule->quizzes;
+        $totalQuizzes = $subModuleQuizzes->count();
+        $passedQuizzes = 0;
+        $allSubModuleQuizzesPassed = true;
+        if ($totalQuizzes > 0) {
+            foreach ($subModuleQuizzes as $quiz) {
+                if ($quiz->hasUserPassed($user->id)) {
+                    $passedQuizzes++;
+                } else {
+                    $allSubModuleQuizzesPassed = false;
+                }
+            }
+        }
+
+        // Calculate progress percentage
+        $contentProgressPercentage = $totalContents > 0 ? round(($completedContents / $totalContents) * 100, 2) : ($totalContents == 0 ? 100 : 0);
+        $quizProgressPercentage = $totalQuizzes > 0 ? round(($passedQuizzes / $totalQuizzes) * 100, 2) : ($totalQuizzes == 0 ? 100 : 0);
+        
+        // If there are both contents and quizzes, average them. Otherwise use the one that exists.
+        if ($totalContents > 0 && $totalQuizzes > 0) {
+            $calculatedProgress = round(($contentProgressPercentage + $quizProgressPercentage) / 2, 2);
+        } elseif ($totalContents > 0) {
+            $calculatedProgress = $contentProgressPercentage;
+        } elseif ($totalQuizzes > 0) {
+            $calculatedProgress = $quizProgressPercentage;
+        } else {
+            $calculatedProgress = 0;
+        }
+
+        // Update sub-module progress
+        $progress = $subModule->userProgress()->where('user_id', $user->id)->first();
+        if ($progress) {
+            $progress->update([
+                'progress_percentage' => $calculatedProgress
+            ]);
+        } else {
+            $progress = $subModule->userProgress()->create([
+                'user_id' => $user->id,
+                'is_completed' => false,
+                'progress_percentage' => $calculatedProgress,
+                'started_at' => now()
+            ]);
+        }
+
+        // Check if sub-module is completed
+        $contentsCompleted = $totalContents == 0 || ($totalContents > 0 && $completedContents >= $totalContents);
+        $isSubModuleCompleted = $contentsCompleted && $allSubModuleQuizzesPassed;
+
+        if ($isSubModuleCompleted && !$progress->is_completed) {
+            $progress->update([
+                'is_completed' => true,
+                'progress_percentage' => 100,
+                'completed_at' => now()
+            ]);
             // Sub-module is completed, check if module is completed
             $this->checkModuleCompletion($user, $subModule->module_id);
         }

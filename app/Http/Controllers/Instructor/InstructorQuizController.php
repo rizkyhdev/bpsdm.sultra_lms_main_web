@@ -39,11 +39,23 @@ class InstructorQuizController extends Controller
         $perPage = (int) $request->get('per_page', 15);
 
         // Get all quizzes from instructor's courses
+        // Quizzes can be at course, module, or sub-module level
         $quizzes = Quiz::query()
-            ->whereHas('course', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
+            ->where(function ($query) use ($user) {
+                // Quizzes directly associated with course
+                $query->whereHas('course', function ($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                })
+                // Quizzes associated with module (through module's course)
+                ->orWhereHas('module.course', function ($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                })
+                // Quizzes associated with sub-module (through sub-module's module's course)
+                ->orWhereHas('subModule.module.course', function ($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                });
             })
-            ->with(['course', 'module', 'subModule'])
+            ->with(['course', 'module.course', 'subModule.module.course'])
             ->when($q, function ($query) use ($q) {
                 $query->where('judul', 'like', "%$q%");
             })

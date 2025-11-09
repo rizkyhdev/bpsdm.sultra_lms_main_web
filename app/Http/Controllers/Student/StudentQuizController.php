@@ -673,20 +673,13 @@ class StudentQuizController extends Controller
     {
         $subModule = $quiz->subModule;
         
-        // Check if all quizzes in sub-module are passed
-        $totalQuizzes = $subModule->quizzes()->count();
-        $passedQuizzes = $subModule->quizzes()
-            ->whereHas('quizAttempts', function ($query) use ($user) {
-                $query->where('user_id', $user->id)
-                      ->where('is_passed', true)
-                      ->whereNotNull('completed_at');
-            })
-            ->count();
-
-        if ($totalQuizzes > 0 && $passedQuizzes >= $totalQuizzes) {
-            // All quizzes passed, check if sub-module can be marked as completed
-            $this->checkSubModuleCompletion($user, $subModule->id);
+        if (!$subModule) {
+            return;
         }
+        
+        // Always check sub-module completion when a quiz is passed
+        // The checkSubModuleCompletion method will verify if all requirements are met
+        $this->checkSubModuleCompletion($user, $subModule->id);
     }
 
     /**
@@ -707,19 +700,62 @@ class StudentQuizController extends Controller
             })
             ->count();
 
+        // Check if contents are completed (if there are contents, all must be completed)
+        $contentsCompleted = $totalContents == 0 || ($totalContents > 0 && $completedContents >= $totalContents);
+
         // Check if sub-module has quiz and if user has passed it
         $subModuleQuizzes = $subModule->quizzes;
+        $totalQuizzes = $subModuleQuizzes->count();
+        $passedQuizzes = 0;
         $allSubModuleQuizzesPassed = true;
-        if ($subModuleQuizzes->count() > 0) {
+        if ($totalQuizzes > 0) {
             foreach ($subModuleQuizzes as $quiz) {
-                if (!$quiz->hasUserPassed($user->id)) {
+                if ($quiz->hasUserPassed($user->id)) {
+                    $passedQuizzes++;
+                } else {
                     $allSubModuleQuizzesPassed = false;
-                    break;
                 }
             }
         }
 
-        if ($totalContents > 0 && $completedContents >= $totalContents && $allSubModuleQuizzesPassed) {
+        // Calculate progress percentage
+        $contentProgressPercentage = $totalContents > 0 ? round(($completedContents / $totalContents) * 100, 2) : ($totalContents == 0 ? 100 : 0);
+        $quizProgressPercentage = $totalQuizzes > 0 ? round(($passedQuizzes / $totalQuizzes) * 100, 2) : ($totalQuizzes == 0 ? 100 : 0);
+        
+        // If there are both contents and quizzes, average them. Otherwise use the one that exists.
+        if ($totalContents > 0 && $totalQuizzes > 0) {
+            $calculatedProgress = round(($contentProgressPercentage + $quizProgressPercentage) / 2, 2);
+        } elseif ($totalContents > 0) {
+            $calculatedProgress = $contentProgressPercentage;
+        } elseif ($totalQuizzes > 0) {
+            $calculatedProgress = $quizProgressPercentage;
+        } else {
+            $calculatedProgress = 0;
+        }
+
+        // Update sub-module progress
+        $progress = $subModule->userProgress()->where('user_id', $user->id)->first();
+        if ($progress) {
+            $progress->update([
+                'progress_percentage' => $calculatedProgress
+            ]);
+        } else {
+            $progress = $subModule->userProgress()->create([
+                'user_id' => $user->id,
+                'is_completed' => false,
+                'progress_percentage' => $calculatedProgress,
+                'started_at' => now()
+            ]);
+        }
+
+        // Sub-module is completed if all contents are done (or no contents) and all quizzes passed
+        if ($contentsCompleted && $allSubModuleQuizzesPassed && !$progress->is_completed) {
+            $progress->update([
+                'is_completed' => true,
+                'progress_percentage' => 100,
+                'completed_at' => now()
+            ]);
+            
             // Sub-module is completed, check if module is completed
             $this->checkModuleCompletion($user, $subModule->module_id);
         }

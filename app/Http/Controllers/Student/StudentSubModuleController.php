@@ -117,13 +117,56 @@ class StudentSubModuleController extends Controller
             }
         }
 
+        // Calculate progress percentage based on contents and quizzes
+        $totalQuizzes = $subModuleQuizzes->count();
+        $passedQuizzes = 0;
+        if ($totalQuizzes > 0) {
+            foreach ($subModuleQuizzes as $quiz) {
+                if ($quiz->hasUserPassed($user->id)) {
+                    $passedQuizzes++;
+                }
+            }
+        }
+        
+        // Calculate progress: average of content progress and quiz progress
+        $contentProgressPercentage = $totalContents > 0 ? round(($completedContents / $totalContents) * 100, 2) : ($totalContents == 0 ? 100 : 0);
+        $quizProgressPercentage = $totalQuizzes > 0 ? round(($passedQuizzes / $totalQuizzes) * 100, 2) : ($totalQuizzes == 0 ? 100 : 0);
+        
+        // If there are both contents and quizzes, average them. Otherwise use the one that exists.
+        if ($totalContents > 0 && $totalQuizzes > 0) {
+            $calculatedProgress = round(($contentProgressPercentage + $quizProgressPercentage) / 2, 2);
+        } elseif ($totalContents > 0) {
+            $calculatedProgress = $contentProgressPercentage;
+        } elseif ($totalQuizzes > 0) {
+            $calculatedProgress = $quizProgressPercentage;
+        } else {
+            $calculatedProgress = 0;
+        }
+        
+        // Update progress in database
+        if ($progress) {
+            $progress->update([
+                'progress_percentage' => $calculatedProgress
+            ]);
+            $progress->refresh();
+        } else {
+            $progress = $subModule->userProgress()->create([
+                'user_id' => $user->id,
+                'is_completed' => false,
+                'progress_percentage' => $calculatedProgress,
+                'started_at' => now()
+            ]);
+        }
+        
         // Periksa apakah sub-modul dapat ditandai sebagai selesai
-        $canMarkComplete = $totalContents > 0 && $completedContents >= $totalContents && $allSubModuleQuizzesPassed;
+        // If there are contents, all must be completed. If there are quizzes, all must be passed.
+        $contentsCompleted = $totalContents == 0 || ($totalContents > 0 && $completedContents >= $totalContents);
+        $canMarkComplete = $contentsCompleted && $allSubModuleQuizzesPassed;
         
         // Check if sub-module is completed (all contents are completed and all quizzes passed)
-        $isSubModuleCompleted = $totalContents > 0 && $completedContents >= $totalContents && $allSubModuleQuizzesPassed;
+        $isSubModuleCompleted = $contentsCompleted && $allSubModuleQuizzesPassed;
         
-        // If sub-module is completed, check if module is completed
+        // If sub-module is completed, auto-mark it as complete
         if ($isSubModuleCompleted && $progress && !$progress->is_completed) {
             // Auto-mark sub-module as complete if all contents are done and all quizzes passed
             $progress->update([
@@ -202,7 +245,10 @@ class StudentSubModuleController extends Controller
             }
         }
 
-        if ($totalContents > 0 && $completedContents < $totalContents) {
+        // Check if contents are completed (if there are contents, all must be completed)
+        $contentsCompleted = $totalContents == 0 || ($totalContents > 0 && $completedContents >= $totalContents);
+        
+        if (!$contentsCompleted) {
             return response()->json([
                 'success' => false,
                 'message' => 'Anda harus menyelesaikan semua konten terlebih dahulu.',
@@ -213,8 +259,8 @@ class StudentSubModuleController extends Controller
 
         // Check if sub-module has quiz and if user has passed it
         $subModuleQuizzes = $subModule->quizzes;
+        $allQuizzesPassed = true;
         if ($subModuleQuizzes->count() > 0) {
-            $allQuizzesPassed = true;
             foreach ($subModuleQuizzes as $quiz) {
                 if (!$quiz->hasUserPassed($user->id)) {
                     $allQuizzesPassed = false;
