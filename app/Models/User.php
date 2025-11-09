@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -91,5 +92,21 @@ class User extends Authenticatable
     public function jpRecords(): HasMany
     {
         return $this->hasMany(JpRecord::class);
+    }
+
+    /**
+     * Get the courses that the user has wishlisted.
+     */
+    public function wishlists(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'user_wishlists')->withTimestamps();
+    }
+
+    /**
+     * Get the enrollments for the user (alias for userEnrollments).
+     */
+    public function enrollments(): HasMany
+    {
+        return $this->userEnrollments();
     }
 }

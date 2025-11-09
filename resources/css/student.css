@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .card {
+        @apply rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-200;
+    }
+
+    .pill {
+        @apply text-[11px] uppercase tracking-wide rounded-md bg-slate-100 text-slate-600 px-2 py-0.5;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors;
+    }
+
+    .toolbar {
+        @apply flex flex-wrap gap-3 items-center justify-between;
+    }
+}
+
+@layer utilities {
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+

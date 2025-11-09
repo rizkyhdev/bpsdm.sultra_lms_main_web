@@ -31,12 +31,28 @@ class StudentDashboardController extends Controller
         $user = Auth::user();
         $currentYear = now()->year;
 
+        // KPI counts
+        $enrolledCount = $user->userEnrollments()->count();
+        $inProgressCount = $user->userEnrollments()
+            ->where('status', 'in_progress')
+            ->whereNull('completed_at')
+            ->count();
+        $completedCount = $user->userEnrollments()
+            ->whereNotNull('completed_at')
+            ->count();
+        $totalJp = $user->userEnrollments()
+            ->whereNotNull('completed_at')
+            ->with('course')
+            ->get()
+            ->sum(function ($enrollment) {
+                return $enrollment->course->jp_value ?? 0;
+            });
+
         // Mendapatkan kursus yang diikuti dengan progress
         $enrolledCourses = $user->userEnrollments()
             ->with(['course.modules.subModules', 'course.modules.subModules.userProgress' => function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             }])
-            ->where('status', 'active')
             ->get();
 
         // Menghitung progress pembelajaran untuk setiap kursus
@@ -71,15 +87,17 @@ class StudentDashboardController extends Controller
         // Mendapatkan JP yang terkumpul untuk tahun berjalan
         $jpAccumulated = $user->jpRecords()
             ->whereYear('created_at', $currentYear)
-            ->sum('jp_value');
+            ->sum('jp_earned');
 
         // Mendapatkan quiz yang akan datang (belum diikuti atau gagal)
         $upcomingQuizzes = Quiz::whereHas('subModule.module.course', function ($query) use ($user) {
             $query->whereHas('userEnrollments', function ($q) use ($user) {
-                $q->where('user_id', $user->id)->where('status', 'active');
+                $q->where('user_id', $user->id)
+                  ->whereIn('status', ['enrolled', 'in_progress'])
+                  ->whereNull('completed_at');
             });
         })->whereDoesntHave('quizAttempts', function ($query) use ($user) {
-            $query->where('user_id', $user->id)->where('status', 'passed');
+            $query->where('user_id', $user->id)->where('is_passed', true);
         })->with(['subModule.module.course'])
         ->get();
 
@@ -91,7 +109,7 @@ class StudentDashboardController extends Controller
             ->get();
 
         // Mendapatkan total JP yang diperoleh
-        $totalJpEarned = $user->jpRecords()->sum('jp_value');
+        $totalJpEarned = $user->jpRecords()->sum('jp_earned');
 
         // Mendapatkan kursus yang sedang berlangsung (dimulai tapi belum selesai)
         $coursesInProgress = $enrolledCourses->filter(function ($enrollment) {
@@ -103,7 +121,45 @@ class StudentDashboardController extends Controller
             return $enrollment->completed_at !== null;
         });
 
+        // Pelatihan Tersedia: latest 9 courses where NOT exists enrollment for current user
+        $enrolledCourseIds = $user->userEnrollments()->pluck('course_id')->toArray();
+        
+        $availableCourses = Course::whereNotIn('id', $enrolledCourseIds)
+            ->withCount([
+                'userEnrollments as enrollments_count',
+                'subModules as contents_count'
+            ])
+            ->with(['modules.subModules'])
+            ->latest()
+            ->limit(9)
+            ->get()
+            ->map(function ($course) {
+                // Calculate rating_avg from quiz_attempts.nilai
+                $ratingAvg = \App\Models\QuizAttempt::whereHas('quiz.subModule.module.course', function ($q) use ($course) {
+                    $q->where('id', $course->id);
+                })->avg('nilai');
+                
+                // Derive difficulty from sub_module count
+                $subModuleCount = $course->subModules()->count();
+                if ($subModuleCount <= 4) {
+                    $difficulty = 'Beginner';
+                } elseif ($subModuleCount <= 9) {
+                    $difficulty = 'Intermediate';
+                } else {
+                    $difficulty = 'Expert';
+                }
+                
+                $course->rating_avg = round($ratingAvg ?? 0, 2);
+                $course->difficulty = $difficulty;
+                
+                return $course;
+            });
+
         return view('student.dashboard', compact(
+            'enrolledCount',
+            'inProgressCount',
+            'completedCount',
+            'totalJp',
             'courseProgress',
             'jpAccumulated',
             'upcomingQuizzes',
@@ -111,7 +167,8 @@ class StudentDashboardController extends Controller
             'totalJpEarned',
             'coursesInProgress',
             'completedCourses',
-            'currentYear'
+            'currentYear',
+            'availableCourses'
         ));
     }
 
@@ -136,7 +193,7 @@ class StudentDashboardController extends Controller
             $monthlyJp[$month] = $user->jpRecords()
                 ->whereYear('created_at', $currentYear)
                 ->whereMonth('created_at', $month)
-                ->sum('jp_value');
+                ->sum('jp_earned');
         }
 
         return response()->json([
@@ -165,7 +222,7 @@ class StudentDashboardController extends Controller
         // Mendapatkan total JP yang diperoleh tahun ini
         $jpThisYear = $user->jpRecords()
             ->whereYear('created_at', $currentYear)
-            ->sum('jp_value');
+            ->sum('jp_earned');
 
         // Mendapatkan rata-rata skor quiz
         $averageQuizScore = $user->quizAttempts()

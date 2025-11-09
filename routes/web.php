@@ -26,6 +26,10 @@ use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\Admin\AdminCertificateController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\Student\StudentDashboardController;
+use App\Http\Controllers\Student\StudentPelatihanController;
+use App\Http\Controllers\Student\StudentWishlistController;
+use App\Http\Controllers\Student\EnrollmentController;
 
 // Public landing (keep; uncertain usage in views)
 Route::get('/', [PelatihanController::class, 'index']);
@@ -52,17 +56,28 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 // Rute untuk Student Area (auth + role:student)
+Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
+    // Dashboard
+    Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
+    
+    // Pelatihan (Enrollments)
+    Route::get('/student/pelatihan', [StudentPelatihanController::class, 'index'])->name('student.pelatihan');
+    
+    // Wishlist (Keinginan)
+    Route::get('/student/keinginan', [StudentWishlistController::class, 'index'])->name('student.wishlist');
+    Route::post('/student/keinginan/{course}', [StudentWishlistController::class, 'store'])->name('student.wishlist.store');
+    Route::delete('/student/keinginan/{course}', [StudentWishlistController::class, 'destroy'])->name('student.wishlist.destroy');
+    
+    // Enrollment
+    Route::post('/student/enroll/{course}', [EnrollmentController::class, 'store'])->name('student.enroll');
+});
+
+// Legacy routes for backward compatibility
 Route::group([
     'prefix' => 'student',
     'as' => 'student.',
     'middleware' => ['auth', 'role:student'],
 ], function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        $stats = ['enrolled' => 0, 'completed' => 0, 'in_progress' => 0];
-        $recentActivities = collect();
-        return view('student.dashboard', compact('stats', 'recentActivities'));
-    })->name('dashboard');
 
     // Courses
     Route::get('/courses', function () {

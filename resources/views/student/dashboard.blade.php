@@ -1,54 +1,112 @@
-{{--
-    @phpdoc
-    Variabel:
-    - $stats = ['enrolled' => int, 'completed' => int, 'in_progress' => int]
-    - $recentActivities = Illuminate\Support\Collection<Activity>
---}}
 @extends('layouts.studentapp')
 
-@section('title', __('Dashboard'))
-
 @section('content')
-    @include('student._breadcrumbs', ['crumbs' => [
-        ['label' => __('Dashboard')],
-    ]])
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <x-student.card :title="__('Enrolled Courses')">
-            <p class="text-3xl font-bold">{{ (int)($stats['enrolled'] ?? 0) }}</p>
-        </x-student.card>
-
-        <x-student.card :title="__('In Progress')">
-            <p class="text-3xl font-bold">{{ (int)($stats['in_progress'] ?? 0) }}</p>
-        </x-student.card>
-
-        <x-student.card :title="__('Completed')">
-            <p class="text-3xl font-bold">{{ (int)($stats['completed'] ?? 0) }}</p>
-        </x-student.card>
+<div class="container-fluid my-1">
+    {{-- Page Header --}}
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2">Dashboard</h2>
+        <p class="text-muted mb-0">Selamat datang kembali, {{ auth()->user()->name }}</p>
     </div>
 
-    <div class="mt-6">
-        <x-student.card :title="__('Recent Activity')">
-            @if(($recentActivities ?? collect())->isEmpty())
-                <x-student.empty-state :title="__('No recent activity')" :description="__('You have no recent learning activity.')">
-                    <x-slot:action>
-                        <a href="{{ route('student.courses.index') }}" class="inline-flex items-center px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">{{ __('Browse Courses') }}</a>
-                    </x-slot:action>
-                </x-student.empty-state>
-            @else
-                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @foreach($recentActivities as $activity)
-                        <li class="py-3 flex items-start justify-between gap-4">
-                            <div class="min-w-0">
-                                <p class="text-sm font-medium truncate">{{ $activity->title ?? __('Activity') }}</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-300 truncate">{{ $activity->description ?? '' }}</p>
-                            </div>
-                            <time datetime="{{ optional($activity->created_at)->toIso8601String() }}" class="text-xs text-gray-500">{{ optional($activity->created_at)->diffForHumans() }}</time>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-        </x-student.card>
+    {{-- KPI Cards --}}
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 12px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2 small fw-semibold">Terdaftar</h6>
+                            <h3 class="mb-0 fw-bold">{{ $enrolledCount ?? 0 }}</h3>
+                        </div>
+                        <div class="p-3 rounded" style="background-color: #e0e7ff;">
+                            <i class="bi bi-book text-primary fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 12px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2 small fw-semibold">Sedang Berlangsung</h6>
+                            <h3 class="mb-0 fw-bold">{{ $inProgressCount ?? 0 }}</h3>
+                        </div>
+                        <div class="p-3 rounded" style="background-color: #dbeafe;">
+                            <i class="bi bi-lightning-charge text-primary fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 12px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2 small fw-semibold">Selesai</h6>
+                            <h3 class="mb-0 fw-bold">{{ $completedCount ?? 0 }}</h3>
+                        </div>
+                        <div class="p-3 rounded" style="background-color: #d1fae5;">
+                            <i class="bi bi-check-circle text-success fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 12px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2 small fw-semibold">Total JP</h6>
+                            <h3 class="mb-0 fw-bold">{{ $totalJp ?? 0 }}</h3>
+                        </div>
+                        <div class="p-3 rounded" style="background-color: #f3e8ff;">
+                            <i class="bi bi-clock text-primary fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    {{-- Pelatihan Tersedia Section --}}
+    @if(isset($availableCourses) && $availableCourses->count() > 0)
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="fw-bold mb-1">Pelatihan Tersedia</h4>
+                    <p class="text-muted small mb-0">Pelatihan yang dapat Anda ikuti</p>
+                </div>
+                <a href="{{ route('courses.index') }}" class="btn btn-outline-primary btn-sm">
+                    Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="row g-4">
+                @foreach($availableCourses as $course)
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <x-course-card :course="$course" :actions="true" />
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @else
+        <div class="card shadow-sm border-0 mt-4" style="border-radius: 12px;">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+                <h5 class="fw-bold">Tidak ada pelatihan tersedia</h5>
+                <p class="text-muted">Semua pelatihan sudah terdaftar atau belum ada pelatihan yang tersedia.</p>
+                <a href="{{ route('courses.index') }}" class="btn btn-primary">
+                    Jelajahi Pelatihan
+                </a>
+            </div>
+        </div>
+    @endif
+</div>
 @endsection
 
