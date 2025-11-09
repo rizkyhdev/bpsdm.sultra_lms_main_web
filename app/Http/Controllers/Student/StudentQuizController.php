@@ -178,16 +178,8 @@ class StudentQuizController extends Controller
                 ->orderBy('urutan')
                 ->get();
 
-            // Initialize user answers
-            foreach ($questions as $question) {
-                UserAnswer::create([
-                    'user_id' => $user->id,
-                    'quiz_attempt_id' => $attempt->id,
-                    'question_id' => $question->id,
-                    'selected_answer_option_id' => null,
-                    'is_correct' => false
-                ]);
-            }
+            // Don't create UserAnswer records yet - they will be created when user submits answers
+            // UserAnswer records require answer_option_id which is not nullable
 
             DB::commit();
 
@@ -201,9 +193,14 @@ class StudentQuizController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Error starting quiz: ' . $e->getMessage(), [
+                'quiz_id' => $quiz->id,
+                'user_id' => $user->id,
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memulai quiz.'
+                'message' => 'Terjadi kesalahan saat memulai quiz: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -271,6 +268,11 @@ class StudentQuizController extends Controller
                 $question = Question::with('answerOptions')->find($answerData['question_id']);
                 $selectedOptionId = $answerData['selected_answer_option_id'] ?? null;
                 
+                if (!$selectedOptionId) {
+                    // Skip if no answer selected
+                    continue;
+                }
+                
                 // Find correct answer
                 $correctOption = $question->answerOptions()->where('is_correct', true)->first();
                 $isCorrect = $correctOption && $selectedOptionId == $correctOption->id;
@@ -279,15 +281,17 @@ class StudentQuizController extends Controller
                     $correctAnswers++;
                 }
 
-                // Update user answer
-                UserAnswer::where([
-                    'user_id' => $user->id,
-                    'quiz_attempt_id' => $attempt->id,
-                    'question_id' => $question->id
-                ])->update([
-                    'selected_answer_option_id' => $selectedOptionId,
-                    'is_correct' => $isCorrect
-                ]);
+                // Create or update user answer
+                // UserAnswer table only has: quiz_attempt_id, question_id, answer_option_id
+                UserAnswer::updateOrCreate(
+                    [
+                        'quiz_attempt_id' => $attempt->id,
+                        'question_id' => $question->id
+                    ],
+                    [
+                        'answer_option_id' => $selectedOptionId
+                    ]
+                );
 
                 $userAnswers[] = [
                     'question_id' => $question->id,
@@ -372,8 +376,15 @@ class StudentQuizController extends Controller
 
         // Get detailed results
         $userAnswers = $attempt->userAnswers()
-            ->with(['question.answerOptions'])
+            ->with(['question.answerOptions', 'answerOption'])
             ->get();
+
+        // Calculate is_correct for each answer (not stored in database)
+        $userAnswers = $userAnswers->map(function ($userAnswer) {
+            $correctOption = $userAnswer->question->answerOptions->where('is_correct', true)->first();
+            $userAnswer->is_correct = $correctOption && $userAnswer->answerOption && $userAnswer->answerOption->id === $correctOption->id;
+            return $userAnswer;
+        });
 
         $totalQuestions = $userAnswers->count();
         $correctAnswers = $userAnswers->where('is_correct', true)->count();
@@ -421,8 +432,15 @@ class StudentQuizController extends Controller
 
         // Get detailed review
         $userAnswers = $attempt->userAnswers()
-            ->with(['question.answerOptions'])
+            ->with(['question.answerOptions', 'answerOption'])
             ->get();
+
+        // Calculate is_correct for each answer (not stored in database)
+        $userAnswers = $userAnswers->map(function ($userAnswer) {
+            $correctOption = $userAnswer->question->answerOptions->where('is_correct', true)->first();
+            $userAnswer->is_correct = $correctOption && $userAnswer->answerOption && $userAnswer->answerOption->id === $correctOption->id;
+            return $userAnswer;
+        });
 
         $totalQuestions = $userAnswers->count();
         $correctAnswers = $userAnswers->where('is_correct', true)->count();
@@ -577,13 +595,24 @@ class StudentQuizController extends Controller
 
             // Save answers without calculating score
             foreach ($request->answers as $answerData) {
-                UserAnswer::where([
-                    'user_id' => $user->id,
-                    'quiz_attempt_id' => $attempt->id,
-                    'question_id' => $answerData['question_id']
-                ])->update([
-                    'selected_answer_option_id' => $answerData['selected_answer_option_id'] ?? null
-                ]);
+                $selectedOptionId = $answerData['selected_answer_option_id'] ?? null;
+                
+                if (!$selectedOptionId) {
+                    // Skip if no answer selected
+                    continue;
+                }
+                
+                // Create or update user answer
+                // UserAnswer table only has: quiz_attempt_id, question_id, answer_option_id
+                UserAnswer::updateOrCreate(
+                    [
+                        'quiz_attempt_id' => $attempt->id,
+                        'question_id' => $answerData['question_id']
+                    ],
+                    [
+                        'answer_option_id' => $selectedOptionId
+                    ]
+                );
             }
 
             return response()->json([

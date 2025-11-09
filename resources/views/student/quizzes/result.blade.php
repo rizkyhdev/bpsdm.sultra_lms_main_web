@@ -113,7 +113,7 @@
                     @foreach($userAnswers as $index => $userAnswer)
                         @php
                             $question = $userAnswer->question;
-                            $selectedOption = $userAnswer->selectedAnswerOption;
+                            $selectedOption = $userAnswer->answerOption;
                             $correctOption = $question->answerOptions->where('is_correct', true)->first();
                         @endphp
                         <div class="card mb-3 {{ $userAnswer->is_correct ? 'border-success' : 'border-danger' }}">

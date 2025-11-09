@@ -101,7 +101,7 @@
                     @foreach($userAnswers as $index => $userAnswer)
                         @php
                             $question = $userAnswer->question;
-                            $selectedOption = $userAnswer->selectedAnswerOption;
+                            $selectedOption = $userAnswer->answerOption;
                             $correctOption = $question->answerOptions->where('is_correct', true)->first();
                             $allOptions = $question->answerOptions;
                         @endphp
