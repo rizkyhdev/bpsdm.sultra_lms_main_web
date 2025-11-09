@@ -135,7 +135,12 @@ class InstructorSubModuleController extends Controller
         DB::beginTransaction();
         try {
             // Update sub-module basic info
-            $sub->update($request->only(['judul', 'deskripsi', 'urutan']));
+            $updateData = [
+                'judul' => $request->input('judul'),
+                'deskripsi' => $request->input('deskripsi') ?? '',
+                'urutan' => $request->input('urutan'),
+            ];
+            $sub->update($updateData);
 
             // Handle contents
             if ($request->has('contents') && is_array($request->contents)) {
