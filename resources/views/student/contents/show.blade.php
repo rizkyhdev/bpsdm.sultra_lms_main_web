@@ -416,6 +416,11 @@ function updateTimeSpentForAllContent() {
             // Check required duration
             if (requiredDuration > 0) {
                 checkRequiredDuration();
+                
+                // If duration requirement is met and content is marked as completed, update UI
+                if (timeSpentGlobal >= requiredDuration && data.is_completed) {
+                    markContentAsCompleted();
+                }
             }
         }
     })
@@ -436,6 +441,13 @@ function checkRequiredDuration() {
                 if (warningAlert) {
                     warningAlert.style.display = 'none';
                 }
+                
+                // Automatically mark as completed when duration is met
+                // Check if not already completed to avoid multiple calls
+                const statusBadge = document.querySelector('.badge.bg-warning');
+                if (statusBadge && statusBadge.classList.contains('bg-warning')) {
+                    markContentAsCompleted();
+                }
             } else {
                 nextButton.classList.add('disabled');
                 const warningAlert = document.querySelector('.alert-warning');
@@ -447,6 +459,47 @@ function checkRequiredDuration() {
                 }
             }
         }
+    }
+}
+
+function markContentAsCompleted() {
+    // Update UI to show content is completed
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar) {
+        progressBar.classList.remove('bg-warning');
+        progressBar.classList.add('bg-success');
+        progressBar.style.width = '100%';
+        progressBar.setAttribute('aria-valuenow', '100');
+    }
+    
+    const progressText = document.querySelector('.small.text-muted');
+    if (progressText) {
+        progressText.textContent = '100.0%';
+    }
+    
+    const statusBadge = document.querySelector('.badge.bg-warning');
+    if (statusBadge) {
+        statusBadge.classList.remove('bg-warning');
+        statusBadge.classList.add('bg-success');
+        statusBadge.innerHTML = '<i class="bi bi-check-circle me-1"></i>Selesai';
+    }
+    
+    // Hide mark complete button if it exists
+    const markCompleteBtn = document.getElementById('markCompleteBtn');
+    if (markCompleteBtn) {
+        markCompleteBtn.style.display = 'none';
+    }
+    
+    // Enable next button
+    const nextButton = document.getElementById('nextContentBtn');
+    if (nextButton) {
+        nextButton.classList.remove('disabled');
+    }
+    
+    // Hide warning alert if it exists
+    const warningAlert = document.querySelector('.alert-warning');
+    if (warningAlert) {
+        warningAlert.style.display = 'none';
     }
 }
 
@@ -674,6 +727,7 @@ function trackProgress(progressPercentage, currentPosition, duration, watchedDur
                 if (data.is_completed) {
                     isCompleted = true;
                     enableNextButton();
+                    markContentAsCompletedForVideo();
                 }
             }
         })
@@ -721,6 +775,11 @@ function checkRequiredDuration() {
                 if (warningAlert) {
                     warningAlert.style.display = 'none';
                 }
+                
+                // Automatically mark as completed when duration is met
+                if (!isCompleted) {
+                    markContentAsCompletedForVideo();
+                }
             } else {
                 nextButton.classList.add('disabled');
                 const warningAlert = document.querySelector('.alert-warning');
@@ -733,6 +792,43 @@ function checkRequiredDuration() {
             }
         }
     }
+}
+
+function markContentAsCompletedForVideo() {
+    // Update UI to show content is completed
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar) {
+        progressBar.classList.remove('bg-warning');
+        progressBar.classList.add('bg-success');
+        progressBar.style.width = '100%';
+        progressBar.setAttribute('aria-valuenow', '100');
+    }
+    
+    const progressText = document.querySelector('.small.text-muted');
+    if (progressText) {
+        progressText.textContent = '100.0%';
+    }
+    
+    const statusBadge = document.querySelector('.badge.bg-warning');
+    if (statusBadge) {
+        statusBadge.classList.remove('bg-warning');
+        statusBadge.classList.add('bg-success');
+        statusBadge.innerHTML = '<i class="bi bi-check-circle me-1"></i>Selesai';
+    }
+    
+    // Enable next button
+    const nextButton = document.getElementById('nextContentBtn');
+    if (nextButton) {
+        nextButton.classList.remove('disabled');
+    }
+    
+    // Hide warning alert if it exists
+    const warningAlert = document.querySelector('.alert-warning');
+    if (warningAlert) {
+        warningAlert.style.display = 'none';
+    }
+    
+    isCompleted = true;
 }
 
 // Start time tracking for all content types when page loads

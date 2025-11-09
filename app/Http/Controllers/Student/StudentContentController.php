@@ -148,10 +148,16 @@ class StudentContentController extends Controller
                 ]);
             }
 
+            // Check if content should be marked as completed
             $isCompleted = $request->progress_percentage >= 100;
             
+            // If content has required_duration, check if time spent meets requirement
+            if ($content->required_duration && $timeSpent >= $content->required_duration) {
+                $isCompleted = true;
+            }
+            
             $progress->update([
-                'progress_percentage' => $request->progress_percentage,
+                'progress_percentage' => $isCompleted ? 100 : $request->progress_percentage,
                 'is_completed' => $isCompleted,
                 'time_spent' => $timeSpent,
                 'current_position' => $request->current_position ?? $progress->current_position ?? 0,
@@ -159,7 +165,7 @@ class StudentContentController extends Controller
                 'watched_duration' => $request->watched_duration ?? $progress->watched_duration ?? 0
             ]);
 
-            if ($isCompleted) {
+            if ($isCompleted && !$progress->completed_at) {
                 $progress->update(['completed_at' => now()]);
             }
             
@@ -499,10 +505,26 @@ class StudentContentController extends Controller
 
         $previousProgress = ContentProgress::where('content_id', $previousContent->id)
             ->where('user_id', $user->id)
-            ->where('is_completed', true)
             ->first();
 
-        return $previousProgress !== null;
+        if (!$previousProgress) {
+            return false;
+        }
+
+        // Check if previous content is completed
+        if (!$previousProgress->is_completed) {
+            return false;
+        }
+
+        // If previous content has required_duration, also check if time spent meets requirement
+        if ($previousContent->required_duration) {
+            $timeSpent = $previousProgress->time_spent ?? 0;
+            if ($timeSpent < $previousContent->required_duration) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
