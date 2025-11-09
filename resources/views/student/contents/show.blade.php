@@ -200,13 +200,21 @@
                         </div>
                     @endif
                 @else
-                    <button class="btn btn-primary" disabled>
-                        Konten Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
-                    </button>
+                    {{-- No next content - show button to go back to sub-module --}}
+                    @if($content->subModule)
+                        <a href="{{ route('student.sub_modules.show', $content->sub_module_id) }}" 
+                           class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Kembali ke Sub-Modul
+                        </a>
+                    @else
+                        <button class="btn btn-primary" disabled>
+                            Konten Selanjutnya<i class="bi bi-chevron-right ms-1"></i>
+                        </button>
+                    @endif
                 @endif
                 
-                {{-- Mark as Complete Button (shown if duration is not set) --}}
-                @if(!$content->required_duration && !$progress->is_completed)
+                {{-- Mark as Complete Button (shown if duration is not set and not completed) --}}
+                @if(!$content->required_duration && !$progress->is_completed && $nextContent)
                     <button type="button" 
                             class="btn btn-success mt-2" 
                             id="markCompleteBtn"
@@ -447,6 +455,19 @@ function checkRequiredDuration() {
                 const statusBadge = document.querySelector('.badge.bg-warning');
                 if (statusBadge && statusBadge.classList.contains('bg-warning')) {
                     markContentAsCompleted();
+                    
+                    // If there's no next content, reload page to show sub-module button
+                    const nextContentBtn = document.getElementById('nextContentBtn');
+                    if (!nextContentBtn || nextContentBtn.disabled) {
+                        // Check if this is the last content by checking if button text is "Konten Selanjutnya"
+                        const nextButton = document.querySelector('a[href*="student.contents.show"]');
+                        if (!nextButton) {
+                            // No next content, reload to show sub-module button
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }
+                    }
                 }
             } else {
                 nextButton.classList.add('disabled');

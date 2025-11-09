@@ -82,6 +82,34 @@ class StudentContentController extends Controller
         // Mendapatkan progress sub-modul
         $subModuleProgress = $content->subModule->userProgress()->where('user_id', $user->id)->first();
 
+        // If there's no next content, automatically mark current content as complete
+        // (if duration requirement is met or no duration is set)
+        if (!$nextContent && !$progress->is_completed) {
+            $shouldAutoComplete = false;
+            
+            if ($content->required_duration) {
+                $timeSpent = $progress->time_spent ?? 0;
+                $shouldAutoComplete = $timeSpent >= $content->required_duration;
+            } else {
+                // If no duration is set, auto-complete when it's the last content
+                $shouldAutoComplete = true;
+            }
+            
+            if ($shouldAutoComplete) {
+                $progress->update([
+                    'is_completed' => true,
+                    'progress_percentage' => 100,
+                    'completed_at' => now()
+                ]);
+                
+                // Refresh progress object
+                $progress->refresh();
+                
+                // Check if sub-module is completed
+                $this->checkSubModuleCompletion($user, $content->sub_module_id);
+            }
+        }
+
         // Periksa apakah konten dapat ditandai sebagai selesai
         // If required_duration is set, check if time spent meets requirement
         // Otherwise, allow manual completion
