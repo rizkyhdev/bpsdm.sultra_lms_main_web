@@ -95,6 +95,16 @@ Route::group([
     Route::post('/contents/{content}/track-progress', [\App\Http\Controllers\Student\StudentContentController::class, 'trackProgress'])->name('contents.track-progress');
     Route::post('/contents/{content}/mark-complete', [\App\Http\Controllers\Student\StudentContentController::class, 'markComplete'])->name('contents.mark-complete');
 
+    // Quizzes
+    Route::get('/quizzes', [\App\Http\Controllers\Student\StudentQuizController::class, 'index'])->name('quizzes.index');
+    Route::get('/quizzes/{quiz}', [\App\Http\Controllers\Student\StudentQuizController::class, 'show'])->name('quizzes.show');
+    Route::post('/quizzes/{quiz}/start', [\App\Http\Controllers\Student\StudentQuizController::class, 'start'])->name('quizzes.start');
+    Route::post('/quizzes/{quiz}/submit', [\App\Http\Controllers\Student\StudentQuizController::class, 'submit'])->name('quizzes.submit');
+    Route::get('/quizzes/attempts/{attempt}', [\App\Http\Controllers\Student\StudentQuizController::class, 'result'])->name('quizzes.result');
+    Route::get('/quizzes/attempts/{attempt}/review', [\App\Http\Controllers\Student\StudentQuizController::class, 'reviewAttempt'])->name('quizzes.review');
+    Route::get('/quizzes/{quiz}/questions', [\App\Http\Controllers\Student\StudentQuizController::class, 'getQuestions'])->name('quizzes.questions');
+    Route::post('/quizzes/{quiz}/save-progress', [\App\Http\Controllers\Student\StudentQuizController::class, 'saveProgress'])->name('quizzes.save-progress');
+
     // Progress
     Route::get('/progress', function () {
         $summary = (object) ['enrolled' => 0, 'completed' => 0, 'in_progress' => 0];

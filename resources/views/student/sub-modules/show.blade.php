@@ -119,7 +119,7 @@
             @endif
 
             {{-- Contents List --}}
-            <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
                 <div class="card-header bg-white border-0 pb-0">
                     <h5 class="fw-bold mb-0">Konten</h5>
                 </div>
@@ -215,6 +215,79 @@
                     @endif
                 </div>
             </div>
+
+            {{-- Quizzes List --}}
+            @if(($subModuleQuizzes ?? collect())->isNotEmpty())
+            <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                <div class="card-header bg-white border-0 pb-0">
+                    <h5 class="fw-bold mb-0">Quiz</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        @foreach($subModuleQuizzes as $quiz)
+                            @php
+                                $user = auth()->user();
+                                $quizAttempts = $user->quizAttempts()
+                                    ->where('quiz_id', $quiz->id)
+                                    ->get();
+                                $passedAttempt = $quizAttempts->where('status', 'passed')->first();
+                                $activeAttempt = $quizAttempts->where('status', 'in_progress')->first();
+                                $isPassed = $passedAttempt !== null;
+                                $canTakeQuiz = !$isPassed && (!$quiz->max_attempts || $quizAttempts->where('status', '!=', 'in_progress')->count() < $quiz->max_attempts);
+                            @endphp
+                            <div class="list-group-item border-0 px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-2 fw-semibold">
+                                            <a href="{{ route('student.quizzes.show', $quiz->id) }}" 
+                                               class="text-decoration-none text-dark">
+                                                {{ $quiz->judul }}
+                                            </a>
+                                        </h6>
+                                        @if($quiz->deskripsi)
+                                        <p class="small text-muted mb-2">
+                                            {{ Str::limit($quiz->deskripsi, 100) }}
+                                        </p>
+                                        @endif
+                                        <div class="d-flex gap-3 small text-muted">
+                                            <span><i class="bi bi-check-circle me-1"></i>Nilai Minimum: {{ $quiz->nilai_minimum }}%</span>
+                                            @if($quiz->max_attempts)
+                                            <span><i class="bi bi-arrow-repeat me-1"></i>Maks Attempts: {{ $quiz->max_attempts }}</span>
+                                            @endif
+                                            @if($passedAttempt)
+                                            <span><i class="bi bi-trophy me-1"></i>Nilai: {{ number_format($passedAttempt->score, 1) }}%</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="ms-3 d-flex flex-column align-items-end">
+                                        @if($isPassed)
+                                            <span class="badge bg-success mb-2">
+                                                <i class="bi bi-check-circle me-1"></i>Lulus
+                                            </span>
+                                        @elseif($activeAttempt)
+                                            <span class="badge bg-warning mb-2">
+                                                <i class="bi bi-clock me-1"></i>Berlangsung
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary mb-2">
+                                                <i class="bi bi-circle me-1"></i>Belum Dimulai
+                                            </span>
+                                        @endif
+                                        <a href="{{ route('student.quizzes.show', $quiz->id) }}" 
+                                           class="btn btn-sm {{ $isPassed ? 'btn-outline-success' : 'btn-primary' }} mt-2">
+                                            <i class="bi bi-arrow-right me-1"></i>{{ $isPassed ? 'Lihat Hasil' : ($activeAttempt ? 'Lanjutkan' : 'Mulai') }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            @if(!$loop->last)
+                                <hr class="my-0">
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
 
         {{-- Sidebar --}}
