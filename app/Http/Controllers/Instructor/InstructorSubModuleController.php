@@ -116,9 +116,9 @@ class InstructorSubModuleController extends Controller
      */
     public function edit($id)
     {
-        $sub = SubModule::with('module.course')->findOrFail($id);
+        $sub = SubModule::with(['module.course', 'contents'])->findOrFail($id);
         $this->authorize('update', $sub);
-        return view('instructor.submodules.edit', compact('sub'));
+        return view('instructor.sub_modules.edit', compact('sub'));
     }
 
     /**
