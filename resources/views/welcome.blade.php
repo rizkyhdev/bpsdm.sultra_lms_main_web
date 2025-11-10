@@ -467,7 +467,7 @@ function renderPelatihan(date) {
         </div>
 
         {{-- Card 3 --}}
-        <div class="swiper-slide">
+        <!-- <div class="swiper-slide">
           <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease-in-out;"
                onmouseover="this.style.transform='scale(1.05)'"
                onmouseout="this.style.transform='scale(1)'">
@@ -480,10 +480,10 @@ function renderPelatihan(date) {
               <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
             </div>
           </div>
-        </div>
+        </div> -->
       
         {{-- Card 4 --}}
-        <div class="swiper-slide">
+        <!-- <div class="swiper-slide">
           <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease-in-out;"
                onmouseover="this.style.transform='scale(1.05)'"
                onmouseout="this.style.transform='scale(1)'">
@@ -496,10 +496,10 @@ function renderPelatihan(date) {
               <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
             </div>
           </div>
-        </div>
+        </div> -->
 
         {{-- Card 5 --}}
-        <div class="swiper-slide">
+        <!-- <div class="swiper-slide">
           <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease-in-out;"
                onmouseover="this.style.transform='scale(1.05)'"
                onmouseout="this.style.transform='scale(1)'">
@@ -512,7 +512,7 @@ function renderPelatihan(date) {
               <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
             </div>
           </div>
-        </div>
+        </div> -->
 
 
       </div>
