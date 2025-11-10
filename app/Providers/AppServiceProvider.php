@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Daftarkan namespace komponen anonim Blade untuk area Student
         // Sehingga dapat digunakan sebagai <x-student::input>, <x-student::card>, dll
+        
         Blade::anonymousComponentPath(resource_path('views/student/components'), 'student');
+        if($this->app->environment('production')) {
+            \URL::forceScheme('https');
+        }
     }
 }
