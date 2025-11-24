@@ -31,13 +31,14 @@ use App\Http\Controllers\Student\StudentPelatihanController;
 use App\Http\Controllers\Student\StudentWishlistController;
 use App\Http\Controllers\Student\EnrollmentController;
 
+Auth::routes();
+
 // Public landing (keep; uncertain usage in views)
 Route::get('/', [PelatihanController::class, 'index']);
 
 // Public courses catalog
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 
-Auth::routes();
 
 // Redirect hub setelah login/registrasi berdasarkan role
 Route::get('/dashboard', function () {

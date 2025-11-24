@@ -26,11 +26,11 @@
 
   <body style="padding-top:80px;">
   {{-- Preload --}}
-     <!-- <div id="preloader">
+     <div id="preloader">
         <div class="preloader-logo">
             <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" />
         </div>
-    </div> -->
+    </div>
 
 {{-- Navbar --}}
 <nav class="navbar navbar-expand-lg fixed-top" style="background-color:#FFFFFF;  box-shadow: 0px 5px 5px rgba(0.2, 0.2, 0.2, 0.2);">
@@ -58,8 +58,8 @@
         </li>
       </ul>
       <div>
-        <a href="{{ url('/login') }}" class="btn btn-outline-info me-2">Login</a>
-         <a href="{{ url('/register') }}" class="btn btn-outline-info">Register</a>
+        <a href="{{ route('login') }}" class="btn btn-outline-info me-2">Login</a>
+         <a href="{{ route('register') }}" class="btn btn-outline-info">Register</a>
       </div>
     </div>
   </div>
@@ -70,6 +70,7 @@
 <div class="container-fluid px-5">
   <div id="heroCarousel" class="carousel slide mx-auto my-5 shadow" data-bs-ride="carousel" style="max-width: 1500px; border-radius: 20px; overflow: hidden;">
     <div class="carousel-inner" style="height: 75vh;">
+  
 
       {{-- Slide 1 --}}
       <div class="carousel-item active position-relative" style="height: 100%;">
