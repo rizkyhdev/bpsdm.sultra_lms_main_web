@@ -201,7 +201,7 @@
     </a>
  @endif
 </form>
-        <p class="mt-3 text-center">Belum punya akun? <a href="{{ url('/register') }}">Daftar</a></p>
+        <p class="mt-3 text-center">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>
       </div>
     </div>
   </div>

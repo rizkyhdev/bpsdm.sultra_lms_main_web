@@ -244,7 +244,6 @@
                                     <option value="">Pilih Role</option>
                                     <option value="student" {{ old('role') === 'student' ? 'selected' : '' }}>Student</option>
                                     <option value="instructor" {{ old('role') === 'instructor' ? 'selected' : '' }}>Instructor</option>
-                                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>-</option>
                                 </select>
 
                                 @error('role')
@@ -280,6 +279,7 @@
   <!-- Tombol -->
   <button type="submit" class="btn btn-info w-100">REGISTER</button>
 </form>
+<p class="mt-3 text-center">Sudah punya akun? <a href="{{ route('login') }}">Masuk</a></p>
       </div>
     </div>
   </div>
