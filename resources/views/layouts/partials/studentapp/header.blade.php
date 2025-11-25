@@ -1,7 +1,9 @@
 <header class="d-flex justify-content-between align-items-center px-4 py-3 bg-white shadow">
   <div class="d-flex align-items-center gap-2">
-    <img src="{{ asset('image/LOGO AURA.png') }}" alt="Logo" height="50" class="ms-3">
-    <img src="{{ asset('image/LOGO AURA 1.png') }}" alt="Logo Font" height="50">
+    <a href="{{route('student.dashboard')}}">
+      <img src="{{ asset('image/LOGO AURA.png') }}" alt="Logo" height="50" class="ms-3">
+      <img src="{{ asset('image/LOGO AURA 1.png') }}" alt="Logo Font" height="50">
+    </a>
     <button id="menu-toggle" class="btn btn-link ms-5">
       <i class="fas fa-bars fs-4" style="color:#21b3ca;"></i>
     </button>
