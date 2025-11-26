@@ -54,29 +54,27 @@
                     <td class="px-4 py-2">
                         <div class="flex justify-end gap-2">
                             @can('view', $user)
-                                <a href="{{ route('admin.users.show', $user) }}" class="inline-flex items-center px-2 py-1 text-sm rounded border hover:bg-gray-50 dark:hover:bg-gray-800">{{ __('View') }}</a>
+                                <a href="{{ route('admin.users.show', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded border border-gray-400 dark:border-gray-600 text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700" title="{{ __('View') }}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
                             @endcan
-                            <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                                {{ __('Edit') }}
+                            <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-sm" title="{{ __('Edit') }}">
+                                <i class="fas fa-edit"></i>
                             </a>
                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to delete this user?') }}')" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                    {{ __('Delete') }}
+                                <button type="submit" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 shadow-sm" title="{{ __('Delete') }}">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                             @can('validateUser', $user)
                                 @if(!$user->is_validated)
                                     <form action="{{ route('admin.users.validate', $user) }}" method="POST" class="inline">
                                         @csrf
-                                        <button class="inline-flex items-center px-2 py-1 text-sm rounded border border-green-300 text-green-700 hover:bg-green-50">{{ __('Validate') }}</button>
+                                        <button type="submit" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded border border-green-600 dark:border-green-500 text-white bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-600 shadow-sm" title="{{ __('Validate') }}">
+                                            <i class="fas fa-check"></i>
+                                        </button>
                                     </form>
                                 @endif
                             @endcan
