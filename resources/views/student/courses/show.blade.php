@@ -69,16 +69,16 @@
                                         @if(!($canSeeCertificate ?? false)) disabled @endif
                                     >
                                         <i class="bi bi-award me-1"></i>
-                                        {{ __('See Certificate') }}
+                                        {{ __('Lihat Sertifikat') }}
                                     </button>
                                     <div class="small mt-1">
                                         @if($canSeeCertificate ?? false)
                                             <span class="text-success">
-                                                {{ __('You have completed this course. You can download your certificate.') }}
+                                                {{ __('Anda telah menyelesaikan kursus ini. Anda dapat mengunduh sertifikat Anda.') }}
                                             </span>
                                         @else
-                                            <span class="text-muted" title="{{ __('Complete the course to unlock your certificate.') }}">
-                                                {{ __('Complete the course to unlock your certificate.') }}
+                                            <span class="text-muted" title="{{ __('Selesaikan kursus ini untuk membuka sertifikat Anda.') }}">
+                                                {{ __('Selesaikan kursus ini untuk mengakses sertifikat Anda.') }}
                                             </span>
                                         @endif
                                     </div>
