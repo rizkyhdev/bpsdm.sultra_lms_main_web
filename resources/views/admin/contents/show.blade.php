@@ -22,7 +22,15 @@
                 @if(in_array($content->tipe, ['image']))
                     <img src="{{ Storage::url($content->file_path) }}" alt="{{ $content->judul }}" class="img-fluid">
                 @elseif(in_array($content->tipe, ['pdf']))
-                    <iframe src="{{ Storage::url($content->file_path) }}" style="width:100%; height:500px;"></iframe>
+                    {{-- PDF Viewer (pdf.js) --}}
+                    @php
+                        $pdfUrl = Storage::url($content->file_path);
+                    @endphp
+                    @include('partials.pdf-viewer', [
+                        'pdfUrl' => $pdfUrl,
+                        'downloadUrl' => $pdfUrl,
+                        'title' => $content->judul,
+                    ])
                 @elseif(in_array($content->tipe, ['video']))
                     <video controls class="w-100" src="{{ Storage::url($content->file_path) }}"></video>
                 @elseif(in_array($content->tipe, ['audio']))

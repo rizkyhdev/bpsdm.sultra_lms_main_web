@@ -53,16 +53,17 @@
                                     <td class="text-end">
                                         @if($course && $course->slug)
                                             <div class="btn-group" role="group" aria-label="Certificate actions">
-                                                {{-- View in browser (inline PDF viewer) --}}
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-sm btn-outline-primary js-cert-view-btn"
-                                                    data-generate-url="{{ route('certificates.generate', ['course' => $course->slug]) }}"
+                                                {{-- View in browser (pdf.js viewer page) --}}
+                                                <a
+                                                    href="{{ route('certificates.viewer', ['course' => $course->slug]) }}"
+                                                    class="btn btn-sm btn-outline-primary"
+                                                    target="_blank"
+                                                    rel="noopener"
                                                 >
                                                     <i class="bi bi-eye me-1"></i>{{ __('Lihat') }}
-                                                </button>
+                                                </a>
 
-                                                {{-- Download as file (existing behaviour) --}}
+                                                {{-- Download as file (existing behaviour via async generate) --}}
                                                 <button
                                                     type="button"
                                                     class="btn btn-sm btn-outline-success js-cert-download-btn"
@@ -100,8 +101,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const downloadButtons = document.querySelectorAll('.js-cert-download-btn');
-        const viewButtons = document.querySelectorAll('.js-cert-view-btn');
-        if (!downloadButtons.length && !viewButtons.length) return;
+        if (!downloadButtons.length) return;
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -197,10 +197,6 @@
 
         downloadButtons.forEach(function (btn) {
             handleCertificateAction(btn, 'download');
-        });
-
-        viewButtons.forEach(function (btn) {
-            handleCertificateAction(btn, 'view');
         });
     });
 </script>

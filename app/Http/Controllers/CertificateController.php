@@ -92,6 +92,37 @@ class CertificateController extends Controller
     }
 
     /**
+     * View certificate using pdf.js viewer page.
+     *
+     * This keeps a consistent UX with other LMS PDF content while still
+     * using signed, access-controlled certificate URLs under the hood.
+     *
+     * @param Course $course
+     * @return \Illuminate\View\View
+     */
+    public function viewer(Course $course)
+    {
+        $user = auth()->user();
+
+        $this->authorize('downloadCertificate', $course);
+
+        // Ensure certificate exists and get a fresh signed URL pointing to inline view
+        $result = $this->certificateService->ensureCertificate($user, $course);
+
+        $signedUrl = $this->getSignedDownloadUrl($course);
+        $separator = str_contains($signedUrl, '?') ? '&' : '?';
+
+        $viewUrl = $signedUrl . $separator . 'mode=view';
+        $downloadUrl = $signedUrl . $separator . 'mode=download';
+
+        return view('certificates.viewer', [
+            'course' => $course,
+            'pdfUrl' => $viewUrl,
+            'downloadUrl' => $downloadUrl,
+        ]);
+    }
+
+    /**
      * Verify a certificate by UID.
      *
      * @param string $uid
