@@ -23,7 +23,7 @@
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.users') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.users.index') }}">
-          <i class="fas fa-users me-2"></i>Users
+          <i class="fas fa-users me-2"></i>Daftar Pengguna
         </a>
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.courses') ? 'active' : '' }}">
@@ -66,11 +66,11 @@
           <i class="fas fa-certificate me-2"></i>Sertifikat
         </a>
       </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.reports') ? 'active' : '' }}">
+      <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.reports') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.reports.dashboard') }}">
           <i class="fas fa-chart-bar me-2"></i>Laporan
         </a>
-      </li>
+      </li> -->
     </ul>
     <h6 class="fw-bold text-uppercase text-white">Account</h6>
     <ul class="nav flex-column">

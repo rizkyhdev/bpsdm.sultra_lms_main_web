@@ -106,12 +106,12 @@
                         <td>{{ $user->nip }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td><span class="badge badge-primary">{{ strtoupper($user->role) }}</span></td>
+                        <td><span class="">{{ strtoupper($user->role) }}</span></td>
                         <td>
                             @if($user->is_validated)
-                                <span class="badge badge-success">Yes</span>
+                                <span class="">Yes</span>
                             @else
-                                <span class="badge badge-secondary">No</span>
+                                <span class="">No</span>
                             @endif
                         </td>
                         <td class="text-right">

@@ -18,20 +18,35 @@
             <div class="card-body">
                 <div class="form-row align-items-end">
                     <div class="form-group col-md-3">
+                        <label for="search">Cari Pengguna / Kursus</label>
+                        <input type="text" id="search" name="search" class="form-control"
+                               value="{{ request('search') }}" placeholder="Ketik nama, NIP, atau judul kursus">
+                    </div>
+                    <div class="form-group col-md-3">
                         <label for="course_id">Kursus</label>
                         <select id="course_id" name="course_id" class="form-control">
-                            <option value="">Semua</option>
-                            @foreach(($coursesFilter ?? []) as $c)
-                                <option value="{{ $c->id }}" @if(request('course_id')==$c->id) selected @endif>{{ $c->judul }}</option>
+                            <option value="all">Semua</option>
+                            @foreach(($courses ?? []) as $c)
+                                <option value="{{ $c->id }}" @if(request('course_id','all')==$c->id) selected @endif>{{ $c->judul }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group col-md-3">
                         <label for="status">Status</label>
                         <select id="status" name="status" class="form-control">
-                            <option value="">Semua</option>
-                            @foreach(['pending'=>'Pending','active'=>'Aktif','completed'=>'Selesai','cancelled'=>'Batal'] as $val=>$label)
-                                <option value="{{ $val }}" @if(request('status')===$val) selected @endif>{{ $label }}</option>
+                            <option value="all">Semua</option>
+                            @php
+                                $statusLabels = [
+                                    'not_started' => 'Belum Mulai',
+                                    'in_progress' => 'Sedang Berjalan',
+                                    'completed' => 'Selesai',
+                                    'dropped' => 'Dibatalkan / Drop',
+                                ];
+                            @endphp
+                            @foreach(($statuses ?? []) as $val)
+                                <option value="{{ $val }}" @if(request('status','all')===$val) selected @endif>
+                                    {{ $statusLabels[$val] ?? ucfirst(str_replace('_',' ',$val)) }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -75,7 +90,13 @@
                 <tbody>
                 @forelse($enrollments as $en)
                     <tr>
-                        <td>{{ $en->user->nama ?? '-' }}</td>
+                        <td>
+                            @if($en->user)
+                                {{ $en->user->nip ?? '-' }} - {{ $en->user->name ?? '-' }}
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td>
                             @if($en->course_id)
                                 <a href="{{ route('admin.courses.show', $en->course_id) }}">{{ $en->course->judul ?? '-' }}</a>
