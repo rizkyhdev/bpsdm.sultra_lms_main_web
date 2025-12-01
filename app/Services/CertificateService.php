@@ -112,6 +112,9 @@ class CertificateService
      */
     public function pdfHtmlData(User $user, Course $course, UserEnrollment $enrollment, string $uid): array
     {
+        // Eager-load modules once for competency listing on the certificate
+        $course->loadMissing('modules');
+
         return [
             'student_name' => $user->name,
             'course_title' => $course->judul ?? $course->title,
@@ -120,6 +123,13 @@ class CertificateService
             'certificate_uid' => $uid,
             'issuer_name' => config('certificates.issuer_name'),
             'background_image' => config('certificates.background_image'),
+            // Optional extra data for richer templates
+            'jp_value' => $course->jp_value ?? null,
+            'competencies' => $course->modules
+                ? $course->modules->pluck('judul')->filter()->values()->all()
+                : [],
+            // Final score can be wired later if you add it to enrollments; keep nullable for now
+            'final_score' => null,
         ];
     }
 

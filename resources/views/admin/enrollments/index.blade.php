@@ -76,7 +76,13 @@
                 @forelse($enrollments as $en)
                     <tr>
                         <td>{{ $en->user->nama ?? '-' }}</td>
-                        <td><a href="{{ route('admin.courses.show', $en->course) }}">{{ $en->course->judul ?? '-' }}</a></td>
+                        <td>
+                            @if($en->course_id)
+                                <a href="{{ route('admin.courses.show', $en->course_id) }}">{{ $en->course->judul ?? '-' }}</a>
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td>{{ optional($en->enrollment_date)->format('d/m/Y') }}</td>
                         <td>{{ $en->status }}</td>
                         <td>{{ optional($en->completed_at)->format('d/m/Y') ?? '-' }}</td>
