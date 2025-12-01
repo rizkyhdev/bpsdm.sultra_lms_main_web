@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Module;
-use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,28 +39,73 @@ class StudentModuleController extends Controller
             abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses modul.');
         }
 
-        // Mendapatkan modul dengan sub-modul dan progress user
+        // Mendapatkan modul dengan sub-modul
         $module->load(['course', 'subModules' => function ($query) {
             $query->orderBy('urutan');
-        }, 'subModules.userProgress' => function ($query) use ($user) {
-            $query->where('user_id', $user->id);
         }]);
 
-        // Menghitung progress modul
+        // Menghitung progress modul berdasarkan progress sub-modul yang dihitung
+        // dari konten & quiz (tidak mengandalkan kolom yang tidak ada di tabel user_progress)
         $totalSubModules = $module->subModules->count();
         $completedSubModules = 0;
         $moduleProgress = 0;
 
         foreach ($module->subModules as $subModule) {
-            $progress = $subModule->userProgress()->where('user_id', $user->id)->first();
-            
-            if ($progress && $progress->is_completed) {
+            // Hitung progress sub‑modul secara dinamis
+            $totalContents = $subModule->contents()->count();
+            $completedContents = $subModule->contents()
+                ->whereHas('userProgress', function ($query) use ($user) {
+                    $query->where('user_id', $user->id)->where('is_completed', true);
+                })
+                ->count();
+
+            $subModuleQuizzes = $subModule->quizzes;
+            $totalQuizzes = $subModuleQuizzes->count();
+            $passedQuizzes = 0;
+            $allSubModuleQuizzesPassed = true;
+
+            if ($totalQuizzes > 0) {
+                foreach ($subModuleQuizzes as $quiz) {
+                    if ($quiz->hasUserPassed($user->id)) {
+                        $passedQuizzes++;
+                    } else {
+                        $allSubModuleQuizzesPassed = false;
+                    }
+                }
+            }
+
+            // Rumus sama dengan di controller sub‑modul/konten:
+            $contentProgressPercentage = $totalContents > 0
+                ? round(($completedContents / $totalContents) * 100, 2)
+                : ($totalContents == 0 ? 100 : 0);
+
+            $quizProgressPercentage = $totalQuizzes > 0
+                ? round(($passedQuizzes / $totalQuizzes) * 100, 2)
+                : ($totalQuizzes == 0 ? 100 : 0);
+
+            if ($totalContents > 0 && $totalQuizzes > 0) {
+                $calculatedProgress = round(($contentProgressPercentage + $quizProgressPercentage) / 2, 2);
+            } elseif ($totalContents > 0) {
+                $calculatedProgress = $contentProgressPercentage;
+            } elseif ($totalQuizzes > 0) {
+                $calculatedProgress = $quizProgressPercentage;
+            } else {
+                $calculatedProgress = 0;
+            }
+
+            // Sub‑modul dianggap selesai jika semua konten selesai & semua quiz lulus
+            $contentsCompleted = $totalContents == 0 || ($totalContents > 0 && $completedContents >= $totalContents);
+            $isSubModuleCompleted = $contentsCompleted && $allSubModuleQuizzesPassed;
+
+            if ($isSubModuleCompleted) {
                 $completedSubModules++;
             }
-            
-            if ($progress) {
-                $moduleProgress += $progress->progress_percentage;
-            }
+
+            $moduleProgress += $calculatedProgress;
+
+            // Simpan nilai ini ke model untuk dipakai di view
+            $subModule->calculated_progress_percentage = $calculatedProgress;
+            $subModule->is_calculated_completed = $isSubModuleCompleted;
         }
 
         $overallProgress = $totalSubModules > 0 ? round($moduleProgress / $totalSubModules, 2) : 0;
