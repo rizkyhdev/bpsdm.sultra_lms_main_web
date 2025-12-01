@@ -330,7 +330,7 @@ class InstructorCourseController extends Controller
 
             DB::commit();
             Log::info('Course created via wizard', ['course_id' => $course->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.courses.show', $course)
+            return redirect()->route('instructor.courses.show', $course->id)
                 ->with('success', 'Course created successfully with all modules, sub-modules, contents, and quizzes.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -361,7 +361,7 @@ class InstructorCourseController extends Controller
             $course->save();
 
             Log::info('Course created by instructor', ['course_id' => $course->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.courses.show', $course)
+            return redirect()->route('instructor.courses.show', $course->id)
                 ->with('success', 'Course created successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to create course', ['error' => $e->getMessage()]);
@@ -371,11 +371,12 @@ class InstructorCourseController extends Controller
 
     /**
      * Tampilkan detail kursus tertentu.
-     * @param Course $course
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Course $course)
+    public function show($id)
     {
+        $course = Course::findOrFail($id);
         $course->load(['modules.subModules.contents', 'modules.subModules.quizzes'])
             ->loadCount(['userEnrollments as enrollments_count']);
 
@@ -410,7 +411,7 @@ class InstructorCourseController extends Controller
         try {
             $course->update($request->validated());
             Log::info('Course updated by instructor', ['course_id' => $course->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.courses.show', $course)
+            return redirect()->route('instructor.courses.show', $course->id)
                 ->with('success', 'Course updated successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to update course', ['course_id' => $course->id, 'error' => $e->getMessage()]);
@@ -851,7 +852,7 @@ class InstructorCourseController extends Controller
 
             DB::commit();
             Log::info('Course updated via wizard', ['course_id' => $course->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.courses.show', $course)
+            return redirect()->route('instructor.courses.show', $course->id)
                 ->with('success', 'Course updated successfully with all modules, sub-modules, contents, and quizzes.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -966,7 +967,7 @@ class InstructorCourseController extends Controller
 
             DB::commit();
             Log::info('Course duplicated by instructor', ['source_course_id' => $course->id, 'new_course_id' => $newCourse->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.courses.show', $newCourse)
+            return redirect()->route('instructor.courses.show', $newCourse->id)
                 ->with('success', 'Course duplicated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();

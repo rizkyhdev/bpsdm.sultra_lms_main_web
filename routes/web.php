@@ -186,20 +186,20 @@ Route::group([
     'middleware' => ['auth', 'role:instructor'],
 ], function () {
     Route::get('/dashboard', [InstructorDashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/courses/{course}/overview', [InstructorDashboardController::class, 'courseOverview'])->name('courses.overview');
+    Route::get('/courses/{id}/overview', [InstructorDashboardController::class, 'courseOverview'])->name('courses.overview');
 
     Route::get('/courses', [InstructorCourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/create', [InstructorCourseController::class, 'create'])->name('courses.create');
     Route::get('/courses/create-wizard', [InstructorCourseController::class, 'createWizard'])->name('courses.create-wizard');
     Route::post('/courses', [InstructorCourseController::class, 'store'])->name('courses.store');
     Route::post('/courses/wizard', [InstructorCourseController::class, 'storeWizard'])->name('courses.store-wizard');
-    Route::get('/courses/{course}', [InstructorCourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{id}', [InstructorCourseController::class, 'show'])->name('courses.show');
     Route::get('/courses/{id}/edit', [InstructorCourseController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{id}', [InstructorCourseController::class, 'update'])->name('courses.update');
     Route::put('/courses/{id}/wizard', [InstructorCourseController::class, 'updateWizard'])->name('courses.update-wizard');
     Route::delete('/courses/{id}', [InstructorCourseController::class, 'destroy'])->name('courses.destroy');
     Route::post('/courses/{id}/duplicate', [InstructorCourseController::class, 'duplicate'])->name('courses.duplicate');
-    Route::patch('/courses/{course}/schedule', [\App\Http\Controllers\CourseScheduleController::class, 'update'])->name('courses.schedule.update');
+    Route::patch('/courses/{id}/schedule', [\App\Http\Controllers\CourseScheduleController::class, 'update'])->name('courses.schedule.update');
 
     Route::get('/courses/{courseId}/modules', [InstructorModuleController::class, 'index'])->name('modules.index');
     Route::get('/courses/{courseId}/modules/create', [InstructorModuleController::class, 'create'])->name('modules.create');

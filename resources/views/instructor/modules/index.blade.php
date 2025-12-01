@@ -6,7 +6,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb mb-0">
     <li class="breadcrumb-item"><a href="{{ route('instructor.dashboard') }}">Instructor</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('instructor.courses.show', $course) }}">{{ $course->judul }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('instructor.courses.show', $course->id) }}">{{ $course->judul }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Modules</li>
   </ol>
   {{-- Binding: $course, $modules --}}
@@ -35,7 +35,7 @@
       <small class="text-muted">Course: {{ $course->judul }}</small>
     </div>
     <div>
-      <a href="{{ route('instructor.courses.show', $course) }}" class="btn btn-light btn-sm me-2">
+      <a href="{{ route('instructor.courses.show', $course->id) }}" class="btn btn-light btn-sm me-2">
         <i class="bi bi-arrow-left"></i> Back to Course
       </a>
     @can('create', [App\Models\Module::class, $course])
