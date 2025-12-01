@@ -47,7 +47,12 @@ class CertificateController extends Controller
     }
 
     /**
-     * Download the certificate PDF.
+     * Download or view the certificate PDF.
+     *
+     * By default the behaviour matches the existing implementation (download as attachment).
+     * If the request has query string ?mode=view the PDF will be rendered inline in the browser,
+     * which allows us to embed it in an iframe or open it in a new tab using the browser's
+     * built-in PDF viewer.
      *
      * @param Request $request
      * @param Course $course
@@ -73,9 +78,13 @@ class CertificateController extends Controller
                 abort(404, 'Certificate file not found.');
             }
 
+            // Decide whether to show inline in browser or force download
+            $mode = $request->query('mode', 'download');
+            $dispositionType = $mode === 'view' ? 'inline' : 'attachment';
+
             return Storage::disk($disk)->response($filePath, 'certificate.pdf', [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="certificate-' . $course->slug . '.pdf"',
+                'Content-Disposition' => $dispositionType . '; filename="certificate-' . $course->slug . '.pdf"',
             ]);
         } catch (\Exception $e) {
             abort(403, $e->getMessage());

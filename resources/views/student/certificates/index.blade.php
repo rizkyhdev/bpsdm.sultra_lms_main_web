@@ -52,13 +52,25 @@
                                     <td>{{ optional($enrollment->completed_at)->format('d M Y') ?? '-' }}</td>
                                     <td class="text-end">
                                         @if($course && $course->slug)
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm btn-outline-success js-cert-download-btn"
-                                                data-generate-url="{{ route('certificates.generate', ['course' => $course->slug]) }}"
-                                            >
-                                                <i class="bi bi-download me-1"></i>{{ __('Download') }}
-                                            </button>
+                                            <div class="btn-group" role="group" aria-label="Certificate actions">
+                                                {{-- View in browser (inline PDF viewer) --}}
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-outline-primary js-cert-view-btn"
+                                                    data-generate-url="{{ route('certificates.generate', ['course' => $course->slug]) }}"
+                                                >
+                                                    <i class="bi bi-eye me-1"></i>{{ __('Lihat') }}
+                                                </button>
+
+                                                {{-- Download as file (existing behaviour) --}}
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-outline-success js-cert-download-btn"
+                                                    data-generate-url="{{ route('certificates.generate', ['course' => $course->slug]) }}"
+                                                >
+                                                    <i class="bi bi-download me-1"></i>{{ __('Download') }}
+                                                </button>
+                                            </div>
                                         @else
                                             <span class="text-muted small">{{ __('Sertifikat belum tersedia') }}</span>
                                         @endif
@@ -87,8 +99,9 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const buttons = document.querySelectorAll('.js-cert-download-btn');
-        if (!buttons.length) return;
+        const downloadButtons = document.querySelectorAll('.js-cert-download-btn');
+        const viewButtons = document.querySelectorAll('.js-cert-view-btn');
+        if (!downloadButtons.length && !viewButtons.length) return;
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -123,7 +136,7 @@
             }, 4000);
         }
 
-        buttons.forEach(function (btn) {
+        function handleCertificateAction(btn, mode) {
             const originalHtml = btn.innerHTML;
             const generateUrl = btn.getAttribute('data-generate-url');
 
@@ -159,8 +172,17 @@
                             throw new Error(data.message || 'Failed to generate certificate.');
                         }
 
-                        window.location.href = data.download_url;
-                        showToast('{{ __('Certificate download started.') }}', 'success');
+                        // Ensure we can append query params safely
+                        const separator = data.download_url.includes('?') ? '&' : '?';
+
+                        if (mode === 'view') {
+                            const viewUrl = data.download_url + separator + 'mode=view';
+                            window.open(viewUrl, '_blank', 'noopener,noreferrer');
+                            showToast('{{ __('Certificate opened in a new tab.') }}', 'success');
+                        } else {
+                            window.location.href = data.download_url;
+                            showToast('{{ __('Certificate download started.') }}', 'success');
+                        }
                     })
                     .catch(function (error) {
                         console.error(error);
@@ -171,6 +193,14 @@
                         btn.innerHTML = originalHtml;
                     });
             });
+        }
+
+        downloadButtons.forEach(function (btn) {
+            handleCertificateAction(btn, 'download');
+        });
+
+        viewButtons.forEach(function (btn) {
+            handleCertificateAction(btn, 'view');
         });
     });
 </script>

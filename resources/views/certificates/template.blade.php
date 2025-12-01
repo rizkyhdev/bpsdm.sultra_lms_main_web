@@ -25,7 +25,9 @@
             position: relative;
             width: 100%;
             height: 100%;
-            padding: 32px 40px;
+            /* Remove internal padding so the border can be centered consistently
+               and use an inner margin on .page-content instead. This helps DomPDF
+               produce a certificate that is properly aligned when printed. */
         }
 
         .page-background {
@@ -38,10 +40,12 @@
         .page-content {
             position: relative;
             z-index: 1;
-            width: 100%;
-            height: 100%;
+            /* Add uniform margins from the paper edge so the border is visually centered */
+            margin: 24px 32px;
+            width: calc(100% - 64px);
+            height: calc(100% - 48px);
             border: 2px solid #003f7d;
-            padding: 36px 48px;
+            padding: 28px 40px;
             display: flex;
             flex-direction: column;
         }
