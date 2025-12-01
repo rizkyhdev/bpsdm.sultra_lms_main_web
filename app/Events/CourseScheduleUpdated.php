@@ -32,9 +32,20 @@ class CourseScheduleUpdated implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [
+        $channels = [
             new Channel('course.' . $this->course->id),
         ];
+
+        // Also broadcast to enrolled students' calendar channels
+        $enrolledUserIds = $this->course->userEnrollments()
+            ->pluck('user_id')
+            ->toArray();
+
+        foreach ($enrolledUserIds as $userId) {
+            $channels[] = new Channel('student.' . $userId . '.calendar');
+        }
+
+        return $channels;
     }
 
     /**

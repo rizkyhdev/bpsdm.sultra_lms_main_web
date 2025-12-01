@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'calendar' => 'Kalender',
+    'month' => 'Bulan',
+    'week' => 'Minggu',
+    'agenda' => 'Agenda',
+    'course_starts' => 'Kelas dimulai',
+    'course_ends' => 'Kelas berakhir',
+    'in' => 'dalam :relative',
+    'no_upcoming_course_windows' => 'Tidak ada jadwal kelas yang akan datang',
+    'browse_courses' => 'Jelajahi kursus',
+    'go_to_course' => 'Buka kursus',
+    'starts_at' => 'Dimulai pada',
+    'ends_at' => 'Berakhir pada',
+    'all' => 'Semua',
+    'enrolled' => 'Terdaftar',
+    'favorites' => 'Favorit',
+    'search_courses' => 'Cari kursus',
+    'hide_past' => 'Sembunyikan kursus yang sudah lewat',
+    'loading' => 'Memuat...',
+    'events_updated' => 'Acara diperbarui',
+    'today' => 'Hari ini',
+    'previous' => 'Sebelumnya',
+    'next' => 'Selanjutnya',
+    'close' => 'Tutup',
+    'course_event' => 'Acara Kursus',
+    'view_schedule' => 'Lihat jadwal kursus dan tanggal penting Anda',
+    'no_events_period' => 'Tidak ada acara kursus dalam periode waktu ini.',
+];
+

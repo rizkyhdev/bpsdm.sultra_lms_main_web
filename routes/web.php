@@ -30,6 +30,8 @@ use App\Http\Controllers\Student\StudentDashboardController;
 use App\Http\Controllers\Student\StudentPelatihanController;
 use App\Http\Controllers\Student\StudentWishlistController;
 use App\Http\Controllers\Student\EnrollmentController;
+use App\Http\Controllers\Student\StudentCalendarPageController;
+use App\Http\Controllers\Student\StudentCalendarController;
 use App\Http\Controllers\CertificateController;
 use App\Models\Course;
 
@@ -92,6 +94,10 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     Route::get('/courses/{course:slug}/certificate', [CertificateController::class, 'download'])->name('certificates.download');
     Route::get('/courses/{course:slug}/certificate/view', [CertificateController::class, 'viewer'])->name('certificates.viewer');
     // Route::get('/courses/{course:slug}/certificate', [CertificateController::class, 'download'])->name('certificates.download')->middleware('signed');
+    
+    // Calendar
+    Route::get('/student/calendar', [StudentCalendarPageController::class, 'index'])->name('student.calendar.index');
+    Route::get('/api/student/calendar', [StudentCalendarController::class, 'index'])->name('api.student.calendar');
 });
 
 // Legacy routes for backward compatibility

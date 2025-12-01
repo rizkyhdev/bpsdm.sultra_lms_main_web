@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'calendar' => 'Calendar',
+    'month' => 'Month',
+    'week' => 'Week',
+    'agenda' => 'Agenda',
+    'course_starts' => 'Course starts',
+    'course_ends' => 'Course ends',
+    'in' => 'in :relative',
+    'no_upcoming_course_windows' => 'No upcoming course windows',
+    'browse_courses' => 'Browse courses',
+    'go_to_course' => 'Go to course',
+    'starts_at' => 'Starts at',
+    'ends_at' => 'Ends at',
+    'all' => 'All',
+    'enrolled' => 'Enrolled',
+    'favorites' => 'Favorites',
+    'search_courses' => 'Search courses',
+    'hide_past' => 'Hide past courses',
+    'loading' => 'Loading...',
+    'events_updated' => 'Events updated',
+    'today' => 'Today',
+    'previous' => 'Previous',
+    'next' => 'Next',
+    'close' => 'Close',
+    'course_event' => 'Course Event',
+    'view_schedule' => 'View your course schedule and important dates',
+    'no_events_period' => 'There are no course events in this time period.',
+];
+
