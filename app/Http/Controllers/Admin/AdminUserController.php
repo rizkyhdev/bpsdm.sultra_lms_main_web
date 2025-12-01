@@ -38,7 +38,13 @@ class AdminUserController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = User::query();
+            $query = User::query()
+                ->withCount([
+                    'userEnrollments as enrollments_count',
+                    'userEnrollments as completed_courses_count' => function ($q) {
+                        $q->where('status', 'completed');
+                    },
+                ]);
 
             // Fungsi pencarian
             if ($request->filled('search')) {
@@ -62,8 +68,22 @@ class AdminUserController extends Controller
                 $query->where('is_validated', $request->is_validated);
             }
 
-            $users = $query->orderBy('created_at', 'desc')
-                          ->paginate(15);
+            // Optional sorting by simple fields / computed counts
+            $sort = $request->get('sort', 'created_at');
+            $direction = $request->get('direction', 'desc') === 'asc' ? 'asc' : 'desc';
+
+            if (in_array($sort, ['nip', 'name', 'email', 'role', 'created_at', 'enrollments_count', 'completed_courses_count'], true)) {
+                $query->orderBy($sort, $direction);
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
+
+            $perPage = (int) $request->get('per_page', 15);
+            if (! in_array($perPage, [10, 25, 50, 100], true)) {
+                $perPage = 15;
+            }
+
+            $users = $query->paginate($perPage)->appends($request->all());
 
             return view('admin.users.index', compact('users'));
         } catch (\Exception $e) {

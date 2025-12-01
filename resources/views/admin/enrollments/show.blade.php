@@ -31,7 +31,14 @@
                 <div class="card-header bg-white">Informasi Kursus</div>
                 <div class="card-body">
                     <dl class="row mb-0">
-                        <dt class="col-5">Judul</dt><dd class="col-7"><a href="{{ route('admin.courses.show', $enrollment->course) }}">{{ $enrollment->course->judul ?? '-' }}</a></dd>
+                        <dt class="col-5">Judul</dt>
+                        <dd class="col-7">
+                            @if($enrollment->course_id)
+                                <a href="{{ route('admin.courses.show', $enrollment->course_id) }}">{{ $enrollment->course->judul ?? '-' }}</a>
+                            @else
+                                -
+                            @endif
+                        </dd>
                         <dt class="col-5">Bidang</dt><dd class="col-7">{{ $enrollment->course->bidang_kompetensi ?? '-' }}</dd>
                         <dt class="col-5">JP</dt><dd class="col-7">{{ $enrollment->course->jp_value ?? '-' }}</dd>
                     </dl>

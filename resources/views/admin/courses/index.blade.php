@@ -59,18 +59,18 @@
                 <tbody>
                 @forelse($courses as $course)
                     <tr>
-                        <td><a href="{{ route('admin.courses.show', $course) }}">{{ $course->judul }}</a></td>
+                        <td><a href="{{ route('admin.courses.show', $course->id) }}">{{ $course->judul }}</a></td>
                         <td>{{ $course->jp_value }}</td>
                         <td>{{ $course->bidang_kompetensi }}</td>
-                        <td>{{ $course->enrollments_count ?? ($course->enrollments_count ?? 0) }}</td>
+                        <td>{{ $course->user_enrollments_count ?? 0 }}</td>
                         <td class="text-right">
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ route('admin.courses.show', $course) }}" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></a>
                                 @can('update', $course)
-                                <a href="{{ route('admin.courses.edit', $course) }}" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
                                 @endcan
                                 @can('delete', $course)
-                                <button class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmDeleteModal" data-action="{{ route('admin.courses.destroy', $course) }}"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmDeleteModal" data-action="{{ route('admin.courses.destroy', $course->id) }}"><i class="fas fa-trash"></i></button>
                                 @endcan
                             </div>
                         </td>
