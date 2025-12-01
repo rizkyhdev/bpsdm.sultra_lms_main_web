@@ -16,15 +16,25 @@
             box-sizing: border-box;
         }
 
+        html,
+        body {
+            /* Explicit A4 landscape dimensions so browser print preview respects orientation */
+            width: 297mm;
+            height: 210mm;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'DejaVu Sans', sans-serif;
             color: #001f54;
+            background-color: #ffffff;
         }
 
         .page {
             position: relative;
-            width: 100%;
-            height: 100%;
+            width: 90%;
+            height: 90%;
             /* Remove internal padding so the border can be centered consistently
                and use an inner margin on .page-content instead. This helps DomPDF
                produce a certificate that is properly aligned when printed. */
