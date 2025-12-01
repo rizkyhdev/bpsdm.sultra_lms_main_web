@@ -53,9 +53,9 @@
   </div>
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#contents" role="tab">Contents</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quizzes" role="tab">Quizzes</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#progress" role="tab">Progress</a></li>
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#contents" role="tab">Contents</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#quizzes" role="tab">Quizzes</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#progress" role="tab">Progress</a></li>
   </ul>
   <div class="tab-content p-3 border border-top-0">
     <div class="tab-pane fade show active" id="contents" role="tabpanel">
@@ -97,10 +97,11 @@
       </div>
     </div>
     <div class="tab-pane fade" id="quizzes" role="tabpanel">
-      <div class="d-flex mb-2">
-        @can('create', [App\Models\Quiz::class, $subModule])
-          <button type="button" class="btn btn-primary btn-sm" onclick="openQuizModal({{ $subModule->id }})">Tambah Quiz</button>
-        @endcan
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0">Quizzes</h6>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openQuizModal({{ $subModule->id }})">
+          <i class="bi bi-plus-circle"></i> Add Quiz
+        </button>
       </div>
       <div class="list-group">
         @forelse($quizzes as $q)
@@ -111,29 +112,23 @@
             </div>
             <div class="btn-group btn-group-sm" role="group">
               <a href="{{ route('instructor.quizzes.show', $q->id) }}" class="btn btn-outline-primary" title="View">
-                <i class="bi bi-eye"></i>
+                <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
               </a>
-              @can('update', $q)
-                <button type="button" class="btn btn-outline-secondary" onclick="openQuizModal({{ $subModule->id }}, {{ $q->id }})" title="Edit">
-                  <i class="bi bi-pencil"></i>
-                </button>
-              @endcan
-              @can('delete', $q)
-                <button type="button" class="btn btn-outline-danger" onclick="openQuizDeleteModal({{ $q->id }})" title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              @endcan
+              <button type="button" class="btn btn-outline-secondary" onclick="openQuizModal({{ $subModule->id }}, {{ $q->id }})" title="Edit">
+                <i class="bi bi-pencil"></i> <span class="d-none d-md-inline">Edit</span>
+              </button>
+              <button type="button" class="btn btn-outline-danger" onclick="openQuizDeleteModal({{ $q->id }})" title="Delete">
+                <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
+              </button>
             </div>
           </div>
         @empty
           <div class="text-center py-4 text-muted">
             <i class="bi bi-inbox" style="font-size: 2rem;"></i>
             <p class="mt-2">No quizzes found. Create your first quiz!</p>
-            @can('create', [App\Models\Quiz::class, $subModule])
-              <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openQuizModal({{ $subModule->id }})">
-                <i class="bi bi-plus-circle"></i> Add Quiz
-              </button>
-            @endcan
+            <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openQuizModal({{ $subModule->id }})">
+              <i class="bi bi-plus-circle"></i> Add Quiz
+            </button>
           </div>
         @endforelse
       </div>
