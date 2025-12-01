@@ -1,8 +1,9 @@
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 
-// Disable web worker to avoid dynamic import issues in some deployments.
-// Rendering happens on the main thread, which is acceptable for typical LMS PDFs.
-pdfjsLib.GlobalWorkerOptions.workerSrc = undefined;
+// Run pdf.js without a separate worker. Using an empty string keeps `workerSrc`
+// as a valid string type so pdf.js does not throw, and `disableWorker` forces
+// main-thread rendering (acceptable for LMS-sized PDFs).
+pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 pdfjsLib.disableWorker = true;
 
 function initPdfViewer(container) {
@@ -16,6 +17,7 @@ function initPdfViewer(container) {
     const ctx = canvas.getContext('2d');
     const loadingEl = container.querySelector('.pdfjs-loading');
     const errorEl = container.querySelector('.pdfjs-error');
+    const fallbackWrapper = container.querySelector('.pdfjs-fallback-wrapper');
     const pageNumEl = container.querySelector('.pdfjs-page-num');
     const pageCountEl = container.querySelector('.pdfjs-page-count');
     const zoomPercentEl = container.querySelector('.pdfjs-zoom-percent');
@@ -43,6 +45,14 @@ function initPdfViewer(container) {
                 errorEl.textContent = message;
             }
             errorEl.classList.remove('d-none');
+        }
+
+        // Show browser's native PDF rendering as a fallback
+        if (fallbackWrapper) {
+            fallbackWrapper.classList.remove('d-none');
+            if (canvas) {
+                canvas.closest('.pdfjs-canvas-wrapper')?.classList.add('d-none');
+            }
         }
     }
 
@@ -133,8 +143,9 @@ function initPdfViewer(container) {
     updateZoomLabel();
     showLoading(true);
 
-    pdfjsLib
-        .getDocument(pdfUrl)
+    const loadingTask = pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true });
+
+    loadingTask
         .promise.then(function (pdf) {
             pdfDoc = pdf;
             if (pageCountEl) {

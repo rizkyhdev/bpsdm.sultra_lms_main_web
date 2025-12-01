@@ -56,13 +56,18 @@
         <canvas class="pdfjs-canvas" style="max-width: 100%; height: auto;"></canvas>
     </div>
 
+    {{-- Fallback iframe if pdf.js fails --}}
+    <div class="pdfjs-fallback-wrapper border border-top-0 rounded-bottom bg-white d-none" style="min-height: 400px; max-height: 80vh;">
+        <iframe class="pdfjs-fallback-iframe w-100 h-100" src="{{ $pdfUrl }}" style="border: none;"></iframe>
+    </div>
+
     <div class="pdfjs-loading text-center py-3 small text-muted d-none">
         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
         {{ __('Memuat dokumen PDF...') }}
     </div>
 
     <div class="pdfjs-error alert alert-danger mt-2 d-none small" role="alert">
-        {{ __('Gagal memuat dokumen PDF. Silakan coba lagi atau unduh file secara langsung.') }}
+        {{ __('Gagal memuat dokumen PDF. Menampilkan tampilan standar browser.') }}
     </div>
 </div>
 
