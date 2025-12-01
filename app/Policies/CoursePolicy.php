@@ -63,6 +63,23 @@ class CoursePolicy
         // Allow instructors and admins
         return $user->role === 'instructor' || $user->role === 'admin';
     }
+
+    /**
+     * Determine if the user can update the course schedule.
+     */
+    public function updateSchedule(User $user, Course $course): bool
+    {
+        // Allow instructors who own the course, or admins
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        if ($user->role === 'instructor' && (int) $course->user_id === (int) $user->id) {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 

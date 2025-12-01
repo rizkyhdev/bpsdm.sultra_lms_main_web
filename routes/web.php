@@ -31,6 +31,7 @@ use App\Http\Controllers\Student\StudentPelatihanController;
 use App\Http\Controllers\Student\StudentWishlistController;
 use App\Http\Controllers\Student\EnrollmentController;
 use App\Http\Controllers\CertificateController;
+use App\Models\Course;
 
 Auth::routes();
 
@@ -42,6 +43,14 @@ Route::get('/courses', [CourseController::class, 'index'])->name('courses.index'
 
 // Public certificate verification
 Route::get('/certificates/verify/{uid}', [CertificateController::class, 'verify'])->name('certificates.verify');
+
+// API route for server time (for countdown sync)
+Route::get('/api/courses/{course}/server-time', function (Course $course) {
+    return response()->json([
+        'server_now_utc' => now('UTC')->toIso8601String(),
+        'course_id' => $course->id,
+    ]);
+})->name('api.courses.server-time');
 
 // Redirect hub setelah login/registrasi berdasarkan role
 Route::get('/dashboard', function () {
@@ -74,6 +83,9 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     
     // Enrollment
     Route::post('/student/enroll/{course:id}', [EnrollmentController::class, 'store'])->name('student.enroll');
+    
+    // Course schedule (for countdown display)
+    Route::get('/courses/{course:id}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
     
     // Certificates (use signed URLs generated in controller; no extra middleware to avoid env signature issues)
     Route::post('/courses/{course:slug}/certificate/generate', [CertificateController::class, 'generate'])->name('certificates.generate');
@@ -180,6 +192,7 @@ Route::group([
     Route::put('/courses/{id}/wizard', [InstructorCourseController::class, 'updateWizard'])->name('courses.update-wizard');
     Route::delete('/courses/{id}', [InstructorCourseController::class, 'destroy'])->name('courses.destroy');
     Route::post('/courses/{id}/duplicate', [InstructorCourseController::class, 'duplicate'])->name('courses.duplicate');
+    Route::patch('/courses/{course}/schedule', [\App\Http\Controllers\CourseScheduleController::class, 'update'])->name('courses.schedule.update');
 
     Route::get('/courses/{courseId}/modules', [InstructorModuleController::class, 'index'])->name('modules.index');
     Route::get('/courses/{courseId}/modules/create', [InstructorModuleController::class, 'create'])->name('modules.create');

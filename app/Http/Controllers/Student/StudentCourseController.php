@@ -7,6 +7,7 @@ use App\Models\ContentProgress;
 use App\Models\Course;
 use App\Models\UserEnrollment;
 use App\Models\UserProgress;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -222,6 +223,11 @@ class StudentCourseController extends Controller
         $completedStudents = $course->userEnrollments()->whereNotNull('completed_at')->count();
         // Note: Certificates table doesn't have a score column, so we skip average score calculation
 
+        // Get schedule status and server time
+        $serverNowUtc = CarbonImmutable::now('UTC');
+        $scheduleStatus = $course->scheduleStatus($serverNowUtc);
+        $canEnroll = $course->canEnroll($serverNowUtc);
+
         // Format course data untuk view
         $courseData = (object) [
             'id' => $course->id,
@@ -244,7 +250,10 @@ class StudentCourseController extends Controller
             'totalStudents',
             'completedStudents',
             'overallProgress',
-            'canSeeCertificate'
+            'canSeeCertificate',
+            'scheduleStatus',
+            'serverNowUtc',
+            'canEnroll'
         ));
     }
 
@@ -254,6 +263,28 @@ class StudentCourseController extends Controller
     public function enroll(Course $course): JsonResponse
     {
         $user = Auth::user();
+        $nowUtc = CarbonImmutable::now('UTC');
+
+        // Check enrollment window (server-side enforcement)
+        if (!$course->canEnroll($nowUtc)) {
+            $status = $course->scheduleStatus($nowUtc);
+            $relativeTime = match ($status) {
+                Course::SCHEDULE_STATUS_BEFORE_START => $course->start_date_time?->diffForHumans($nowUtc),
+                Course::SCHEDULE_STATUS_AFTER_END => $course->end_date_time?->diffForHumans($nowUtc),
+                default => null,
+            };
+
+            $message = match ($status) {
+                Course::SCHEDULE_STATUS_BEFORE_START => __('schedule.enrollment_opens_in', ['time' => $relativeTime ?? '']),
+                Course::SCHEDULE_STATUS_AFTER_END => __('schedule.enrollment_closed_ago', ['time' => $relativeTime ?? '']),
+                default => __('Enrollment is not available at this time.'),
+            };
+
+            return response()->json([
+                'success' => false,
+                'message' => $message
+            ], 403);
+        }
 
         // Periksa apakah sudah terdaftar
         $existingEnrollment = $user->userEnrollments()
