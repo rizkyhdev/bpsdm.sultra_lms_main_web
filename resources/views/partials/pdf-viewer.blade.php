@@ -57,7 +57,7 @@
     </div>
 
     {{-- Fallback iframe if pdf.js fails --}}
-    <div class="pdfjs-fallback-wrapper border border-top-0 rounded-bottom bg-white d-none" style="min-height: 400px; max-height: 80vh;">
+    <div class="pdfjs-fallback-wrapper border border-top-0 rounded-bottom bg-white d-none" style="min-height: 700px; max-height: 80vh;">
         <iframe class="pdfjs-fallback-iframe w-100 h-100" src="{{ $pdfUrl }}" style="border: none;"></iframe>
     </div>
 
