@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * Kelas InstructorContentController
@@ -297,6 +298,64 @@ class InstructorContentController extends Controller
             DB::rollBack();
             return response()->json(['message' => 'Failed to update order'], 500);
         }
+    }
+
+    /**
+     * Serve PDF file for viewing (with proper authorization and headers).
+     * @param Content $content
+     * @return BinaryFileResponse
+     */
+    public function viewPdf(Content $content): BinaryFileResponse
+    {
+        // Check authorization
+        $this->authorize('view', $content);
+
+        // Check if content is a PDF and has a file
+        if ($content->tipe !== 'pdf' || !$content->file_path) {
+            abort(404, 'File PDF tidak ditemukan.');
+        }
+
+        // Check if file exists in public disk (where content files are stored)
+        if (!Storage::disk('public')->exists($content->file_path)) {
+            abort(404, 'File PDF tidak ditemukan.');
+        }
+
+        // Get file path and size
+        $filePath = Storage::disk('public')->path($content->file_path);
+        $fileSize = Storage::disk('public')->size($content->file_path);
+        $safeFileName = str_replace(['"', "\n", "\r"], ['_', ' ', ' '], $content->judul . '.pdf');
+
+        // Prepare headers following LMS best practices
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $safeFileName . '"',
+            'Content-Length' => $fileSize,
+            'Accept-Ranges' => 'bytes', // Support range requests for better performance with pdf.js
+            'Cache-Control' => 'private, max-age=3600', // Cache for 1 hour, but private (requires auth)
+            'X-Content-Type-Options' => 'nosniff', // Security header to prevent MIME type sniffing
+        ];
+
+        // Support range requests for large PDFs (improves performance with pdf.js)
+        $range = request()->header('Range');
+        if ($range) {
+            // Parse range header (e.g., "bytes=0-1023")
+            if (preg_match('/bytes=(\d+)-(\d*)/', $range, $matches)) {
+                $start = (int) $matches[1];
+                $end = $matches[2] ? (int) $matches[2] : $fileSize - 1;
+                $length = $end - $start + 1;
+
+                $headers['Content-Range'] = sprintf('bytes %d-%d/%d', $start, $end, $fileSize);
+                $headers['Content-Length'] = $length;
+
+                // Return partial content response
+                $response = response()->file($filePath, $headers);
+                $response->setStatusCode(206); // Partial Content
+                return $response;
+            }
+        }
+
+        // Return full file response
+        return response()->file($filePath, $headers);
     }
 }
 

@@ -229,6 +229,7 @@ Route::group([
     Route::get('/contents/{id}/edit', [InstructorContentController::class, 'edit'])->name('contents.edit');
     Route::put('/contents/{id}', [InstructorContentController::class, 'update'])->name('contents.update');
     Route::delete('/contents/{id}', [InstructorContentController::class, 'destroy'])->name('contents.destroy');
+    Route::get('/contents/{content}/view-pdf', [InstructorContentController::class, 'viewPdf'])->name('contents.view-pdf');
     Route::get('/contents/{id}/download', [InstructorContentController::class, 'download'])->name('contents.download');
     Route::post('/contents/reorder', [InstructorContentController::class, 'reorder'])->name('contents.reorder');
 
