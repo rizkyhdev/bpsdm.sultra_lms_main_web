@@ -77,7 +77,7 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     
     // Certificates (use signed URLs generated in controller; no extra middleware to avoid env signature issues)
     Route::post('/courses/{course:slug}/certificate/generate', [CertificateController::class, 'generate'])->name('certificates.generate');
-    Route::get('/courses/{course:slug}/certificate', [CertificateController::class, 'download'])->name('certificates.download');
+    Route::get('/courses/{course:slug}/certificate', [CertificateController::class, 'download'])->name('certificates.download')->middleware('signed');
 });
 
 // Legacy routes for backward compatibility
