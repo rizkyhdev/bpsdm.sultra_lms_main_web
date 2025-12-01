@@ -155,16 +155,29 @@
                                  style="max-height: 600px;">
                         </div>
                     @elseif($content->tipe === 'link')
-                        {{-- External Link --}}
+                        {{-- External Link (with special handling for Google Drive PDF) --}}
                         <div class="mb-4">
-                            <div class="alert alert-primary">
-                                <i class="bi bi-link-45deg me-2"></i>
-                                <strong>Link Eksternal:</strong>
-                                <a href="{{ $content->external_url }}" target="_blank" class="alert-link">
-                                    {{ $content->external_url }}
-                                    <i class="bi bi-box-arrow-up-right ms-1"></i>
-                                </a>
-                            </div>
+                            @php
+                                $externalUrl = $content->external_url;
+                            @endphp
+
+                            @if($externalUrl && \Illuminate\Support\Str::contains($externalUrl, 'drive.google.com'))
+                                {{-- Google Drive PDF viewer --}}
+                                @include('partials.google-drive-pdf-viewer', [
+                                    'driveUrl' => $externalUrl,
+                                    'title' => $content->judul,
+                                ])
+                            @else
+                                {{-- Generic external link --}}
+                                <div class="alert alert-primary">
+                                    <i class="bi bi-link-45deg me-2"></i>
+                                    <strong>Link Eksternal:</strong>
+                                    <a href="{{ $externalUrl }}" target="_blank" class="alert-link">
+                                        {{ $externalUrl }}
+                                        <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     @endif
                 </div>
