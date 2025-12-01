@@ -46,8 +46,13 @@ class CoursePolicy
             return false;
         }
 
-        // Check if completion is 100% and completed_at is not null
-        return $enrollment->completion_percent == 100 && $enrollment->completed_at !== null;
+        // Check if completion is 100% OR status is 'completed',
+        // and completed_at is not null (server-side eligibility)
+        $isCompletedByPercent = (int) ($enrollment->completion_percent ?? 0) === 100;
+        $isCompletedByStatus = ($enrollment->status ?? null) === 'completed';
+
+        return ($isCompletedByPercent || $isCompletedByStatus)
+            && $enrollment->completed_at !== null;
     }
 
     /**

@@ -44,7 +44,13 @@ class CertificateService
             throw new \Exception('User is not enrolled in this course.');
         }
 
-        if ($enrollment->completion_percent < 100 || !$enrollment->completed_at) {
+        // Eligibility check should mirror policy:
+        // - completion_percent == 100 OR status == 'completed'
+        // - completed_at is not null
+        $isCompletedByPercent = (int) ($enrollment->completion_percent ?? 0) === 100;
+        $isCompletedByStatus = ($enrollment->status ?? null) === 'completed';
+
+        if (!($isCompletedByPercent || $isCompletedByStatus) || !$enrollment->completed_at) {
             throw new \Exception('Course completion is not 100%.');
         }
 
