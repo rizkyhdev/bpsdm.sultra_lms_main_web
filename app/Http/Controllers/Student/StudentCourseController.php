@@ -151,11 +151,28 @@ class StudentCourseController extends Controller
     public function show(Course $course): View
     {
         $user = Auth::user();
-        
+
+        // Pastikan kursus memiliki slug untuk rute yang menggunakan {course:slug}
+        if (empty($course->slug)) {
+            $course->slug = Str::slug($course->judul);
+            $course->save();
+        }
+
         // Periksa apakah user sudah terdaftar
         $enrollment = $user->userEnrollments()
             ->where('course_id', $course->id)
             ->first();
+
+        // Eligibility for certificate:
+        // - user must be enrolled, AND
+        // - (completion_percent == 100 OR status == 'completed'), AND
+        // - completed_at is not null
+        $canSeeCertificate = $enrollment
+            && (
+                (int) ($enrollment->completion_percent ?? 0) === 100
+                || ($enrollment->status ?? null) === 'completed'
+            )
+            && ! is_null($enrollment->completed_at);
 
         // Mendapatkan modul kursus dengan sub-modul
         $modules = $course->modules()
@@ -226,7 +243,8 @@ class StudentCourseController extends Controller
             'moduleProgress',
             'totalStudents',
             'completedStudents',
-            'overallProgress'
+            'overallProgress',
+            'canSeeCertificate'
         ));
     }
 
