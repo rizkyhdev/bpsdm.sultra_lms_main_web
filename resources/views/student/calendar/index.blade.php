@@ -16,7 +16,7 @@
             {{-- View Toggle and Navigation --}}
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary btn-sm calendar-view-btn" data-view="month" aria-pressed="true">
+                    <button type="button" class="btn btn-outline-primary btn-sm calendar-view-btn active" data-view="month" aria-pressed="true">
                         <i class="fas fa-calendar me-1"></i>{{ __('calendar.month') }}
                     </button>
                     <button type="button" class="btn btn-outline-primary btn-sm calendar-view-btn" data-view="week" aria-pressed="false">
