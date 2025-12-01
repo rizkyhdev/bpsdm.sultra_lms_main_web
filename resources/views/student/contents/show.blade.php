@@ -127,12 +127,16 @@
                             {!! $content->html_content ?? nl2br(e($content->html_content)) !!}
                         </div>
                     @elseif($content->tipe === 'pdf')
-                        {{-- PDF Viewer --}}
+                        {{-- PDF Viewer (pdf.js) --}}
                         <div class="mb-4">
-                            <iframe src="{{ Storage::url($content->file_path) }}" 
-                                    class="w-100" 
-                                    style="height: 600px; border: 1px solid #ddd; border-radius: 8px;">
-                            </iframe>
+                            @php
+                                $pdfUrl = Storage::url($content->file_path);
+                            @endphp
+                            @include('partials.pdf-viewer', [
+                                'pdfUrl' => $pdfUrl,
+                                'downloadUrl' => $pdfUrl,
+                                'title' => $content->judul,
+                            ])
                         </div>
                     @elseif($content->tipe === 'audio')
                         {{-- Audio Player --}}

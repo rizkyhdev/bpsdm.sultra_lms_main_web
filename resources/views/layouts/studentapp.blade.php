@@ -44,5 +44,8 @@
   <script src="{{ asset('./js/sidebar-toggle.js') }}"></script>
   <script src="{{ asset('./js/page-transition.js') }}"></script>
   <script src="{{ asset('./js/tabs.js') }}"></script>
+
+  {{-- Vite bundle for student area (includes pdfjs-dist powered PDF viewer) --}}
+  @vite(['resources/sass/app.scss', 'resources/js/student.js'])
 </body>
 </html>
