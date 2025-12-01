@@ -62,7 +62,7 @@
                         <td><a href="{{ route('admin.courses.show', $course->id) }}">{{ $course->judul }}</a></td>
                         <td>{{ $course->jp_value }}</td>
                         <td>{{ $course->bidang_kompetensi }}</td>
-                        <td>{{ $course->enrollments_count ?? ($course->enrollments_count ?? 0) }}</td>
+                        <td>{{ $course->user_enrollments_count ?? 0 }}</td>
                         <td class="text-right">
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></a>

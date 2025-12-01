@@ -28,10 +28,10 @@
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.courses') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.courses.index') }}">
-          <i class="fas fa-book me-2"></i>Courses
+          <i class="fas fa-book me-2"></i>Pelatihan
         </a>
       </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.modules') ? 'active' : '' }}">
+      <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.modules') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.courses.index') }}">
           <i class="fas fa-layer-group me-2"></i>Modules
         </a>
@@ -45,10 +45,10 @@
         <a class="nav-link text-black" href="{{ route('admin.courses.index') }}">
           <i class="far fa-file-alt me-2"></i>Contents
         </a>
-      </li>
+      </li> -->
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.quizzes') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.quizzes.index-all') }}">
-          <i class="fas fa-question-circle me-2"></i>Quizzes
+          <i class="fas fa-question-circle me-2"></i>Kuis
         </a>
       </li>
       <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.questions') ? 'active' : '' }}">
@@ -58,17 +58,17 @@
       </li> -->
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.enrollments') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.enrollments.index') }}">
-          <i class="fas fa-user-check me-2"></i>Enrollments
+          <i class="fas fa-user-check me-2"></i>Peserta Pelatihan
         </a>
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.certificates') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.certificates.index') }}">
-          <i class="fas fa-certificate me-2"></i>Certificates
+          <i class="fas fa-certificate me-2"></i>Sertifikat
         </a>
       </li>
       <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.reports') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.reports.dashboard') }}">
-          <i class="fas fa-chart-bar me-2"></i>Reports
+          <i class="fas fa-chart-bar me-2"></i>Laporan
         </a>
       </li>
     </ul>
@@ -77,7 +77,7 @@
       <li class="nav-item">
         <a class="nav-link text-black" href="#"
            onclick="event.preventDefault(); document.getElementById('logout-form-admin').submit();">
-          <i class="fas fa-sign-out-alt me-2"></i>Logout
+          <i class="fas fa-sign-out-alt me-2"></i>Keluar
         </a>
         <form id="logout-form-admin" action="{{ route('logout') }}" method="POST" class="d-none">
           @csrf
