@@ -34,7 +34,8 @@
 
           <div class="mb-3">
             <label class="form-label">Urutan <span class="text-danger">*</span></label>
-            <input type="number" name="urutan" id="contentUrutan" class="form-control" min="1" required>
+            <input type="number" name="urutan" id="contentUrutan" class="form-control" min="1" value="1" required>
+            <small class="text-muted">Order of display in the sub-module</small>
           </div>
 
           <!-- HTML Content Field -->
@@ -72,8 +73,12 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i>Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i>Save
+          </button>
         </div>
       </form>
     </div>
