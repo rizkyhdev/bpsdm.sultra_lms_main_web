@@ -67,7 +67,7 @@
           <small class="text-muted">Stored in UTC. Shown in your local time: {{ config('app.timezone') }}</small>
         </div>
         <div class="card-body">
-          <form id="scheduleForm" action="{{ route('courses.schedule.update', $course) }}" method="POST">
+          <form id="scheduleForm" action="{{ route('instructor.courses.schedule.update', $course) }}" method="POST">
             @csrf
             @method('PATCH')
             
