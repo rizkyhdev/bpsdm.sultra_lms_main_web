@@ -790,7 +790,112 @@ class StudentQuizController extends Controller
             return false; // Already passed
         }
 
+        // New rule: user must complete all required contents before starting a quiz
+        if (!$this->hasCompletedRequiredContents($user, $quiz)) {
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Check if the user has completed all required contents before taking this quiz.
+     *
+     * Best-practice rule:
+     * - Sub-module quiz  -> all contents in that sub-module must be completed
+     * - Module quiz      -> all contents in all sub-modules of that module must be completed
+     * - Course quiz      -> all contents in all modules/sub-modules of that course must be completed
+     */
+    private function hasCompletedRequiredContents($user, Quiz $quiz): bool
+    {
+        $userId = $user->id;
+
+        // Prefer relationship-based checks to keep queries readable
+        $level = $quiz->getLevel();
+
+        if ($level === 'sub_module' && $quiz->sub_module_id) {
+            $subModule = $quiz->subModule()->with('contents')->first();
+            if (!$subModule) {
+                return false;
+            }
+
+            $totalContents = $subModule->contents()->count();
+            if ($totalContents === 0) {
+                // No contents to gate on
+                return true;
+            }
+
+            $completedContents = $subModule->contents()
+                ->whereHas('userProgress', function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->where('is_completed', true);
+                })
+                ->count();
+
+            return $completedContents >= $totalContents;
+        }
+
+        if ($level === 'module' && $quiz->module_id) {
+            $module = $quiz->module()->with(['subModules'])->first();
+            if (!$module) {
+                return false;
+            }
+
+            $subModuleIds = $module->subModules->pluck('id');
+            if ($subModuleIds->isEmpty()) {
+                return true;
+            }
+
+            // Count all contents across all sub-modules in this module
+            $totalContents = \App\Models\Content::whereIn('sub_module_id', $subModuleIds)->count();
+            if ($totalContents === 0) {
+                return true;
+            }
+
+            $completedContents = \App\Models\Content::whereIn('sub_module_id', $subModuleIds)
+                ->whereHas('userProgress', function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->where('is_completed', true);
+                })
+                ->count();
+
+            return $completedContents >= $totalContents;
+        }
+
+        if ($level === 'course' && $quiz->course_id) {
+            $course = $quiz->course()->with(['modules.subModules'])->first();
+            if (!$course) {
+                return false;
+            }
+
+            $subModuleIds = $course->modules
+                ->flatMap(function ($module) {
+                    return $module->subModules->pluck('id');
+                })
+                ->filter()
+                ->values();
+
+            if ($subModuleIds->isEmpty()) {
+                return true;
+            }
+
+            $totalContents = \App\Models\Content::whereIn('sub_module_id', $subModuleIds)->count();
+            if ($totalContents === 0) {
+                return true;
+            }
+
+            $completedContents = \App\Models\Content::whereIn('sub_module_id', $subModuleIds)
+                ->whereHas('userProgress', function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->where('is_completed', true);
+                })
+                ->count();
+
+            return $completedContents >= $totalContents;
+        }
+
+        // Unknown level – be safe and require completion (treated as not completed)
+        return false;
     }
 
     /**

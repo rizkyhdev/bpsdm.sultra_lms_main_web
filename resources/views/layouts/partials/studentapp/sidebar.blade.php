@@ -31,6 +31,11 @@
               <i class="fas fa-question-circle me-2"></i>Kuis Saya
           </a>
       </li>
+      <li class="nav-item {{ Route::is('student.certificates.*') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.certificates.index') }}">
+              <i class="fas fa-certificate me-2"></i>Sertifikat Saya
+          </a>
+      </li>
       @if(auth()->check() && auth()->user()->role === 'admin')
       <li class="nav-item">
           <a class="nav-link text-black" href="{{ route('admin.dashboard') }}">
