@@ -233,12 +233,17 @@ class StudentQuizController extends Controller
         // Check if user can take the quiz
         $canTakeQuiz = $this->canTakeQuiz($user, $quiz);
 
+        // Additional flag: apakah seluruh konten prasyarat sudah 100% selesai?
+        // Ini digunakan di halaman /student/quizzes/{id} untuk menampilkan pesan yang tepat.
+        $hasCompletedRequiredContents = $this->hasCompletedRequiredContents($user, $quiz);
+
         return view('student.quizzes.show', compact(
             'quiz',
             'enrollment',
             'activeAttempt',
             'previousAttempts',
-            'canTakeQuiz'
+            'canTakeQuiz',
+            'hasCompletedRequiredContents'
         ));
     }
 
