@@ -58,11 +58,11 @@
         </a>
       </li>
      
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.reports') ? 'active' : '' }}">
+      <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.reports') ? 'active' : '' }}">
         <a class="nav-link text-black" href="#" onclick="event.preventDefault();">
           <i class="fas fa-chart-bar me-2"></i>Laporan
         </a>
-      </li>
+      </li> -->
     </ul>
     <h6 class="fw-bold text-uppercase text-white">Akun</h6>
     <ul class="nav flex-column">

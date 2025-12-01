@@ -41,19 +41,39 @@
   </div>
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#modules" role="tab">Modules</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#schedule" role="tab">Schedule</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#enrollments" role="tab">Enrollments</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#reports" role="tab">Reports</a></li>
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#modules" role="tab">Modules</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#schedule" role="tab">Schedule</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#enrollments" role="tab">Enrollments</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#reports" role="tab">Reports</a></li>
   </ul>
   <div class="tab-content p-3 border border-top-0">
     <div class="tab-pane fade show active" id="modules" role="tabpanel">
+      <div class="mb-3">
+        @can('update', $course)
+          <button type="button" class="btn btn-primary btn-sm" onclick="openModuleModal({{ $course->id }})">
+            <i class="bi bi-plus-circle"></i> Add Module
+          </button>
+        @endcan
+      </div>
       <div class="list-group">
         @forelse($course->modules as $m)
-          <a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{ route('instructor.modules.show', $m) }}">
-            <span>{{ $m->urutan }}. {{ $m->judul }}</span>
-            <span class="text-muted small">Kelola</span>
-          </a>
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{{ route('instructor.modules.show', $m) }}" class="flex-grow-1 text-decoration-none">
+              <span>{{ $m->urutan }}. {{ $m->judul }}</span>
+            </a>
+            <div class="btn-group btn-group-sm" role="group">
+              @can('update', $m)
+                <button type="button" class="btn btn-outline-secondary" onclick="openModuleModal({{ $course->id }}, {{ $m->id }})" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              @endcan
+              @can('delete', $m)
+                <button type="button" class="btn btn-outline-danger" onclick="openModuleDeleteModal({{ $m->id }})" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              @endcan
+            </div>
+          </div>
         @empty
           <div class="text-muted">Belum ada module.</div>
         @endforelse
@@ -170,6 +190,10 @@
     </div>
   </div>
 </div>
+
+{{-- Module Modal and Operations --}}
+@include('partials.modals.module-modal')
+<script src="{{ asset('js/modal-operations.js') }}"></script>
 
 {{-- Schedule Form Handler --}}
 @can('updateSchedule', $course)

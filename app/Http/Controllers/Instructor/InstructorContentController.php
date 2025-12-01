@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * Kelas InstructorContentController
@@ -81,7 +82,7 @@ class InstructorContentController extends Controller
      * Simpan konten, termasuk upload file.
      * @param StoreContentRequest $request
      * @param int $subModuleId
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function store(StoreContentRequest $request, $subModuleId)
     {
@@ -110,10 +111,20 @@ class InstructorContentController extends Controller
             $content->save();
             DB::commit();
             Log::info('Content created', ['content_id' => $content->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Content created successfully.', 'content' => $content]);
+            }
+            
             return redirect()->route('instructor.contents.index', $subModule->id)->with('success', 'Content created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create content', ['sub_module_id' => $subModule->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to create content.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to create content.');
         }
     }
@@ -128,6 +139,18 @@ class InstructorContentController extends Controller
         $content = Content::with('subModule.module.course')->findOrFail($id);
         $this->authorize('view', $content);
         return view('instructor.contents.show', compact('content'));
+    }
+
+    /**
+     * Get content data as JSON (for modal editing)
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function json($id)
+    {
+        $content = Content::findOrFail($id);
+        $this->authorize('view', $content);
+        return response()->json($content);
     }
 
     /**
@@ -146,7 +169,7 @@ class InstructorContentController extends Controller
      * Perbarui konten dan opsional ganti file.
      * @param UpdateContentRequest $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateContentRequest $request, $id)
     {
@@ -176,20 +199,31 @@ class InstructorContentController extends Controller
             $content->save();
             DB::commit();
             Log::info('Content updated', ['content_id' => $content->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Content updated successfully.', 'content' => $content]);
+            }
+            
             return redirect()->route('instructor.contents.show', $content->id)->with('success', 'Content updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to update content', ['content_id' => $content->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to update content.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to update content.');
         }
     }
 
     /**
      * Hapus konten beserta filenya.
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $content = Content::with('subModule.module.course')->findOrFail($id);
         $this->authorize('delete', $content);
@@ -202,10 +236,20 @@ class InstructorContentController extends Controller
             $content->delete();
             DB::commit();
             Log::info('Content deleted', ['content_id' => $content->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Content deleted successfully.']);
+            }
+            
             return redirect()->back()->with('success', 'Content deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to delete content', ['content_id' => $content->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to delete content.'], 422);
+            }
+            
             return redirect()->back()->with('error', 'Failed to delete content.');
         }
     }
@@ -254,6 +298,64 @@ class InstructorContentController extends Controller
             DB::rollBack();
             return response()->json(['message' => 'Failed to update order'], 500);
         }
+    }
+
+    /**
+     * Serve PDF file for viewing (with proper authorization and headers).
+     * @param Content $content
+     * @return BinaryFileResponse
+     */
+    public function viewPdf(Content $content): BinaryFileResponse
+    {
+        // Check authorization
+        $this->authorize('view', $content);
+
+        // Check if content is a PDF and has a file
+        if ($content->tipe !== 'pdf' || !$content->file_path) {
+            abort(404, 'File PDF tidak ditemukan.');
+        }
+
+        // Check if file exists in public disk (where content files are stored)
+        if (!Storage::disk('public')->exists($content->file_path)) {
+            abort(404, 'File PDF tidak ditemukan.');
+        }
+
+        // Get file path and size
+        $filePath = Storage::disk('public')->path($content->file_path);
+        $fileSize = Storage::disk('public')->size($content->file_path);
+        $safeFileName = str_replace(['"', "\n", "\r"], ['_', ' ', ' '], $content->judul . '.pdf');
+
+        // Prepare headers following LMS best practices
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $safeFileName . '"',
+            'Content-Length' => $fileSize,
+            'Accept-Ranges' => 'bytes', // Support range requests for better performance with pdf.js
+            'Cache-Control' => 'private, max-age=3600', // Cache for 1 hour, but private (requires auth)
+            'X-Content-Type-Options' => 'nosniff', // Security header to prevent MIME type sniffing
+        ];
+
+        // Support range requests for large PDFs (improves performance with pdf.js)
+        $range = request()->header('Range');
+        if ($range) {
+            // Parse range header (e.g., "bytes=0-1023")
+            if (preg_match('/bytes=(\d+)-(\d*)/', $range, $matches)) {
+                $start = (int) $matches[1];
+                $end = $matches[2] ? (int) $matches[2] : $fileSize - 1;
+                $length = $end - $start + 1;
+
+                $headers['Content-Range'] = sprintf('bytes %d-%d/%d', $start, $end, $fileSize);
+                $headers['Content-Length'] = $length;
+
+                // Return partial content response
+                $response = response()->file($filePath, $headers);
+                $response->setStatusCode(206); // Partial Content
+                return $response;
+            }
+        }
+
+        // Return full file response
+        return response()->file($filePath, $headers);
     }
 }
 

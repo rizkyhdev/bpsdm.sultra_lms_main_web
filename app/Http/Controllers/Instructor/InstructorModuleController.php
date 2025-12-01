@@ -62,11 +62,11 @@ class InstructorModuleController extends Controller
     }
 
     /**
-        * Simpan modul di bawah kursus.
-        * @param StoreModuleRequest $request
-        * @param int $courseId
-        * @return \Illuminate\Http\RedirectResponse
-        */
+     * Simpan modul di bawah kursus.
+     * @param StoreModuleRequest $request
+     * @param int $courseId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
     public function store(StoreModuleRequest $request, $courseId)
     {
         $course = Course::findOrFail($courseId);
@@ -77,9 +77,19 @@ class InstructorModuleController extends Controller
             $module->course_id = $course->id;
             $module->save();
             Log::info('Module created', ['module_id' => $module->id, 'course_id' => $course->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Module created successfully.', 'module' => $module]);
+            }
+            
             return redirect()->route('instructor.modules.index', $course->id)->with('success', 'Module created successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to create module', ['course_id' => $course->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to create module.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to create module.');
         }
     }
@@ -100,6 +110,18 @@ class InstructorModuleController extends Controller
     }
 
     /**
+     * Get module data as JSON (for modal editing)
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function json($id)
+    {
+        $module = Module::findOrFail($id);
+        $this->authorize('view', $module);
+        return response()->json($module);
+    }
+
+    /**
      * Tampilkan form edit.
      * @param int $id
      * @return \Illuminate\Http\Response
@@ -115,7 +137,7 @@ class InstructorModuleController extends Controller
      * Perbarui modul.
      * @param UpdateModuleRequest $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateModuleRequest $request, $id)
     {
@@ -125,19 +147,30 @@ class InstructorModuleController extends Controller
         try {
             $module->update($request->validated());
             Log::info('Module updated', ['module_id' => $module->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Module updated successfully.', 'module' => $module]);
+            }
+            
             return redirect()->route('instructor.modules.show', $module->id)->with('success', 'Module updated successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to update module', ['module_id' => $module->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to update module.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to update module.');
         }
     }
 
     /**
      * Hapus modul.
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $module = Module::with(['subModules.contents', 'subModules.quizzes.questions'])->findOrFail($id);
         $this->authorize('delete', $module);
@@ -160,10 +193,20 @@ class InstructorModuleController extends Controller
             $module->delete();
             DB::commit();
             Log::info('Module deleted', ['module_id' => $module->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Module deleted successfully.']);
+            }
+            
             return redirect()->back()->with('success', 'Module deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to delete module', ['module_id' => $module->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to delete module.'], 422);
+            }
+            
             return redirect()->back()->with('error', 'Failed to delete module.');
         }
     }

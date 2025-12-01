@@ -18,7 +18,9 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-3">
     @can('create', [App\Models\SubModule::class, $module])
-      <a href="{{ route('instructor.sub_modules.create', $module->id) }}" class="btn btn-primary btn-sm">Tambah Sub-Module</a>
+      <button type="button" class="btn btn-primary btn-sm" onclick="openSubModuleModal({{ $module->id }})">
+        <i class="bi bi-plus-circle"></i> Tambah Sub-Module
+      </button>
     @endcan
   </div>
 
@@ -47,20 +49,21 @@
               <td>{{ $sm->judul }}</td>
               <td class="text-truncate" style="max-width: 420px;">{{ $sm->deskripsi }}</td>
               <td class="text-right">
-                <a href="{{ route('instructor.sub_modules.show', $sm->id) }}" class="btn btn-sm btn-outline-primary">Show</a>
-                @can('create', [App\Models\SubModule::class, $module])
-                  <a href="{{ route('instructor.sub_modules.create', $module->id) }}" class="btn btn-sm btn-outline-success">Tambah</a>
-                @endcan
-                @can('update', $sm)
-                  <a href="{{ route('instructor.sub_modules.edit', $sm->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                @endcan
-                @can('delete', $sm)
-                  <form action="{{ route('instructor.sub_modules.destroy', $sm->id) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus sub-module ini?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                  </form>
-                @endcan
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="{{ route('instructor.sub_modules.show', $sm->id) }}" class="btn btn-outline-primary" title="View">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  @can('update', $sm)
+                    <button type="button" class="btn btn-outline-secondary" onclick="openSubModuleModal({{ $module->id }}, {{ $sm->id }})" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                  @endcan
+                  @can('delete', $sm)
+                    <button type="button" class="btn btn-outline-danger" onclick="openSubModuleDeleteModal({{ $sm->id }})" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  @endcan
+                </div>
               </td>
             </tr>
           @empty
@@ -71,6 +74,9 @@
     </div>
   </div>
 </div>
+
+@include('partials.modals.submodule-modal')
+<script src="{{ asset('js/modal-operations.js') }}"></script>
 @endsection
 
 

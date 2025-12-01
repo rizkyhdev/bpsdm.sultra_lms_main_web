@@ -40,34 +40,30 @@
         <i class="bi bi-arrow-left"></i> Back to Module
       </a>
       @can('update', $subModule)
-        <a href="{{ route('instructor.sub_modules.edit', $subModule->id) }}" class="btn btn-outline-secondary btn-sm me-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="openSubModuleModal({{ $subModule->module_id }}, {{ $subModule->id }})">
           <i class="bi bi-pencil"></i> Edit
-        </a>
+        </button>
       @endcan
       @can('delete', $subModule)
-        <form action="{{ route('instructor.sub_modules.destroy', $subModule->id) }}" method="post" class="d-inline" 
-              onsubmit="return confirm('Are you sure you want to delete this sub-module?\n\nThis will also delete:\n- All contents\n- All quizzes and questions\n\nThis action cannot be undone!');">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn btn-outline-danger btn-sm me-2">
-            <i class="bi bi-trash"></i> Delete
-          </button>
-        </form>
+        <button type="button" class="btn btn-outline-danger btn-sm me-2" onclick="openSubModuleDeleteModal({{ $subModule->id }})">
+          <i class="bi bi-trash"></i> Delete
+        </button>
       @endcan
     </div>
   </div>
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#contents" role="tab">Contents</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quizzes" role="tab">Quizzes</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#progress" role="tab">Progress</a></li>
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#contents" role="tab">Contents</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#quizzes" role="tab">Quizzes</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#progress" role="tab">Progress</a></li>
   </ul>
   <div class="tab-content p-3 border border-top-0">
     <div class="tab-pane fade show active" id="contents" role="tabpanel">
-      <div class="d-flex mb-2">
-        @can('create', [App\Models\Content::class, $subModule])
-          <a href="{{ route('instructor.contents.create', $subModule->id) }}" class="btn btn-primary btn-sm">Tambah Content</a>
-        @endcan
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0">Contents</h6>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openContentModal({{ $subModule->id }})">
+          <i class="bi bi-plus-circle"></i> Add Content
+        </button>
       </div>
       <div class="list-group">
         @forelse($contents as $c)
@@ -79,43 +75,33 @@
             </div>
             <div class="btn-group btn-group-sm" role="group">
               <a href="{{ route('instructor.contents.show', $c->id) }}" class="btn btn-outline-primary" title="View">
-                <i class="bi bi-eye"></i>
+                <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
               </a>
-              @can('update', $c)
-                <a href="{{ route('instructor.contents.edit', $c->id) }}" class="btn btn-outline-secondary" title="Edit">
-                  <i class="bi bi-pencil"></i>
-                </a>
-              @endcan
-              @can('delete', $c)
-                <form action="{{ route('instructor.contents.destroy', $c->id) }}" method="post" class="d-inline" 
-                      onsubmit="return confirm('Are you sure you want to delete this content?\n\nThis action cannot be undone!');">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="btn btn-outline-danger" title="Delete">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </form>
-              @endcan
+              <button type="button" class="btn btn-outline-secondary" onclick="openContentModal({{ $subModule->id }}, {{ $c->id }})" title="Edit">
+                <i class="bi bi-pencil"></i> <span class="d-none d-md-inline">Edit</span>
+              </button>
+              <button type="button" class="btn btn-outline-danger" onclick="openContentDeleteModal({{ $c->id }})" title="Delete">
+                <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
+              </button>
             </div>
           </div>
         @empty
           <div class="text-center py-4 text-muted">
             <i class="bi bi-inbox" style="font-size: 2rem;"></i>
             <p class="mt-2">No contents found. Create your first content!</p>
-            @can('create', [App\Models\Content::class, $subModule])
-              <a href="{{ route('instructor.contents.create', $subModule->id) }}" class="btn btn-primary btn-sm mt-2">
-                <i class="bi bi-plus-circle"></i> Add Content
-              </a>
-            @endcan
+            <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openContentModal({{ $subModule->id }})">
+              <i class="bi bi-plus-circle"></i> Add Content
+            </button>
           </div>
         @endforelse
       </div>
     </div>
     <div class="tab-pane fade" id="quizzes" role="tabpanel">
-      <div class="d-flex mb-2">
-        @can('create', [App\Models\Quiz::class, $subModule])
-          <a href="{{ route('instructor.quizzes.create', $subModule->id) }}" class="btn btn-primary btn-sm">Tambah Quiz</a>
-        @endcan
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0">Quizzes</h6>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openQuizModal({{ $subModule->id }})">
+          <i class="bi bi-plus-circle"></i> Add Quiz
+        </button>
       </div>
       <div class="list-group">
         @forelse($quizzes as $q)
@@ -126,34 +112,23 @@
             </div>
             <div class="btn-group btn-group-sm" role="group">
               <a href="{{ route('instructor.quizzes.show', $q->id) }}" class="btn btn-outline-primary" title="View">
-                <i class="bi bi-eye"></i>
+                <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
               </a>
-              @can('update', $q)
-                <a href="{{ route('instructor.quizzes.edit', $q->id) }}" class="btn btn-outline-secondary" title="Edit">
-                  <i class="bi bi-pencil"></i>
-                </a>
-              @endcan
-              @can('delete', $q)
-                <form action="{{ route('instructor.quizzes.destroy', $q->id) }}" method="post" class="d-inline" 
-                      onsubmit="return confirm('Are you sure you want to delete this quiz?\n\nThis will also delete:\n- All questions\n- All answer options\n\nThis action cannot be undone!');">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="btn btn-outline-danger" title="Delete">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </form>
-              @endcan
+              <button type="button" class="btn btn-outline-secondary" onclick="openQuizModal({{ $subModule->id }}, {{ $q->id }})" title="Edit">
+                <i class="bi bi-pencil"></i> <span class="d-none d-md-inline">Edit</span>
+              </button>
+              <button type="button" class="btn btn-outline-danger" onclick="openQuizDeleteModal({{ $q->id }})" title="Delete">
+                <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
+              </button>
             </div>
           </div>
         @empty
           <div class="text-center py-4 text-muted">
             <i class="bi bi-inbox" style="font-size: 2rem;"></i>
             <p class="mt-2">No quizzes found. Create your first quiz!</p>
-            @can('create', [App\Models\Quiz::class, $subModule])
-              <a href="{{ route('instructor.quizzes.create', $subModule->id) }}" class="btn btn-primary btn-sm mt-2">
-                <i class="bi bi-plus-circle"></i> Add Quiz
-              </a>
-            @endcan
+            <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openQuizModal({{ $subModule->id }})">
+              <i class="bi bi-plus-circle"></i> Add Quiz
+            </button>
           </div>
         @endforelse
       </div>
@@ -182,5 +157,10 @@
     </div>
   </div>
 </div>
+
+@include('partials.modals.submodule-modal')
+@include('partials.modals.content-modal')
+@include('partials.modals.quiz-modal')
+<script src="{{ asset('js/modal-operations.js') }}"></script>
 @endsection
 

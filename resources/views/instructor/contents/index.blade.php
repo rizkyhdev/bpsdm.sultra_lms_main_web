@@ -49,7 +49,9 @@
           </select>
         </div>
         @can('create', [App\Models\Content::class, $subModule])
-          <a href="{{ route('instructor.contents.create', $subModule->id) }}" class="btn btn-success mb-2 ml-auto">Tambah Content</a>
+          <button type="button" class="btn btn-success mb-2 ml-auto" onclick="openContentModal({{ $subModule->id }})">
+            <i class="bi bi-plus-circle"></i> Tambah Content
+          </button>
         @endcan
       </form>
     </div>
@@ -85,23 +87,21 @@
                 @endif
               </td>
               <td class="text-right">
-                  <a href="{{ route('instructor.contents.show', $c->id) }}" class="btn btn-sm btn-outline-primary">Show</a>
-                @can('create', [App\Models\Content::class, $subModule])
-                  <a href="{{ route('instructor.contents.create', $subModule->id) }}" class="btn btn-sm btn-outline-success">Tambah</a>
-                @endcan
-                @can('update', $c)
-                  <a href="{{ route('instructor.contents.edit', $c->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                @endcan
-                @can('delete', $c)
-                  <form action="{{ route('instructor.contents.destroy', $c->id) }}" method="post" class="d-inline" 
-                        onsubmit="return confirm('Are you sure you want to delete this content?\n\nThis action cannot be undone!');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                      <i class="bi bi-trash"></i> Delete
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="{{ route('instructor.contents.show', $c->id) }}" class="btn btn-outline-primary" title="View">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  @can('update', $c)
+                    <button type="button" class="btn btn-outline-secondary" onclick="openContentModal({{ $subModule->id }}, {{ $c->id }})" title="Edit">
+                      <i class="bi bi-pencil"></i>
                     </button>
-                  </form>
-                @endcan
+                  @endcan
+                  @can('delete', $c)
+                    <button type="button" class="btn btn-outline-danger" onclick="openContentDeleteModal({{ $c->id }})" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  @endcan
+                </div>
               </td>
             </tr>
           @empty
@@ -112,6 +112,9 @@
     </div>
   </div>
 </div>
+
+@include('partials.modals.content-modal')
+<script src="{{ asset('js/modal-operations.js') }}"></script>
 @endsection
 
 

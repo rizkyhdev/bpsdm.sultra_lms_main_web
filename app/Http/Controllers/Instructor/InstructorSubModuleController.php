@@ -65,7 +65,7 @@ class InstructorSubModuleController extends Controller
      * Simpan sub-modul di bawah modul.
      * @param StoreSubModuleRequest $request
      * @param int $moduleId
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function store(StoreSubModuleRequest $request, $moduleId)
     {
@@ -77,9 +77,19 @@ class InstructorSubModuleController extends Controller
             $sub->module_id = $module->id;
             $sub->save();
             Log::info('SubModule created', ['sub_module_id' => $sub->id, 'module_id' => $module->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Sub-module created successfully.', 'subModule' => $sub]);
+            }
+            
             return redirect()->route('instructor.sub_modules.index', $module->id)->with('success', 'Sub-module created successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to create sub-module', ['module_id' => $module->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to create sub-module.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to create sub-module.');
         }
     }
@@ -110,6 +120,18 @@ class InstructorSubModuleController extends Controller
     }
 
     /**
+     * Get submodule data as JSON (for modal editing)
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function json($id)
+    {
+        $subModule = SubModule::findOrFail($id);
+        $this->authorize('view', $subModule);
+        return response()->json($subModule);
+    }
+
+    /**
      * Tampilkan form edit.
      * @param int $id
      * @return \Illuminate\Http\Response
@@ -125,7 +147,7 @@ class InstructorSubModuleController extends Controller
      * Perbarui sub-modul.
      * @param UpdateSubModuleRequest $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateSubModuleRequest $request, $id)
     {
@@ -324,20 +346,31 @@ class InstructorSubModuleController extends Controller
 
             DB::commit();
             Log::info('SubModule updated', ['sub_module_id' => $sub->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Sub-module updated successfully.', 'subModule' => $sub]);
+            }
+            
             return redirect()->route('instructor.sub_modules.show', $sub->id)->with('success', 'Sub-module updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to update sub-module', ['sub_module_id' => $sub->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to update sub-module.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to update sub-module: ' . $e->getMessage());
         }
     }
 
     /**
      * Hapus sub-modul.
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $sub = SubModule::with(['module.course', 'contents', 'quizzes.questions'])->findOrFail($id);
         $this->authorize('delete', $sub);
@@ -357,10 +390,20 @@ class InstructorSubModuleController extends Controller
             $sub->delete();
             DB::commit();
             Log::info('SubModule deleted', ['sub_module_id' => $sub->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Sub-module deleted successfully.']);
+            }
+            
             return redirect()->back()->with('success', 'Sub-module deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to delete sub-module', ['sub_module_id' => $sub->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to delete sub-module.'], 422);
+            }
+            
             return redirect()->back()->with('error', 'Failed to delete sub-module.');
         }
     }

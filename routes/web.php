@@ -205,6 +205,7 @@ Route::group([
     Route::get('/courses/{courseId}/modules/create', [InstructorModuleController::class, 'create'])->name('modules.create');
     Route::post('/courses/{courseId}/modules', [InstructorModuleController::class, 'store'])->name('modules.store');
     Route::get('/modules/{id}', [InstructorModuleController::class, 'show'])->name('modules.show');
+    Route::get('/modules/{id}/json', [InstructorModuleController::class, 'json'])->name('modules.json');
     Route::get('/modules/{id}/edit', [InstructorModuleController::class, 'edit'])->name('modules.edit');
     Route::put('/modules/{id}', [InstructorModuleController::class, 'update'])->name('modules.update');
     Route::delete('/modules/{id}', [InstructorModuleController::class, 'destroy'])->name('modules.destroy');
@@ -214,6 +215,7 @@ Route::group([
     Route::get('/modules/{moduleId}/sub-modules/create', [InstructorSubModuleController::class, 'create'])->name('sub_modules.create');
     Route::post('/modules/{moduleId}/sub-modules', [InstructorSubModuleController::class, 'store'])->name('sub_modules.store');
     Route::get('/sub-modules/{id}', [InstructorSubModuleController::class, 'show'])->name('sub_modules.show');
+    Route::get('/sub-modules/{id}/json', [InstructorSubModuleController::class, 'json'])->name('sub_modules.json');
     Route::get('/sub-modules/{id}/edit', [InstructorSubModuleController::class, 'edit'])->name('sub_modules.edit');
     Route::put('/sub-modules/{id}', [InstructorSubModuleController::class, 'update'])->name('sub_modules.update');
     Route::delete('/sub-modules/{id}', [InstructorSubModuleController::class, 'destroy'])->name('sub_modules.destroy');
@@ -223,9 +225,11 @@ Route::group([
     Route::get('/sub-modules/{subModuleId}/contents/create', [InstructorContentController::class, 'create'])->name('contents.create');
     Route::post('/sub-modules/{subModuleId}/contents', [InstructorContentController::class, 'store'])->name('contents.store');
     Route::get('/contents/{id}', [InstructorContentController::class, 'show'])->name('contents.show');
+    Route::get('/contents/{id}/json', [InstructorContentController::class, 'json'])->name('contents.json');
     Route::get('/contents/{id}/edit', [InstructorContentController::class, 'edit'])->name('contents.edit');
     Route::put('/contents/{id}', [InstructorContentController::class, 'update'])->name('contents.update');
     Route::delete('/contents/{id}', [InstructorContentController::class, 'destroy'])->name('contents.destroy');
+    Route::get('/contents/{content}/view-pdf', [InstructorContentController::class, 'viewPdf'])->name('contents.view-pdf');
     Route::get('/contents/{id}/download', [InstructorContentController::class, 'download'])->name('contents.download');
     Route::post('/contents/reorder', [InstructorContentController::class, 'reorder'])->name('contents.reorder');
 
@@ -247,6 +251,7 @@ Route::group([
     Route::get('/sub-modules/{subModuleId}/quizzes/create', [InstructorQuizController::class, 'create'])->name('quizzes.create');
     Route::post('/sub-modules/{subModuleId}/quizzes', [InstructorQuizController::class, 'store'])->name('quizzes.store');
     Route::get('/quizzes/{id}', [InstructorQuizController::class, 'show'])->name('quizzes.show');
+    Route::get('/quizzes/{id}/json', [InstructorQuizController::class, 'json'])->name('quizzes.json');
     Route::get('/quizzes/{id}/edit', [InstructorQuizController::class, 'edit'])->name('quizzes.edit');
     Route::put('/quizzes/{id}', [InstructorQuizController::class, 'update'])->name('quizzes.update');
     Route::delete('/quizzes/{id}', [InstructorQuizController::class, 'destroy'])->name('quizzes.destroy');

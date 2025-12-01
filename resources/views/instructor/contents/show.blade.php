@@ -150,8 +150,16 @@
               </audio>
             </div>
           @elseif($content->tipe === 'pdf')
-            <div>
-              <iframe src="{{ Storage::url($content->file_path) }}" style="width: 100%; height: 600px; border: 1px solid #ddd;"></iframe>
+            {{-- PDF Viewer (pdf.js) --}}
+            <div class="mb-4">
+              @php
+                $pdfUrl = route('instructor.contents.view-pdf', $content->id);
+              @endphp
+              @include('partials.pdf-viewer', [
+                'pdfUrl' => $pdfUrl,
+                'downloadUrl' => $pdfUrl,
+                'title' => $content->judul,
+              ])
             </div>
           @else
             <div class="alert alert-info">
