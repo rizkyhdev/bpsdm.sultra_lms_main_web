@@ -16,9 +16,17 @@ class StudentCalendarEventResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user = $request->user();
-        $isEnrolled = $user && $user->userEnrollments()
-            ->where('course_id', $this->resource['course_id'])
-            ->exists();
+        $isEnrolled = false;
+        if ($user) {
+            try {
+                $isEnrolled = $user->userEnrollments()
+                    ->where('course_id', $this->resource['course_id'])
+                    ->exists();
+            } catch (\Exception $e) {
+                // Fallback if relationship fails
+                $isEnrolled = false;
+            }
+        }
 
         return [
             'id' => $this->resource['id'],

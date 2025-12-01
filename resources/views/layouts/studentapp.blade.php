@@ -47,5 +47,8 @@
 
   {{-- Vite bundle for student area (includes pdfjs-dist powered PDF viewer) --}}
   @vite(['resources/sass/app.scss', 'resources/js/student.js'])
+  
+  {{-- Stack for additional scripts pushed by views --}}
+  @stack('scripts')
 </body>
 </html>

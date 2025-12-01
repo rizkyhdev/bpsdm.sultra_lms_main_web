@@ -67,9 +67,14 @@ class StudentCalendarController extends Controller
     {
         // Get all courses that have at least one date in the range
         // and that the student can see (enrolled or visible)
-        $enrolledCourseIds = $user->userEnrollments()
-            ->pluck('course_id')
-            ->toArray();
+        try {
+            $enrolledCourseIds = $user->userEnrollments()
+                ->pluck('course_id')
+                ->toArray();
+        } catch (\Exception $e) {
+            // Fallback if relationship fails
+            $enrolledCourseIds = [];
+        }
 
         // For now, all courses are visible to students (as per existing pattern)
         // In the future, you might add a visibility flag or policy

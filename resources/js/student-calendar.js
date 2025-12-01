@@ -28,8 +28,8 @@ class StudentCalendar {
     init() {
         this.setupEventListeners();
         this.setupBroadcastListener();
-        this.render();
-        this.loadEvents();
+        // Set initial view state
+        this.switchView(this.currentView);
     }
 
     loadViewPreference() {
@@ -186,7 +186,8 @@ class StudentCalendar {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
 
             const data = await response.json();
@@ -196,6 +197,16 @@ class StudentCalendar {
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Failed to load calendar events:', error);
+                // Show user-friendly error message
+                const emptyEl = document.getElementById('calendar-empty');
+                if (emptyEl) {
+                    emptyEl.innerHTML = `
+                        <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3"></i>
+                        <h5 class="fw-bold">Error loading calendar</h5>
+                        <p class="text-muted">Unable to load calendar events. Please try refreshing the page.</p>
+                    `;
+                    emptyEl.classList.remove('d-none');
+                }
             }
         } finally {
             this.showLoading(false);
@@ -218,7 +229,8 @@ class StudentCalendar {
             // Start of week (Monday)
             const day = date.getDay();
             const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-            from = new Date(date.setDate(diff));
+            from = new Date(date);
+            from.setDate(diff);
             from.setHours(0, 0, 0, 0);
             // End of week (Sunday)
             to = new Date(from);
@@ -393,7 +405,8 @@ class StudentCalendar {
         const date = new Date(this.currentDate);
         const day = date.getDay();
         const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-        const monday = new Date(date.setDate(diff));
+        const monday = new Date(date);
+        monday.setDate(diff);
         monday.setHours(0, 0, 0, 0);
 
         const weekTitle = `Week of ${monday.toLocaleDateString(this.config.locale, { 
@@ -450,7 +463,7 @@ class StudentCalendar {
         const grouped = this.groupEventsByDate(this.filteredEvents);
 
         if (grouped.length === 0) {
-            list.innerHTML = '<p class="text-muted text-center py-4">{{ __("No events in this period") }}</p>';
+            list.innerHTML = '<p class="text-muted text-center py-4">' + (this.config.translations?.no_events_period || 'No events in this period') + '</p>';
             return;
         }
 
@@ -585,7 +598,17 @@ class StudentCalendar {
     }
 
     showEventDetails(event) {
-        const modal = new bootstrap.Modal(document.getElementById('event-details-modal'));
+        const modalEl = document.getElementById('event-details-modal');
+        if (!modalEl) return;
+        
+        // Get Bootstrap Modal - check if available globally or via window
+        const BootstrapModal = window.bootstrap?.Modal || bootstrap?.Modal;
+        if (!BootstrapModal) {
+            console.error('Bootstrap Modal not available');
+            return;
+        }
+        
+        const modal = new BootstrapModal(modalEl);
         const content = document.getElementById('event-details-content');
         const goToCourseBtn = document.getElementById('event-go-to-course');
 
