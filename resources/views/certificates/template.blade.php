@@ -33,7 +33,7 @@
 
         .page {
             position: relative;
-            width: 85%;
+            width: 90%;
             height: 70%;
             /* Remove internal padding so the border can be centered consistently
                and use an inner margin on .page-content instead. This helps DomPDF
