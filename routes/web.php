@@ -123,6 +123,7 @@ Route::group([
 
     // Contents
     Route::get('/contents/{content}', [\App\Http\Controllers\Student\StudentContentController::class, 'show'])->name('contents.show');
+    Route::get('/contents/{content}/view-pdf', [\App\Http\Controllers\Student\StudentContentController::class, 'viewPdf'])->name('contents.view-pdf');
     Route::post('/contents/{content}/track-progress', [\App\Http\Controllers\Student\StudentContentController::class, 'trackProgress'])->name('contents.track-progress');
     Route::post('/contents/{content}/mark-complete', [\App\Http\Controllers\Student\StudentContentController::class, 'markComplete'])->name('contents.mark-complete');
 
