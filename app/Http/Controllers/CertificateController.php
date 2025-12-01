@@ -55,6 +55,10 @@ class CertificateController extends Controller
      */
     public function download(Request $request, Course $course)
     {
+        // if(!request()->hasValidSignature()) {
+        //     abort(403, 'Invalid signature.');
+        // }
+
         $user = auth()->user();
 
         $this->authorize('downloadCertificate', $course);
