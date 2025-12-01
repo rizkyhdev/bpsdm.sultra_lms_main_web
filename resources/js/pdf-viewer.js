@@ -1,10 +1,10 @@
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+// Use the main ES module entry for pdf.js together with a dedicated worker.
+// This avoids legacy UMD globals that try to write to `window.undefined`
+// (which is read‑only in modern browsers and can cause runtime errors).
+import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?url';
 
-// Run pdf.js without a separate worker. Using an empty string keeps `workerSrc`
-// as a valid string type so pdf.js does not throw, and `disableWorker` forces
-// main-thread rendering (acceptable for LMS-sized PDFs).
-pdfjsLib.GlobalWorkerOptions.workerSrc = '';
-pdfjsLib.disableWorker = true;
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 function initPdfViewer(container) {
     const pdfUrl = container.getAttribute('data-pdf-url');

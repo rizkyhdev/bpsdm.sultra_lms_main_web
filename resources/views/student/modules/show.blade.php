@@ -140,9 +140,9 @@
                         <div class="list-group list-group-flush">
                             @foreach($module->subModules as $subModule)
                                 @php
-                                    $progress = $subModule->userProgress->first();
-                                    $isSubCompleted = $progress && $progress->is_completed;
-                                    $progressPercent = $progress ? $progress->progress_percentage : 0;
+                                    $progressPercent = $subModule->calculated_progress_percentage ?? 0;
+                                    $isSubCompleted = $subModule->is_calculated_completed ?? false;
+                                    $hasProgress = $progressPercent > 0 || $isSubCompleted;
                                 @endphp
                                 <div class="list-group-item border-0 px-0 py-3">
                                     <div class="d-flex justify-content-between align-items-start">
@@ -158,7 +158,7 @@
                                             </p>
                                             
                                             {{-- Sub-Module Progress --}}
-                                            @if($progress)
+                                            @if($hasProgress)
                                             <div class="mt-2">
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                                     <span class="small text-muted">Progress</span>
@@ -181,7 +181,7 @@
                                                 <span class="badge bg-success mb-2">
                                                     <i class="bi bi-check-circle me-1"></i>Selesai
                                                 </span>
-                                            @elseif($progress)
+                                            @elseif($hasProgress)
                                                 <span class="badge bg-warning mb-2">
                                                     <i class="bi bi-clock me-1"></i>Berlangsung
                                                 </span>
