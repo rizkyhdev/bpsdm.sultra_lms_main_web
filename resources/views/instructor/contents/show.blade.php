@@ -108,13 +108,24 @@
           </div>
         </div>
       @elseif($content->external_url)
-        {{-- External URL/Link --}}
+        {{-- External URL/Link (with special handling for Google Drive PDF) --}}
         <div class="mb-4">
           <h5 class="mb-3">Link Eksternal</h5>
-          <div class="alert alert-info">
-            <p><strong>URL:</strong> <a href="{{ $content->external_url }}" target="_blank">{{ $content->external_url }}</a></p>
-            <a href="{{ $content->external_url }}" target="_blank" class="btn btn-primary">Buka Link</a>
-          </div>
+          @php
+            $externalUrl = $content->external_url;
+          @endphp
+
+          @if($externalUrl && \Illuminate\Support\Str::contains($externalUrl, 'drive.google.com'))
+            @include('partials.google-drive-pdf-viewer', [
+                'driveUrl' => $externalUrl,
+                'title' => $content->judul,
+            ])
+          @else
+            <div class="alert alert-info">
+              <p><strong>URL:</strong> <a href="{{ $externalUrl }}" target="_blank">{{ $externalUrl }}</a></p>
+              <a href="{{ $externalUrl }}" target="_blank" class="btn btn-primary">Buka Link</a>
+            </div>
+          @endif
         </div>
       @elseif($content->file_path)
         {{-- File Content --}}
