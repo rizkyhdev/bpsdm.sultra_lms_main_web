@@ -51,7 +51,7 @@
         </div>
     </div>
     <div class="card-body pt-0">
-        <div class="ratio ratio-16x9" style="min-height: 400px;">
+        <div class="ratio ratio-16x9" style="min-height: 800px;">
             <iframe
                 src="{{ $embedUrl }}"
                 style="border: 0;"
