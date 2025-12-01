@@ -41,10 +41,10 @@
   </div>
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#modules" role="tab">Modules</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#schedule" role="tab">Schedule</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#enrollments" role="tab">Enrollments</a></li>
-    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#reports" role="tab">Reports</a></li>
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#modules" role="tab">Modules</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#schedule" role="tab">Schedule</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#enrollments" role="tab">Enrollments</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#reports" role="tab">Reports</a></li>
   </ul>
   <div class="tab-content p-3 border border-top-0">
     <div class="tab-pane fade show active" id="modules" role="tabpanel">
@@ -191,10 +191,12 @@
   </div>
 </div>
 
-{{-- Schedule Form Handler --}}
-@can('updateSchedule', $course)
+{{-- Module Modal and Operations --}}
 @include('partials.modals.module-modal')
 <script src="{{ asset('js/modal-operations.js') }}"></script>
+
+{{-- Schedule Form Handler --}}
+@can('updateSchedule', $course)
 <script>
 document.getElementById('scheduleForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
