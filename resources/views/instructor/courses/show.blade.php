@@ -22,17 +22,17 @@
     </div>
     <div>
       @can('update', $course)
-        <a href="{{ route('instructor.courses.edit', $course) }}" class="btn btn-secondary btn-sm">Edit</a>
+        <a href="{{ route('instructor.courses.edit', $course->id) }}" class="btn btn-secondary btn-sm">Edit</a>
       @endcan
       @can('delete', $course)
-        <form action="{{ route('instructor.courses.destroy', $course) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus course ini?')">
+        <form action="{{ route('instructor.courses.destroy', $course->id) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus course ini?')">
           @csrf
           @method('DELETE')
           <button type="submit" class="btn btn-danger btn-sm">Delete</button>
         </form>
       @endcan
       @can('duplicate', $course)
-        <form action="{{ route('instructor.courses.duplicate', $course) }}" method="post" class="d-inline">
+        <form action="{{ route('instructor.courses.duplicate', $course->id) }}" method="post" class="d-inline">
           @csrf
           <button type="submit" class="btn btn-info btn-sm">Duplicate</button>
         </form>
@@ -67,7 +67,7 @@
           <small class="text-muted">Stored in UTC. Shown in your local time: {{ config('app.timezone') }}</small>
         </div>
         <div class="card-body">
-          <form id="scheduleForm" action="{{ route('instructor.courses.schedule.update', $course) }}" method="POST">
+          <form id="scheduleForm" action="{{ route('instructor.courses.schedule.update', $course->id) }}" method="POST">
             @csrf
             @method('PATCH')
             

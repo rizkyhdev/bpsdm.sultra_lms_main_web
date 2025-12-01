@@ -70,19 +70,19 @@
               <td>{{ $course->modules_count ?? ($course->modules_count ?? 0) }}</td>
               <td>{{ $course->enrollments_count ?? ($course->user_enrollments_count ?? 0) }}</td>
               <td class="text-right">
-                <a class="btn btn-sm btn-outline-primary" href="{{ route('instructor.courses.show', $course) }}">Show</a>
+                <a class="btn btn-sm btn-outline-primary" href="{{ route('instructor.courses.show', $course->id) }}">Show</a>
                 @can('update', $course)
-                  <a class="btn btn-sm btn-outline-secondary" href="{{ route('instructor.courses.edit', $course) }}">Edit</a>
+                  <a class="btn btn-sm btn-outline-secondary" href="{{ route('instructor.courses.edit', $course->id) }}">Edit</a>
                 @endcan
                 @can('delete', $course)
-                  <form action="{{ route('instructor.courses.destroy', $course) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus course ini?')">
+                  <form action="{{ route('instructor.courses.destroy', $course->id) }}" method="post" class="d-inline" onsubmit="return confirm('Hapus course ini?')">
                     @csrf
                     @method('DELETE')
                     <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
                   </form>
                 @endcan
                 @can('duplicate', $course)
-                  <form action="{{ route('instructor.courses.duplicate', $course) }}" method="post" class="d-inline">
+                  <form action="{{ route('instructor.courses.duplicate', $course->id) }}" method="post" class="d-inline">
                     @csrf
                     <button class="btn btn-sm btn-outline-info" type="submit">Duplicate</button>
                   </form>

@@ -13,8 +13,9 @@ class CourseScheduleController extends Controller
     /**
      * Update the course schedule.
      */
-    public function update(UpdateCourseScheduleRequest $request, Course $course): JsonResponse
+    public function update(UpdateCourseScheduleRequest $request, $id): JsonResponse
     {
+        $course = Course::findOrFail($id);
         $this->authorize('updateSchedule', $course);
 
         $oldStart = $course->start_date_time?->toIso8601String();
