@@ -57,15 +57,15 @@
       </li>
      
     
-      <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Tanya Jawab</a></li>
+      <!-- <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Tanya Jawab</a></li> -->
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-calendar me-2"></i>Kalender</a></li>
     </ul>
-    <h6 class="fw-bold text-uppercase text-white">Pengaturan Akun</h6>
+    <!-- <h6 class="fw-bold text-uppercase text-white">Pengaturan Akun</h6>
     <ul class="nav flex-column">
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-gear me-2"></i>Ubah Profil</a></li>
       <li class="nav-item"><a class="nav-link text-black" href="#"><i class="far fa-user me-2"></i>Keamanan</a></li>
-      <!-- <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a></li> -->
-    </ul>
+      <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a></li>
+    </ul> -->
   </nav>
 </aside>
 
