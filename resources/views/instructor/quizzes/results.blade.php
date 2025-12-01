@@ -8,7 +8,7 @@
     <li class="breadcrumb-item"><a href="{{ route('instructor.dashboard') }}">Instructor</a></li>
     @if($quiz->subModule && $quiz->subModule->module && $quiz->subModule->module->course)
       <li class="breadcrumb-item">
-        <a href="{{ route('instructor.courses.show', $quiz->subModule->module->course_id) }}">
+        <a href="{{ route('instructor.courses.show', $quiz->subModule->module->course) }}">
           {{ $quiz->subModule->module->course->judul }}
         </a>
       </li>

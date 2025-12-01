@@ -192,7 +192,7 @@ Route::group([
     Route::get('/courses/create-wizard', [InstructorCourseController::class, 'createWizard'])->name('courses.create-wizard');
     Route::post('/courses', [InstructorCourseController::class, 'store'])->name('courses.store');
     Route::post('/courses/wizard', [InstructorCourseController::class, 'storeWizard'])->name('courses.store-wizard');
-    Route::get('/courses/{id}', [InstructorCourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{course}', [InstructorCourseController::class, 'show'])->name('courses.show');
     Route::get('/courses/{id}/edit', [InstructorCourseController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{id}', [InstructorCourseController::class, 'update'])->name('courses.update');
     Route::put('/courses/{id}/wizard', [InstructorCourseController::class, 'updateWizard'])->name('courses.update-wizard');
