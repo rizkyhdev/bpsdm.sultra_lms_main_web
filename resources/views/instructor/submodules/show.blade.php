@@ -59,10 +59,11 @@
   </ul>
   <div class="tab-content p-3 border border-top-0">
     <div class="tab-pane fade show active" id="contents" role="tabpanel">
-      <div class="d-flex mb-2">
-        @can('create', [App\Models\Content::class, $subModule])
-          <button type="button" class="btn btn-primary btn-sm" onclick="openContentModal({{ $subModule->id }})">Tambah Content</button>
-        @endcan
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0">Contents</h6>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openContentModal({{ $subModule->id }})">
+          <i class="bi bi-plus-circle"></i> Add Content
+        </button>
       </div>
       <div class="list-group">
         @forelse($contents as $c)
@@ -74,29 +75,23 @@
             </div>
             <div class="btn-group btn-group-sm" role="group">
               <a href="{{ route('instructor.contents.show', $c->id) }}" class="btn btn-outline-primary" title="View">
-                <i class="bi bi-eye"></i>
+                <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
               </a>
-              @can('update', $c)
-                <button type="button" class="btn btn-outline-secondary" onclick="openContentModal({{ $subModule->id }}, {{ $c->id }})" title="Edit">
-                  <i class="bi bi-pencil"></i>
-                </button>
-              @endcan
-              @can('delete', $c)
-                <button type="button" class="btn btn-outline-danger" onclick="openContentDeleteModal({{ $c->id }})" title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-              @endcan
+              <button type="button" class="btn btn-outline-secondary" onclick="openContentModal({{ $subModule->id }}, {{ $c->id }})" title="Edit">
+                <i class="bi bi-pencil"></i> <span class="d-none d-md-inline">Edit</span>
+              </button>
+              <button type="button" class="btn btn-outline-danger" onclick="openContentDeleteModal({{ $c->id }})" title="Delete">
+                <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
+              </button>
             </div>
           </div>
         @empty
           <div class="text-center py-4 text-muted">
             <i class="bi bi-inbox" style="font-size: 2rem;"></i>
             <p class="mt-2">No contents found. Create your first content!</p>
-            @can('create', [App\Models\Content::class, $subModule])
-              <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openContentModal({{ $subModule->id }})">
-                <i class="bi bi-plus-circle"></i> Add Content
-              </button>
-            @endcan
+            <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openContentModal({{ $subModule->id }})">
+              <i class="bi bi-plus-circle"></i> Add Content
+            </button>
           </div>
         @endforelse
       </div>

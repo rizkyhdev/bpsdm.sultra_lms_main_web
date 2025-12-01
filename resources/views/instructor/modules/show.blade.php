@@ -53,11 +53,6 @@
           </button>
         </form>
       @endcan
-    @can('create', [App\Models\SubModule::class, $module])
-        <button type="button" class="btn btn-primary btn-sm" onclick="openSubModuleModal({{ $module->id }})">
-          <i class="bi bi-plus-circle"></i> Add Sub-Module
-        </button>
-    @endcan
     </div>
   </div>
 
@@ -73,8 +68,11 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Sub-Modules</h5>
+      <button type="button" class="btn btn-primary btn-sm" onclick="openSubModuleModal({{ $module->id }})">
+        <i class="bi bi-plus-circle"></i> Add Sub-Module
+      </button>
     </div>
     <div class="card-body">
       @forelse($subModules as $sm)
@@ -93,18 +91,14 @@
               <div>
                 <div class="btn-group btn-group-sm" role="group">
                   <a href="{{ route('instructor.sub_modules.show', $sm->id) }}" class="btn btn-outline-primary" title="View">
-                    <i class="bi bi-eye"></i> View
+                    <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
                   </a>
-                  @can('update', $sm)
-                    <button type="button" class="btn btn-outline-secondary" onclick="openSubModuleModal({{ $module->id }}, {{ $sm->id }})" title="Edit">
-                      <i class="bi bi-pencil"></i> Edit
-                    </button>
-                  @endcan
-                  @can('delete', $sm)
-                    <button type="button" class="btn btn-outline-danger" onclick="openSubModuleDeleteModal({{ $sm->id }})" title="Delete">
-                      <i class="bi bi-trash"></i> Delete
-                    </button>
-                  @endcan
+                  <button type="button" class="btn btn-outline-secondary" onclick="openSubModuleModal({{ $module->id }}, {{ $sm->id }})" title="Edit">
+                    <i class="bi bi-pencil"></i> <span class="d-none d-md-inline">Edit</span>
+                  </button>
+                  <button type="button" class="btn btn-outline-danger" onclick="openSubModuleDeleteModal({{ $sm->id }})" title="Delete">
+                    <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -115,11 +109,9 @@
           <div class="text-muted">
             <i class="bi bi-inbox" style="font-size: 2rem;"></i>
             <p class="mt-2">No sub-modules found. Create your first sub-module!</p>
-            @can('create', [App\Models\SubModule::class, $module])
-              <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openSubModuleModal({{ $module->id }})">
-                <i class="bi bi-plus-circle"></i> Add Sub-Module
-              </button>
-            @endcan
+            <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openSubModuleModal({{ $module->id }})">
+              <i class="bi bi-plus-circle"></i> Add Sub-Module
+            </button>
           </div>
         </div>
       @endforelse
