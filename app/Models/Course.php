@@ -7,10 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Str;
 
 class Course extends Model
 {
     use HasFactory;
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($course) {
+            if (empty($course->slug)) {
+                $course->slug = Str::slug($course->judul);
+            }
+        });
+
+        static::updating(function ($course) {
+            if ($course->isDirty('judul') && empty($course->slug)) {
+                $course->slug = Str::slug($course->judul);
+            }
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +40,7 @@ class Course extends Model
      */
     protected $fillable = [
         'judul',
+        'slug',
         'deskripsi',
         'jp_value',
         'bidang_kompetensi',
@@ -107,5 +129,29 @@ class Course extends Model
     public function quizzes(): HasMany
     {
         return $this->hasMany(Quiz::class);
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Get the title attribute (alias for judul).
+     */
+    public function getTitleAttribute(): string
+    {
+        return $this->judul;
+    }
+
+    /**
+     * Get the instructor name.
+     */
+    public function getInstructorNameAttribute(): string
+    {
+        return $this->owner?->name ?? '';
     }
 } 

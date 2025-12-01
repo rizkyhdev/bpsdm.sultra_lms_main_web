@@ -30,6 +30,7 @@ use App\Http\Controllers\Student\StudentDashboardController;
 use App\Http\Controllers\Student\StudentPelatihanController;
 use App\Http\Controllers\Student\StudentWishlistController;
 use App\Http\Controllers\Student\EnrollmentController;
+use App\Http\Controllers\CertificateController;
 
 Auth::routes();
 
@@ -39,6 +40,8 @@ Route::get('/', [PelatihanController::class, 'index']);
 // Public courses catalog
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 
+// Public certificate verification
+Route::get('/certificates/verify/{uid}', [CertificateController::class, 'verify'])->name('certificates.verify');
 
 // Redirect hub setelah login/registrasi berdasarkan role
 Route::get('/dashboard', function () {
@@ -66,11 +69,15 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     
     // Wishlist (Keinginan)
     Route::get('/student/keinginan', [StudentWishlistController::class, 'index'])->name('student.wishlist');
-    Route::post('/student/keinginan/{course}', [StudentWishlistController::class, 'store'])->name('student.wishlist.store');
-    Route::delete('/student/keinginan/{course}', [StudentWishlistController::class, 'destroy'])->name('student.wishlist.destroy');
+    Route::post('/student/keinginan/{course:id}', [StudentWishlistController::class, 'store'])->name('student.wishlist.store');
+    Route::delete('/student/keinginan/{course:id}', [StudentWishlistController::class, 'destroy'])->name('student.wishlist.destroy');
     
     // Enrollment
-    Route::post('/student/enroll/{course}', [EnrollmentController::class, 'store'])->name('student.enroll');
+    Route::post('/student/enroll/{course:id}', [EnrollmentController::class, 'store'])->name('student.enroll');
+    
+    // Certificates
+    Route::post('/courses/{course:slug}/certificate/generate', [CertificateController::class, 'generate'])->name('certificates.generate');
+    Route::get('/courses/{course:slug}/certificate', [CertificateController::class, 'download'])->name('certificates.download')->middleware('signed');
 });
 
 // Legacy routes for backward compatibility
@@ -82,7 +89,7 @@ Route::group([
 
     // Courses
     Route::get('/courses', [\App\Http\Controllers\Student\StudentCourseController::class, 'enrolledCourses'])->name('courses.index');
-    Route::get('/courses/{course}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{course:id}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
 
     // Modules
     Route::get('/modules/{module}', [\App\Http\Controllers\Student\StudentModuleController::class, 'show'])->name('modules.show');
@@ -275,6 +282,9 @@ Route::group([
     Route::delete('/courses/{id}', [AdminCourseController::class, 'destroy'])->name('courses.destroy');
     Route::post('/courses/{id}/duplicate', [AdminCourseController::class, 'duplicate'])->name('courses.duplicate');
     Route::get('/courses/{id}/report', [AdminCourseController::class, 'report'])->name('courses.report');
+    
+    // Certificate preview
+    Route::get('/courses/{course:slug}/certificate/preview', [CertificateController::class, 'preview'])->name('certificates.preview');
 
     // Modules
     Route::get('/courses/{courseId}/modules', [AdminModuleController::class, 'index'])->name('modules.index');
