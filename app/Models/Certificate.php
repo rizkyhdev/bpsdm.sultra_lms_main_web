@@ -19,8 +19,10 @@ class Certificate extends Model
         'user_id',
         'course_id',
         'nomor_sertifikat',
+        'certificate_uid',
         'issue_date',
         'file_path',
+        'generated_at',
     ];
 
     /**
@@ -32,6 +34,7 @@ class Certificate extends Model
     {
         return [
             'issue_date' => 'datetime',
+            'generated_at' => 'datetime',
         ];
     }
 

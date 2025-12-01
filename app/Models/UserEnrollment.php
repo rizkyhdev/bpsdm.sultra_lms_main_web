@@ -20,6 +20,7 @@ class UserEnrollment extends Model
         'course_id',
         'enrollment_date',
         'status',
+        'completion_percent',
         'completed_at',
     ];
 
@@ -33,6 +34,7 @@ class UserEnrollment extends Model
         return [
             'enrollment_date' => 'datetime',
             'completed_at' => 'datetime',
+            'completion_percent' => 'integer',
         ];
     }
 

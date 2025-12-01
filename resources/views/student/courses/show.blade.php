@@ -31,7 +31,7 @@
                             <p class="text-muted mb-3">
                                 <i class="fas fa-user me-2"></i>{{ __('By') }} {{ $courseData->instructor_name ?? ($course->owner ? $course->owner->name : __('Instructor')) }}
                             </p>
-                            
+
                             {{-- Overall Progress --}}
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -57,6 +57,33 @@
                                     <span><i class="bi bi-tag me-1"></i>{{ $courseData->bidang_kompetensi ?? $course->bidang_kompetensi }}</span>
                                 @endif
                             </div>
+
+                            {{-- Certificate CTA --}}
+                            @if(isset($enrollment))
+                                <div class="mt-3">
+                                    <button
+                                        id="see-certificate-btn"
+                                        type="button"
+                                        class="btn btn-outline-success btn-sm"
+                                        data-generate-url="{{ route('certificates.generate', ['course' => $course->slug]) }}"
+                                        @if(!($canSeeCertificate ?? false)) disabled @endif
+                                    >
+                                        <i class="bi bi-award me-1"></i>
+                                        {{ __('Lihat Sertifikat') }}
+                                    </button>
+                                    <div class="small mt-1">
+                                        @if($canSeeCertificate ?? false)
+                                            <span class="text-success">
+                                                {{ __('Anda telah menyelesaikan kursus ini. Anda dapat mengunduh sertifikat Anda.') }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted" title="{{ __('Selesaikan kursus ini untuk membuka sertifikat Anda.') }}">
+                                                {{ __('Selesaikan kursus ini untuk mengakses sertifikat Anda.') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -216,4 +243,91 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('see-certificate-btn');
+        if (!btn) return;
+
+        const originalHtml = btn.innerHTML;
+        const generateUrl = btn.getAttribute('data-generate-url');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        function showToast(message, type = 'danger') {
+            const containerId = 'global-toast-container';
+            let container = document.getElementById(containerId);
+            if (!container) {
+                container = document.createElement('div');
+                container.id = containerId;
+                container.style.position = 'fixed';
+                container.style.top = '1rem';
+                container.style.right = '1rem';
+                container.style.zIndex = '1080';
+                document.body.appendChild(container);
+            }
+
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-' + type + ' alert-dismissible fade show shadow-sm mb-2';
+            alert.role = 'alert';
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+
+            container.appendChild(alert);
+
+            setTimeout(function () {
+                alert.classList.remove('show');
+                alert.addEventListener('transitionend', function () {
+                    alert.remove();
+                });
+            }, 4000);
+        }
+
+        btn.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (btn.disabled || !generateUrl || !csrfToken) {
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>{{ __('Processing...') }}';
+
+            fetch(generateUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .then(async function (response) {
+                    const data = await response.json().catch(function () {
+                        return null;
+                    });
+
+                    if (!response.ok || !data) {
+                        throw new Error(data && data.message ? data.message : 'Failed to generate certificate.');
+                    }
+
+                    if (!data.success || !data.download_url) {
+                        throw new Error(data.message || 'Failed to generate certificate.');
+                    }
+
+                    window.location.href = data.download_url;
+                    showToast('{{ __('Certificate download started.') }}', 'success');
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    showToast(error.message || 'Failed to generate certificate.', 'danger');
+                })
+                .finally(function () {
+                    btn.disabled = !(@json($canSeeCertificate ?? false));
+                    btn.innerHTML = originalHtml;
+                });
+        });
+    });
+</script>
 @endsection

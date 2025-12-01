@@ -22,6 +22,7 @@
             $items = [
                 ['route' => 'student.dashboard', 'label' => __('Dashboard'), 'icon' => 'home'],
                 ['route' => 'student.courses.index', 'label' => __('Courses'), 'icon' => 'book-open'],
+                ['route' => 'student.certificates.index', 'label' => __('Daftar Sertifikat'), 'icon' => 'book-open'],
                 ['route' => 'student.progress.index', 'label' => __('Progress'), 'icon' => 'chart-bar'],
                 ['route' => 'student.notifications.index', 'label' => __('Notifications'), 'icon' => 'bell'],
                 ['route' => 'student.profile.show', 'label' => __('Profile'), 'icon' => 'user'],

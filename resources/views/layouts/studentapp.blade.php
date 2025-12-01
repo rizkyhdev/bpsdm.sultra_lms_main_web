@@ -32,6 +32,7 @@
       @yield('sidebar')
     @else
       @include('layouts.partials.studentapp.sidebar')
+      <!-- @include('student.partials.sidebar') -->
     @endif
     <!-- Main Content -->
     <main class="flex-fill p-4">
