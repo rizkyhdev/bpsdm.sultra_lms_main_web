@@ -58,6 +58,71 @@
                                 @endif
                             </div>
 
+                            {{-- Course Schedule Countdown --}}
+                            @if(isset($course->start_date_time) || isset($course->end_date_time))
+                            <div class="mt-3 mb-3" 
+                                 x-data="courseCountdown({
+                                     startDateTimeUtc: @js($course->start_date_time?->toIso8601String()),
+                                     endDateTimeUtc: @js($course->end_date_time?->toIso8601String()),
+                                     serverNowUtc: @js($serverNowUtc->toIso8601String()),
+                                     locale: @js(app()->getLocale()),
+                                     scheduleStatus: @js($scheduleStatus ?? 'ALWAYS_OPEN')
+                                 })"
+                                 x-init="init()">
+                                <div class="alert alert-info mb-0" role="alert">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-clock-history me-2"></i>
+                                        <div class="flex-grow-1">
+                                            <strong x-text="statusText"></strong>
+                                            <div x-show="showCountdown" class="mt-1">
+                                                <span class="badge bg-primary fs-6" x-text="countdownText"></span>
+                                            </div>
+                                            <div x-show="showEnded" class="mt-1">
+                                                <span class="text-muted">{{ __('schedule.ended') }}</span>
+                                            </div>
+                                        </div>
+                                        <span x-show="syncing" class="badge bg-secondary ms-2">{{ __('schedule.syncing') }}</span>
+                                    </div>
+                                </div>
+                                <div aria-live="polite" aria-atomic="true" class="visually-hidden" x-text="ariaLiveText"></div>
+                            </div>
+                            @endif
+
+                            {{-- Enrollment CTA --}}
+                            @if(!isset($enrollment))
+                            <div class="mt-3">
+                                @php
+                                    $hideCtaOutsideWindow = config('lms.hide_enroll_cta_outside_window', false);
+                                    $shouldShowCta = ($canEnroll ?? true) || !$hideCtaOutsideWindow;
+                                @endphp
+                                @if($shouldShowCta)
+                                <form action="{{ route('student.enroll', $course->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button 
+                                        type="submit" 
+                                        class="btn btn-primary"
+                                        @if(!($canEnroll ?? true)) 
+                                            disabled 
+                                            title="{{ $scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_BEFORE_START ? __('schedule.enrollment_opens_in', ['time' => $course->start_date_time?->diffForHumans() ?? '']) : __('schedule.enrollment_closed_ago', ['time' => $course->end_date_time?->diffForHumans() ?? '']) }}"
+                                        @endif
+                                    >
+                                        <i class="bi bi-person-plus me-1"></i>
+                                        {{ __('Mendaftar ke Pelatihan') }}
+                                    </button>
+                                </form>
+                                @if(!($canEnroll ?? true))
+                                    <div class="small text-muted mt-1">
+                                        @if($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_BEFORE_START)
+                                            {{ __('schedule.enrollment_opens_in', ['time' => $course->start_date_time?->diffForHumans() ?? '']) }}
+                                        @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_AFTER_END)
+                                            {{ __('schedule.enrollment_closed_ago', ['time' => $course->end_date_time?->diffForHumans() ?? '']) }}
+                                        @endif
+                                    </div>
+                                @endif
+                                @endif
+                            </div>
+                            @endif
+
                             {{-- Certificate CTA --}}
                             @if(isset($enrollment))
                                 <div class="mt-3">
@@ -329,5 +394,185 @@
                 });
         });
     });
+</script>
+
+{{-- Course Countdown Component --}}
+<script>
+    function courseCountdown(config) {
+        return {
+            startDateTimeUtc: config.startDateTimeUtc,
+            endDateTimeUtc: config.endDateTimeUtc,
+            serverNowUtc: config.serverNowUtc,
+            locale: config.locale,
+            scheduleStatus: config.scheduleStatus,
+            
+            drift: 0,
+            countdownText: '',
+            statusText: '',
+            ariaLiveText: '',
+            showCountdown: false,
+            showEnded: false,
+            syncing: false,
+            intervalId: null,
+            ariaUpdateIntervalId: null,
+            lastAriaUpdate: 0,
+            
+            init() {
+                this.computeDrift();
+                this.update();
+                this.startInterval();
+                this.startAriaUpdates();
+                this.setupResync();
+                this.setupBroadcastListener();
+            },
+            
+            computeDrift() {
+                const serverTime = new Date(this.serverNowUtc).getTime();
+                const clientTime = Date.now();
+                this.drift = serverTime - clientTime;
+            },
+            
+            getCurrentTime() {
+                return new Date(Date.now() + this.drift);
+            },
+            
+            update() {
+                const now = this.getCurrentTime();
+                const start = this.startDateTimeUtc ? new Date(this.startDateTimeUtc) : null;
+                const end = this.endDateTimeUtc ? new Date(this.endDateTimeUtc) : null;
+                
+                if (!start && !end) {
+                    this.statusText = '{{ __("schedule.always_open") }}';
+                    this.showCountdown = false;
+                    this.showEnded = false;
+                    return;
+                }
+                
+                if (start && now < start) {
+                    // Before start
+                    const diff = start - now;
+                    this.statusText = '{{ __("schedule.starts_in", ["countdown" => ""]) }}';
+                    this.countdownText = this.formatCountdown(diff);
+                    this.showCountdown = true;
+                    this.showEnded = false;
+                } else if (end && now >= end) {
+                    // After end
+                    this.statusText = '{{ __("schedule.ended") }}';
+                    this.showCountdown = false;
+                    this.showEnded = true;
+                } else {
+                    // In progress
+                    if (end) {
+                        const diff = end - now;
+                        this.statusText = '{{ __("schedule.ends_in", ["countdown" => ""]) }}';
+                        this.countdownText = this.formatCountdown(diff);
+                        this.showCountdown = true;
+                        this.showEnded = false;
+                    } else {
+                        this.statusText = '{{ __("schedule.always_open") }}';
+                        this.showCountdown = false;
+                        this.showEnded = false;
+                    }
+                }
+            },
+            
+            formatCountdown(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const days = Math.floor(totalSeconds / 86400);
+                const hours = Math.floor((totalSeconds % 86400) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                
+                return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            },
+            
+            startInterval() {
+                this.intervalId = setInterval(() => {
+                    this.update();
+                }, 1000);
+            },
+            
+            startAriaUpdates() {
+                this.ariaUpdateIntervalId = setInterval(() => {
+                    const now = Date.now();
+                    if (now - this.lastAriaUpdate >= 10000) {
+                        this.ariaLiveText = this.statusText + ' ' + (this.countdownText || '');
+                        this.lastAriaUpdate = now;
+                    }
+                }, 1000);
+            },
+            
+            setupResync() {
+                // Resync on focus
+                window.addEventListener('focus', () => {
+                    this.resync();
+                });
+                
+                // Resync every 60 seconds
+                setInterval(() => {
+                    this.resync();
+                }, 60000);
+            },
+            
+            async resync() {
+                this.syncing = true;
+                try {
+                    const response = await fetch(`/api/courses/{{ $course->id }}/server-time`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.server_now_utc) {
+                            this.serverNowUtc = data.server_now_utc;
+                            this.computeDrift();
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Failed to resync server time, using client time with drift:', error);
+                } finally {
+                    this.syncing = false;
+                }
+            },
+            
+            setupBroadcastListener() {
+                @if(config('lms.enable_websocket_countdown_sync', true))
+                if (typeof Echo !== 'undefined') {
+                    Echo.channel(`course.{{ $course->id }}`)
+                        .listen('.CourseScheduleUpdated', (e) => {
+                            if (e.start_date_time !== undefined) {
+                                this.startDateTimeUtc = e.start_date_time;
+                            }
+                            if (e.end_date_time !== undefined) {
+                                this.endDateTimeUtc = e.end_date_time;
+                            }
+                            if (e.server_now_utc) {
+                                this.serverNowUtc = e.server_now_utc;
+                                this.computeDrift();
+                            }
+                            this.update();
+                        });
+                } else {
+                    // Fallback polling every 60s
+                    setInterval(() => {
+                        this.resync();
+                    }, 60000);
+                }
+                @endif
+            },
+            
+            destroy() {
+                if (this.intervalId) {
+                    clearInterval(this.intervalId);
+                }
+                if (this.ariaUpdateIntervalId) {
+                    clearInterval(this.ariaUpdateIntervalId);
+                }
+            }
+        };
+    }
 </script>
 @endsection

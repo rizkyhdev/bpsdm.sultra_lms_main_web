@@ -55,10 +55,14 @@
               <i class="far fa-user me-2"></i>Profil Saya
           </a>
       </li>
+      <li class="nav-item {{ Route::is('student.calendar.*') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.calendar.index') }}" aria-current="{{ Route::is('student.calendar.*') ? 'page' : 'false' }}">
+              <i class="fas fa-calendar me-2"></i>{{ __('calendar.calendar') }}
+          </a>
+      </li>
      
     
       <!-- <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-question-circle me-2"></i>Tanya Jawab</a></li> -->
-      <li class="nav-item"><a class="nav-link text-black" href="#"><i class="fas fa-calendar me-2"></i>Kalender</a></li>
     </ul>
     <!-- <h6 class="fw-bold text-uppercase text-white">Pengaturan Akun</h6>
     <ul class="nav flex-column">

@@ -130,7 +130,7 @@
                         {{-- PDF Viewer (pdf.js) --}}
                         <div class="mb-4">
                             @php
-                                $pdfUrl = Storage::url($content->file_path);
+                                $pdfUrl = route('student.contents.view-pdf', $content->id);
                             @endphp
                             @include('partials.pdf-viewer', [
                                 'pdfUrl' => $pdfUrl,

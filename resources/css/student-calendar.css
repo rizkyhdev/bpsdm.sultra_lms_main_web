@@ -1,0 +1,228 @@
+/* Student Calendar Styles */
+
+.calendar-view {
+    min-height: 400px;
+}
+
+/* Month View */
+.calendar-month-grid {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.calendar-weekdays {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.calendar-weekday {
+    flex: 1;
+    padding: 12px;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.calendar-days {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.calendar-day {
+    flex: 0 0 calc(100% / 7);
+    min-height: 100px;
+    padding: 8px;
+    border: 1px solid #e9ecef;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background-color: #f8f9fa;
+}
+
+.calendar-day:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: -2px;
+    z-index: 1;
+}
+
+.calendar-day.today {
+    background-color: #e7f3ff;
+    font-weight: bold;
+}
+
+.calendar-day.today .calendar-day-number {
+    color: #0d6efd;
+}
+
+.calendar-day.empty {
+    background-color: #f8f9fa;
+    cursor: default;
+}
+
+.calendar-day-number {
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.calendar-day-events {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.calendar-event-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.calendar-event-dot:hover {
+    transform: scale(1.2);
+}
+
+.calendar-event-more {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Week View */
+.calendar-week-grid {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.calendar-week-time-columns {
+    display: flex;
+}
+
+.calendar-week-column {
+    flex: 1;
+    border-right: 1px solid #e9ecef;
+    min-height: 400px;
+}
+
+.calendar-week-column:last-child {
+    border-right: none;
+}
+
+.calendar-week-day-header {
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    text-align: center;
+}
+
+.calendar-week-day-events {
+    padding: 8px;
+    min-height: 350px;
+}
+
+.calendar-event-item {
+    padding: 8px;
+    margin-bottom: 4px;
+    background-color: #e7f3ff;
+    border-left: 3px solid #0d6efd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.calendar-event-item:hover {
+    background-color: #d0e7ff;
+}
+
+.calendar-event-item:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+.calendar-event-title {
+    font-size: 0.875rem;
+    margin-bottom: 2px;
+}
+
+.calendar-event-time {
+    font-size: 0.75rem;
+}
+
+/* Agenda View */
+.calendar-agenda-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.calendar-agenda-date-header {
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.calendar-agenda-event {
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.calendar-agenda-event:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-agenda-event:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* Loading and Empty States */
+#calendar-loading,
+#calendar-empty {
+    min-height: 300px;
+}
+
+/* Accessibility */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus styles for keyboard navigation */
+.calendar-day:focus-visible,
+.calendar-event-item:focus-visible,
+.calendar-agenda-event:focus-visible {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+    z-index: 10;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .calendar-day {
+        min-height: 80px;
+        padding: 4px;
+    }
+
+    .calendar-week-time-columns {
+        overflow-x: auto;
+    }
+
+    .calendar-week-column {
+        min-width: 120px;
+    }
+}
+

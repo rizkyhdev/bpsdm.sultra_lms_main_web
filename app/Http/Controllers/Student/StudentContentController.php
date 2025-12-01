@@ -8,10 +8,12 @@ use App\Models\ContentProgress;
 use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class StudentContentController extends Controller
 {
@@ -293,7 +295,7 @@ class StudentContentController extends Controller
         }
 
         // Check if content has a file
-        if (!$content->file_path || !Storage::exists($content->file_path)) {
+        if (!$content->file_path || !Storage::disk('public')->exists($content->file_path)) {
             abort(404, 'File tidak ditemukan.');
         }
 
@@ -318,7 +320,109 @@ class StudentContentController extends Controller
         }
 
         // Return file download
-        return Storage::download($content->file_path, $content->judul . '.' . pathinfo($content->file_path, PATHINFO_EXTENSION));
+        return Storage::disk('public')->download($content->file_path, $content->judul . '.' . pathinfo($content->file_path, PATHINFO_EXTENSION));
+    }
+
+    /**
+     * View PDF content inline (for PDF viewer).
+     * 
+     * Best practices for LMS PDF serving:
+     * - Proper authentication and authorization
+     * - Inline content disposition for browser viewing
+     * - Support for range requests (for large PDFs)
+     * - Cache headers for performance
+     * - Progress tracking
+     */
+    public function viewPdf(Content $content): BinaryFileResponse
+    {
+        $user = Auth::user();
+        
+        // Check if user is enrolled (accept multiple valid enrollment statuses)
+        $enrollment = $user->userEnrollments()
+            ->where('course_id', $content->subModule->module->course_id)
+            ->whereIn('status', ['enrolled', 'in_progress', 'completed', 'active'])
+            ->first();
+
+        if (!$enrollment) {
+            abort(403, 'Anda harus terdaftar dalam kursus ini untuk mengakses konten.');
+        }
+
+        // Check if content is a PDF and has a file
+        if ($content->tipe !== 'pdf' || !$content->file_path) {
+            abort(404, 'File PDF tidak ditemukan.');
+        }
+
+        // Check if file exists in public disk (where content files are stored)
+        if (!Storage::disk('public')->exists($content->file_path)) {
+            abort(404, 'File PDF tidak ditemukan.');
+        }
+
+        // Track PDF access progress (non-blocking for better performance)
+        try {
+            $progress = ContentProgress::where('content_id', $content->id)
+                ->where('user_id', $user->id)
+                ->first();
+            
+            if (!$progress) {
+                $progress = ContentProgress::create([
+                    'user_id' => $user->id,
+                    'content_id' => $content->id,
+                    'is_completed' => false,
+                    'progress_percentage' => 0,
+                    'started_at' => now()
+                ]);
+            }
+
+            // Update progress to indicate PDF was accessed
+            if ($progress->progress_percentage < 10) {
+                $progress->update(['progress_percentage' => 10]);
+            }
+        } catch (\Exception $e) {
+            // Log error but don't block PDF serving
+            Log::warning('Failed to track PDF access progress', [
+                'user_id' => $user->id,
+                'content_id' => $content->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        // Get file path and size
+        $filePath = Storage::disk('public')->path($content->file_path);
+        $fileSize = Storage::disk('public')->size($content->file_path);
+        $safeFileName = str_replace(['"', "\n", "\r"], ['_', ' ', ' '], $content->judul . '.pdf');
+
+        // Prepare headers following LMS best practices
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $safeFileName . '"',
+            'Content-Length' => $fileSize,
+            'Accept-Ranges' => 'bytes', // Support range requests for better performance with pdf.js
+            'Cache-Control' => 'private, max-age=3600', // Cache for 1 hour, but private (requires auth)
+            'X-Content-Type-Options' => 'nosniff', // Security header to prevent MIME type sniffing
+        ];
+
+        // Support range requests for large PDFs (improves performance with pdf.js)
+        $range = request()->header('Range');
+        if ($range) {
+            // Parse range header (e.g., "bytes=0-1023")
+            if (preg_match('/bytes=(\d+)-(\d*)/', $range, $matches)) {
+                $start = (int) $matches[1];
+                $end = $matches[2] ? (int) $matches[2] : $fileSize - 1;
+                $length = $end - $start + 1;
+
+                $headers['Content-Range'] = sprintf('bytes %d-%d/%d', $start, $end, $fileSize);
+                $headers['Content-Length'] = $length;
+
+                // Return partial content response
+                $response = response()->file($filePath, $headers);
+                $response->setStatusCode(206); // Partial Content
+                return $response;
+            }
+        }
+
+        // Return full PDF file with proper headers
+        // response()->file() returns BinaryFileResponse which supports range requests
+        return response()->file($filePath, $headers);
     }
 
     /**
@@ -339,7 +443,7 @@ class StudentContentController extends Controller
         }
 
         // Check if content is a video
-        if ($content->jenis !== 'video' || !$content->file_path || !Storage::exists($content->file_path)) {
+        if ($content->jenis !== 'video' || !$content->file_path || !Storage::disk('public')->exists($content->file_path)) {
             abort(404, 'Video tidak ditemukan.');
         }
 
@@ -364,8 +468,8 @@ class StudentContentController extends Controller
         }
 
         // Get file info
-        $filePath = Storage::path($content->file_path);
-        $fileSize = Storage::size($content->file_path);
+        $filePath = Storage::disk('public')->path($content->file_path);
+        $fileSize = Storage::disk('public')->size($content->file_path);
         $fileName = basename($content->file_path);
 
         // Check if range header is present for video streaming
