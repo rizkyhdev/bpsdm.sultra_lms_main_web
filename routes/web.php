@@ -91,6 +91,9 @@ Route::group([
     Route::get('/courses', [\App\Http\Controllers\Student\StudentCourseController::class, 'enrolledCourses'])->name('courses.index');
     Route::get('/courses/{course:id}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
 
+    // Certificates list for students
+    Route::get('/certificates', [\App\Http\Controllers\Student\StudentCertificateController::class, 'index'])->name('certificates.index');
+
     // Modules
     Route::get('/modules/{module}', [\App\Http\Controllers\Student\StudentModuleController::class, 'show'])->name('modules.show');
 
