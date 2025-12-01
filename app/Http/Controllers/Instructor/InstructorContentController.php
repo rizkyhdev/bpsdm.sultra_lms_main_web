@@ -81,7 +81,7 @@ class InstructorContentController extends Controller
      * Simpan konten, termasuk upload file.
      * @param StoreContentRequest $request
      * @param int $subModuleId
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function store(StoreContentRequest $request, $subModuleId)
     {
@@ -110,10 +110,20 @@ class InstructorContentController extends Controller
             $content->save();
             DB::commit();
             Log::info('Content created', ['content_id' => $content->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Content created successfully.', 'content' => $content]);
+            }
+            
             return redirect()->route('instructor.contents.index', $subModule->id)->with('success', 'Content created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create content', ['sub_module_id' => $subModule->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to create content.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to create content.');
         }
     }
@@ -128,6 +138,18 @@ class InstructorContentController extends Controller
         $content = Content::with('subModule.module.course')->findOrFail($id);
         $this->authorize('view', $content);
         return view('instructor.contents.show', compact('content'));
+    }
+
+    /**
+     * Get content data as JSON (for modal editing)
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function json($id)
+    {
+        $content = Content::findOrFail($id);
+        $this->authorize('view', $content);
+        return response()->json($content);
     }
 
     /**
@@ -146,7 +168,7 @@ class InstructorContentController extends Controller
      * Perbarui konten dan opsional ganti file.
      * @param UpdateContentRequest $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateContentRequest $request, $id)
     {
@@ -176,20 +198,31 @@ class InstructorContentController extends Controller
             $content->save();
             DB::commit();
             Log::info('Content updated', ['content_id' => $content->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Content updated successfully.', 'content' => $content]);
+            }
+            
             return redirect()->route('instructor.contents.show', $content->id)->with('success', 'Content updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to update content', ['content_id' => $content->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to update content.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to update content.');
         }
     }
 
     /**
      * Hapus konten beserta filenya.
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $content = Content::with('subModule.module.course')->findOrFail($id);
         $this->authorize('delete', $content);
@@ -202,10 +235,20 @@ class InstructorContentController extends Controller
             $content->delete();
             DB::commit();
             Log::info('Content deleted', ['content_id' => $content->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Content deleted successfully.']);
+            }
+            
             return redirect()->back()->with('success', 'Content deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to delete content', ['content_id' => $content->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to delete content.'], 422);
+            }
+            
             return redirect()->back()->with('error', 'Failed to delete content.');
         }
     }

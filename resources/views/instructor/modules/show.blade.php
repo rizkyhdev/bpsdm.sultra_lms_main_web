@@ -54,9 +54,9 @@
         </form>
       @endcan
     @can('create', [App\Models\SubModule::class, $module])
-        <a href="{{ route('instructor.sub_modules.create', $module->id) }}" class="btn btn-primary btn-sm">
+        <button type="button" class="btn btn-primary btn-sm" onclick="openSubModuleModal({{ $module->id }})">
           <i class="bi bi-plus-circle"></i> Add Sub-Module
-        </a>
+        </button>
     @endcan
     </div>
   </div>
@@ -96,19 +96,14 @@
                     <i class="bi bi-eye"></i> View
                   </a>
                   @can('update', $sm)
-                    <a href="{{ route('instructor.sub_modules.edit', $sm->id) }}" class="btn btn-outline-secondary" title="Edit">
+                    <button type="button" class="btn btn-outline-secondary" onclick="openSubModuleModal({{ $module->id }}, {{ $sm->id }})" title="Edit">
                       <i class="bi bi-pencil"></i> Edit
-                    </a>
+                    </button>
                   @endcan
                   @can('delete', $sm)
-                    <form action="{{ route('instructor.sub_modules.destroy', $sm->id) }}" method="post" class="d-inline" 
-                          onsubmit="return confirm('Are you sure you want to delete this sub-module?\n\nThis will also delete:\n- All contents\n- All quizzes and questions\n\nThis action cannot be undone!');">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-outline-danger" title="Delete">
-                        <i class="bi bi-trash"></i> Delete
-                      </button>
-                    </form>
+                    <button type="button" class="btn btn-outline-danger" onclick="openSubModuleDeleteModal({{ $sm->id }})" title="Delete">
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
                   @endcan
                 </div>
               </div>
@@ -121,9 +116,9 @@
             <i class="bi bi-inbox" style="font-size: 2rem;"></i>
             <p class="mt-2">No sub-modules found. Create your first sub-module!</p>
             @can('create', [App\Models\SubModule::class, $module])
-              <a href="{{ route('instructor.sub_modules.create', $module->id) }}" class="btn btn-primary btn-sm mt-2">
+              <button type="button" class="btn btn-primary btn-sm mt-2" onclick="openSubModuleModal({{ $module->id }})">
                 <i class="bi bi-plus-circle"></i> Add Sub-Module
-              </a>
+              </button>
             @endcan
           </div>
         </div>
@@ -131,6 +126,9 @@
     </div>
   </div>
 </div>
+
+@include('partials.modals.submodule-modal')
+<script src="{{ asset('js/modal-operations.js') }}"></script>
 @endsection
 
 

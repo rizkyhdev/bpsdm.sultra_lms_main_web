@@ -108,7 +108,7 @@ class InstructorQuizController extends Controller
      * Simpan kuis.
      * @param StoreQuizRequest $request
      * @param int $subModuleId
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function store(StoreQuizRequest $request, $subModuleId)
     {
@@ -120,9 +120,19 @@ class InstructorQuizController extends Controller
             $quiz->sub_module_id = $sub->id;
             $quiz->save();
             Log::info('Quiz created', ['quiz_id' => $quiz->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Quiz created successfully.', 'quiz' => $quiz]);
+            }
+            
             return redirect()->route('instructor.quizzes.index', $sub->id)->with('success', 'Quiz created successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to create quiz', ['sub_module_id' => $sub->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to create quiz.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to create quiz.');
         }
     }
@@ -144,6 +154,18 @@ class InstructorQuizController extends Controller
     }
 
     /**
+     * Get quiz data as JSON (for modal editing)
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function json($id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        $this->authorize('view', $quiz);
+        return response()->json($quiz);
+    }
+
+    /**
      * Tampilkan form edit kuis.
      * @param int $id
      * @return \Illuminate\Http\Response
@@ -159,7 +181,7 @@ class InstructorQuizController extends Controller
      * Perbarui kuis.
      * @param UpdateQuizRequest $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateQuizRequest $request, $id)
     {
@@ -169,19 +191,30 @@ class InstructorQuizController extends Controller
         try {
             $quiz->update($request->validated());
             Log::info('Quiz updated', ['quiz_id' => $quiz->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Quiz updated successfully.', 'quiz' => $quiz]);
+            }
+            
             return redirect()->route('instructor.quizzes.show', $quiz->id)->with('success', 'Quiz updated successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to update quiz', ['quiz_id' => $quiz->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to update quiz.', 'errors' => ['general' => [$e->getMessage()]]], 422);
+            }
+            
             return redirect()->back()->withInput()->with('error', 'Failed to update quiz.');
         }
     }
 
     /**
      * Hapus kuis.
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $quiz = Quiz::with(['subModule.module.course', 'questions'])->findOrFail($id);
         $this->authorize('delete', $quiz);
@@ -195,10 +228,20 @@ class InstructorQuizController extends Controller
             $quiz->delete();
             DB::commit();
             Log::info('Quiz deleted', ['quiz_id' => $quiz->id, 'instructor_id' => Auth::id()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Quiz deleted successfully.']);
+            }
+            
             return redirect()->back()->with('success', 'Quiz deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to delete quiz', ['quiz_id' => $quiz->id, 'error' => $e->getMessage()]);
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to delete quiz.'], 422);
+            }
+            
             return redirect()->back()->with('error', 'Failed to delete quiz.');
         }
     }
