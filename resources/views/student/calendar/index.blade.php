@@ -6,8 +6,10 @@
 <div class="container-fluid my-1">
     {{-- Page Header --}}
     <div class="mb-4">
-        <h2 class="fw-bold mb-2">{{ __('calendar.calendar') }}</h2>
-        <p class="text-muted mb-0">{{ __('calendar.view_schedule') }}</p>
+        <!-- <h2 class="fw-bold mb-2">{{ __('calendar.calendar') }}</h2>
+        <p class="text-muted mb-0">{{ __('calendar.view_schedule') }}</p> -->
+        <h2 class="fw-bold mb-2">Kalender</h2>
+        <p class="text-muted mb-0">Lihat jadwal kursus dan tanggal penting Anda</p>
     </div>
 
     {{-- Calendar Container --}}
