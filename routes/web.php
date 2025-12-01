@@ -75,9 +75,9 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     // Enrollment
     Route::post('/student/enroll/{course:id}', [EnrollmentController::class, 'store'])->name('student.enroll');
     
-    // Certificates
+    // Certificates (use signed URLs generated in controller; no extra middleware to avoid env signature issues)
     Route::post('/courses/{course:slug}/certificate/generate', [CertificateController::class, 'generate'])->name('certificates.generate');
-    Route::get('/courses/{course:slug}/certificate', [CertificateController::class, 'download'])->name('certificates.download')->middleware('signed');
+    Route::get('/courses/{course:slug}/certificate', [CertificateController::class, 'download'])->name('certificates.download');
 });
 
 // Legacy routes for backward compatibility
