@@ -129,6 +129,13 @@
                                class="btn btn-outline-success w-100">
                                 <i class="bi bi-eye me-1"></i>Lihat Hasil
                             </a>
+                        @elseif(isset($hasCompletedRequiredContents) && !$hasCompletedRequiredContents)
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>Perhatian:</strong> Kuis ini tidak dapat dimulai karena Anda belum menyelesaikan seluruh konten pada sub-modul ini 100%.
+                                <br>
+                                Silakan selesaikan semua materi terlebih dahulu sebelum memulai kuis.
+                            </div>
                         @else
                             <div class="alert alert-warning">
                                 <i class="bi bi-exclamation-triangle me-2"></i>
