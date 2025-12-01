@@ -1,96 +1,166 @@
 @extends('layouts.admin')
 
-@section('title', __('Users'))
+@section('title', 'Users')
 
 @section('breadcrumb')
-    <li><a href="{{ route('admin.dashboard') }}" class="hover:underline">{{ __('Dashboard') }}</a></li>
-    <li class="text-gray-600 dark:text-gray-400" aria-current="page">{{ __('Users') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Users</li>
 @endsection
 
 @section('header-actions')
     @can('create', App\Models\User::class)
-        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-500">+ <span class="hidden sm:inline">{{ __('Add') }}</span></a>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus mr-1"></i> Add
+        </a>
     @endcan
 @endsection
 
 @section('content')
-    {{-- Filters --}}
-    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-4">
-        <x-admin.card>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-                <x-admin.input name="search" :label="__('Search (NIP/Name/Email)')" :value="request('search')" />
-                <x-admin.select name="role" :label="__('Role')" :options="['all'=>__('All'),'admin'=>__('Admin'),'instructor'=>__('Instructor'),'student'=>__('Student')]" :value="request('role')" />
-                 {{-- <x-admin.select name="is_validated" :label="__('Validation')" :options="[''=>__('All'),'1'=>__('Validated'),'0'=>__('Not yet')]" :value="request('is_validated')" /> --}}
-                <x-admin.select name="per_page" :label="__('Per page')" :options="[10=>10,25=>25,50=>50,100=>100]" :value="request('per_page',10)" />
-                <div class="sm:col-span-2 lg:col-span-1 flex items-end">
-                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">{{ __('Filter') }}</button>
+    {{-- Filter & Search --}}
+    <form method="GET" action="{{ route('admin.users.index') }}" class="mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="form-row align-items-end">
+                    <div class="form-group col-md-3">
+                        <label for="search">Search (NIP / Name / Email)</label>
+                        <input type="text"
+                               id="search"
+                               name="search"
+                               value="{{ request('search') }}"
+                               class="form-control"
+                               placeholder="Type keyword">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="role">Role</label>
+                        <select id="role" name="role" class="form-control">
+                            @php
+                                $roles = ['all' => 'All', 'admin' => 'Admin', 'instructor' => 'Instructor', 'student' => 'Student'];
+                            @endphp
+                            @foreach($roles as $value => $label)
+                                <option value="{{ $value }}" @if(request('role', 'all') == $value) selected @endif>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="per_page">Per Page</label>
+                        <select id="per_page" name="per_page" class="form-control">
+                            @foreach([10,25,50,100] as $size)
+                                <option value="{{ $size }}" @if(request('per_page', 15)==$size) selected @endif>{{ $size }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="sort">Sort By</label>
+                        <select id="sort" name="sort" class="form-control">
+                            @php
+                                $sortOptions = [
+                                    'created_at' => 'Created at',
+                                    'name' => 'Name',
+                                    'email' => 'Email',
+                                    'role' => 'Role',
+                                    'enrollments_count' => 'Total enrollments',
+                                    'completed_courses_count' => 'Completed courses',
+                                ];
+                            @endphp
+                            @foreach($sortOptions as $value => $label)
+                                <option value="{{ $value }}" @if(request('sort', 'created_at') == $value) selected @endif>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="direction">Order</label>
+                        <select id="direction" name="direction" class="form-control">
+                            <option value="desc" @if(request('direction', 'desc') === 'desc') selected @endif>Descending</option>
+                            <option value="asc" @if(request('direction') === 'asc') selected @endif>Ascending</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <button type="submit" class="btn btn-outline-secondary btn-block mt-4">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </x-admin.card>
+        </div>
     </form>
 
-    <x-admin.card>
-        <x-admin.table :headers="[
-            ['key'=>'nip','label'=>__('NIP'), 'sortable'=>true],
-            ['key'=>'name','label'=>__('Name'), 'sortable'=>true],
-            ['key'=>'email','label'=>__('Email'), 'sortable'=>true],
-            ['key'=>'role','label'=>__('Role')],
-            ['key'=>'validated','label'=>__('Validated')],
-            ['key'=>'actions','label'=>__('Actions')],
-        ]">
-            @forelse($users as $user)
-                <tr>
-                    <td class="px-4 py-2">{{ $user->nip }}</td>
-                    <td class="px-4 py-2">{{ $user->name }}</td>
-                    <td class="px-4 py-2">{{ $user->email }}</td>
-                    <td class="px-4 py-2"><x-admin.badge color="indigo">{{ strtoupper($user->role) }}</x-admin.badge></td>
-                    <td class="px-4 py-2">
-                        @if($user->is_validated)
-                            <x-admin.badge color="green">{{ __('Yes') }}</x-admin.badge>
-                        @else
-                            <x-admin.badge>{{ __('No') }}</x-admin.badge>
-                        @endif
-                    </td>
-                    <td class="px-4 py-2">
-                        <div class="flex justify-end gap-2">
-                            @can('view', $user)
-                                <a href="{{ route('admin.users.show', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded border border-gray-400 dark:border-gray-600 text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700" title="{{ __('View') }}">
+    {{-- Users table --}}
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="thead-light">
+                    <tr>
+                        <th>NIP</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Validated</th>
+                        <th class="text-right">Enrollments</th>
+                        <th class="text-right">Completed Courses</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @forelse($users as $user)
+                    <tr>
+                        <td>{{ $user->nip }}</td>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td><span class="badge badge-primary">{{ strtoupper($user->role) }}</span></td>
+                        <td>
+                            @if($user->is_validated)
+                                <span class="badge badge-success">Yes</span>
+                            @else
+                                <span class="badge badge-secondary">No</span>
+                            @endif
+                        </td>
+                        <td class="text-right">
+                            {{ $user->enrollments_count ?? 0 }}
+                        </td>
+                        <td class="text-right">
+                            {{ $user->completed_courses_count ?? 0 }}
+                        </td>
+                        <td class="text-right">
+                            <div class="btn-group btn-group-sm">
+                                @can('view', $user)
+                                <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-outline-secondary" title="View">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                            @endcan
-                            <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-sm" title="{{ __('Edit') }}">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to delete this user?') }}')" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 shadow-sm" title="{{ __('Delete') }}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                            @can('validateUser', $user)
-                                @if(!$user->is_validated)
-                                    <form action="{{ route('admin.users.validate', $user) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" class="inline-flex items-center justify-center w-8 h-8 text-sm rounded border border-green-600 dark:border-green-500 text-white bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-600 shadow-sm" title="{{ __('Validate') }}">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
-                                @endif
-                            @endcan
-                        </div>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="px-4 py-6"><x-admin.empty-state :title="__('No data')" :description="__('No users found for this filter.')"/></td>
-                </tr>
-            @endforelse
-        </x-admin.table>
-
-        <x-admin.pagination :collection="$users" />
-    </x-admin.card>
+                                @endcan
+                                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-outline-primary" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                                @can('validateUser', $user)
+                                    @if(!$user->is_validated)
+                                        <form action="{{ route('admin.users.validate', $user->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline-success" title="Validate">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endcan
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No users found for this filter.</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body">
+            @include('partials._pagination', ['collection' => $users])
+        </div>
+    </div>
 @endsection
-
-
 
