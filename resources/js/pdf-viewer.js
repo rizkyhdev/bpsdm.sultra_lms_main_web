@@ -1,8 +1,9 @@
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?url';
 
-// Configure worker using Vite-loaded URL
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// Disable web worker to avoid dynamic import issues in some deployments.
+// Rendering happens on the main thread, which is acceptable for typical LMS PDFs.
+pdfjsLib.GlobalWorkerOptions.workerSrc = undefined;
+pdfjsLib.disableWorker = true;
 
 function initPdfViewer(container) {
     const pdfUrl = container.getAttribute('data-pdf-url');
