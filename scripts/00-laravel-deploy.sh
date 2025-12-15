@@ -3,6 +3,9 @@ echo "Running composer and npm install"
 composer global require hirak/prestissimo
 composer install --no-dev --working-dir=/var/www/html
 
+composer dump-autoload
+
+
 # composer install --no-dev --no-interaction --working-dir=/var/www/html
 
 # npm install
