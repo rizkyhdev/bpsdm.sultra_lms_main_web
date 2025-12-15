@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 echo "Running composer and npm install"
 composer global require hirak/prestissimo
-# composer install --no-dev --working-dir=/var/www/html
+composer install --no-dev --working-dir=/var/www/html
 
-composer install --no-dev --no-interaction --working-dir=/var/www/html && npm install && npm run build
+# composer install --no-dev --no-interaction --working-dir=/var/www/html
 
 # Skip generating app key for dev
 # echo "generating application key..."
@@ -33,3 +33,6 @@ echo "Caching routes..."
 php artisan route:cache
 echo "Caching views..."
 php artisan view:cache
+
+npm install
+npm run build
