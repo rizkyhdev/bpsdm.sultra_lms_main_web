@@ -5,8 +5,8 @@ composer install --no-dev --working-dir=/var/www/html
 
 # composer install --no-dev --no-interaction --working-dir=/var/www/html
 
-npm install
-npm run build
+# npm install
+# npm run build
 
 # Skip generating app key for dev
 # echo "generating application key..."
