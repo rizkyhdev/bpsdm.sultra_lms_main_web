@@ -63,8 +63,7 @@
             "mkdir -p /vercel/output/static",
             "cp -r public/build /vercel/output/static",
             "php artisan config:cache",
-            "php artisan route:cache",
-            "php artisan optimize:clear"
+            "php artisan route:cache"
         ]
     },
     "extra": {
