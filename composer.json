@@ -62,7 +62,7 @@
             "npm install",
             "npm run build",
             "mkdir -p /vercel/output/static",
-            "cp -r public/* /vercel/output/static",
+            "cp -r public /vercel/output/static",
             "cp -r public/build /vercel/output/static",
             "php artisan config:cache",
             "php artisan route:cache"
