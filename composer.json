@@ -64,7 +64,6 @@
             "mkdir -p /vercel/output/static",
             "cp -r public /vercel/output/static",
             "cp -r public/build /vercel/output/static",
-            "cp -r public/* /vercel/output/static/build",
             "php artisan migrate --force",
             "php artisan optimize:clear",
             "php artisan storage:link",
