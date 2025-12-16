@@ -24,7 +24,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_URL": "https://bpsdm-sultra-lms-main-web.vercel.app",
         "APP_KEY": "base64:+9s/TnUQlHKGjmNRO2uaugb8+S7actweICLQWlqa9hI=",
 
