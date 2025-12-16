@@ -1,23 +1,23 @@
-<?php
+<?php require __DIR__ . "/../public/index.php";
 
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
+// use Illuminate\Foundation\Application;
+// use Illuminate\Http\Request;
 
-define('LARAVEL_START', microtime(true));
+// define('LARAVEL_START', microtime(true));
 
-// Determine if the application is in maintenance mode...
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
-}
+// // Determine if the application is in maintenance mode...
+// if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+//     require $maintenance;
+// }
 
-// Register the Composer autoloader...
-require __DIR__.'/../vendor/autoload.php';
+// // Register the Composer autoloader...
+// require __DIR__.'/../vendor/autoload.php';
 
 
-// require __DIR__ . "/../public/index.php";
+// // require __DIR__ . "/../public/index.php";
 
-// Bootstrap Laravel and handle the request...
-/** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+// // Bootstrap Laravel and handle the request...
+// /** @var Application $app */
+// $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+// $app->handleRequest(Request::capture());
