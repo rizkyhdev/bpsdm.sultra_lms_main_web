@@ -5,6 +5,13 @@
         "api/index.php": { "runtime": "vercel-php@0.7.4" }
     },
     "routes": [
+        { "src": "/build/(.*)", "dest": "/public/build/$1" },
+        { "src": "/resources/(.*)", "dest": "/public/resources/$1" },
+        { "src": "/favicon/(.*)", "dest": "/public/favicon/$1" },
+        {
+            "src": "/(css/)?([a-zA-Z0-9_\\-]+\\.(ico|txt|webp|css|js|png|jpg))$",
+            "dest": "/public/$1$2"
+        },
         {
             "src": "/(.*)",
             "dest": "/api/index.php"
