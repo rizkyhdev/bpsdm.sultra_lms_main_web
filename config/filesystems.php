@@ -32,7 +32,9 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app/private'),
+            // 'root' => storage_path('app/private'),
+            // For Vercel, we need to use a temporary directory
+            'root' => env('FILESYSTEM_ROOT', storage_path('app/private')),
             'serve' => true,
             'throw' => false,
             'report' => false,
@@ -40,7 +42,9 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            // 'root' => storage_path('app/public'),
+            // For Vercel, we need to use a temporary directory
+            'root' => env('FILESYSTEM_ROOT', storage_path('app/public')),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
