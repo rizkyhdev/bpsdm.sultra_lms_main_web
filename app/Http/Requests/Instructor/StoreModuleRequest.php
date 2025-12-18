@@ -16,7 +16,8 @@ class StoreModuleRequest extends FormRequest
         return [
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'urutan' => 'required|integer',
+      // Order will be set automatically in controller based on existing modules
+      'urutan' => 'nullable|integer',
         ];
     }
 }

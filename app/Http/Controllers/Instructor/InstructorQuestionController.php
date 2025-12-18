@@ -78,6 +78,13 @@ class InstructorQuestionController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validated();
+            
+            // Auto-calculate urutan if not provided (next available order number)
+            if (empty($data['urutan'])) {
+                $maxUrutan = Question::where('quiz_id', $quiz->id)->max('urutan') ?? 0;
+                $data['urutan'] = $maxUrutan + 1;
+            }
+            
             $question = new Question();
             $question->quiz_id = $quiz->id;
             $question->pertanyaan = $data['pertanyaan'];
@@ -87,30 +94,33 @@ class InstructorQuestionController extends Controller
             $question->save();
 
             if (in_array($question->tipe, ['multiple_choice', 'true_false']) && !empty($data['answer_options'])) {
-                $correctCount = 0;
                 foreach ($data['answer_options'] as $opt) {
                     $option = new AnswerOption();
                     $option->question_id = $question->id;
                     $option->teks_jawaban = $opt['teks_jawaban'];
                     $option->is_correct = !empty($opt['is_correct']) ? 1 : 0;
-                    if ($option->is_correct) { $correctCount++; }
                     $option->save();
-                }
-                if ($question->tipe === 'multiple_choice' && $correctCount !== 1) {
-                    throw new \RuntimeException('Multiple choice must have exactly one correct option.');
-                }
-                if ($question->tipe === 'true_false' && $correctCount !== 1) {
-                    throw new \RuntimeException('True/False must have exactly one correct option.');
                 }
             }
 
             DB::commit();
             Log::info('Question created', ['question_id' => $question->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.questions.index', $quiz->id)->with('success', 'Question created successfully.');
+            return redirect()->route('instructor.questions.index', $quiz->id)
+                ->with('success', 'Pertanyaan berhasil ditambahkan!');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create question', ['quiz_id' => $quiz->id, 'error' => $e->getMessage()]);
-            return redirect()->back()->withInput()->with('error', 'Failed to create question: ' . $e->getMessage());
+            
+            $errorMessage = 'Gagal menyimpan pertanyaan. ';
+            if (str_contains($e->getMessage(), 'exactly one correct option')) {
+                $errorMessage .= 'Pertanyaan pilihan ganda atau benar/salah harus memiliki tepat satu jawaban yang benar.';
+            } else {
+                $errorMessage .= $e->getMessage();
+            }
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $errorMessage);
         }
     }
 
@@ -160,20 +170,12 @@ class InstructorQuestionController extends Controller
 
             if (in_array($question->tipe, ['multiple_choice', 'true_false'])) {
                 $question->answerOptions()->delete();
-                $correctCount = 0;
                 foreach ($data['answer_options'] as $opt) {
                     $option = new AnswerOption();
                     $option->question_id = $question->id;
                     $option->teks_jawaban = $opt['teks_jawaban'];
                     $option->is_correct = !empty($opt['is_correct']) ? 1 : 0;
-                    if ($option->is_correct) { $correctCount++; }
                     $option->save();
-                }
-                if ($question->tipe === 'multiple_choice' && $correctCount !== 1) {
-                    throw new \RuntimeException('Multiple choice must have exactly one correct option.');
-                }
-                if ($question->tipe === 'true_false' && $correctCount !== 1) {
-                    throw new \RuntimeException('True/False must have exactly one correct option.');
                 }
             } else {
                 // Essay: ensure no options remain

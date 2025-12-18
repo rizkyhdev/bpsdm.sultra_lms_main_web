@@ -61,8 +61,9 @@ class Course extends Model
     {
         return [
             'jp_value' => 'integer',
+            // Rely on Laravel's standard datetime casting; controller provides UTC values
             'start_date_time' => 'datetime',
-            'end_date_time' => 'datetime',
+            'end_date_time'   => 'datetime',
         ];
     }
 

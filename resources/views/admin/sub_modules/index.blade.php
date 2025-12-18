@@ -29,23 +29,12 @@
                     <th class="text-right">Aksi</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="admin-submodule-order-body">
                 @forelse($subModules as $s)
-                    <tr>
+                    <tr class="admin-submodule-row" data-id="{{ $s->id }}" draggable="true">
                         <td>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <form action="{{ route('admin.sub_modules.reorder', $s) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="direction" value="up">
-                                    <button class="btn btn-outline-secondary" title="Naik"><i class="fas fa-arrow-up"></i></button>
-                                </form>
-                                <form action="{{ route('admin.sub_modules.reorder', $s) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="direction" value="down">
-                                    <button class="btn btn-outline-secondary" title="Turun"><i class="fas fa-arrow-down"></i></button>
-                                </form>
-                            </div>
-                            <span class="ml-2">{{ $s->urutan }}</span>
+                            <i class="fas fa-grip-vertical text-muted mr-2"></i>
+                            <span class="badge badge-secondary order-badge">{{ $s->urutan }}</span>
                         </td>
                         <td><a href="{{ route('admin.sub_modules.show', $s) }}">{{ $s->judul }}</a></td>
                         <td>{{ \Illuminate\Support\Str::limit($s->deskripsi, 100) }}</td>
@@ -99,6 +88,107 @@ $('#confirmDeleteModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var action = button.data('action');
     $('#deleteFormSubModule').attr('action', action);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const tbody = document.getElementById('admin-submodule-order-body');
+    if (!tbody) return;
+
+    let dragSrcEl = null;
+
+    function handleDragStart(e) {
+        dragSrcEl = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.outerHTML);
+        this.classList.add('table-active');
+    }
+
+    function handleDragOver(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDragEnter() {
+        this.classList.add('table-warning');
+    }
+
+    function handleDragLeave() {
+        this.classList.remove('table-warning');
+    }
+
+    function handleDrop(e) {
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
+
+        if (dragSrcEl !== this) {
+            this.parentNode.removeChild(dragSrcEl);
+            const dropHTML = e.dataTransfer.getData('text/html');
+            this.insertAdjacentHTML('beforebegin', dropHTML);
+            const droppedRow = this.previousSibling;
+            addDnDHandlers(droppedRow);
+            saveNewOrder();
+        }
+        this.classList.remove('table-warning');
+        return false;
+    }
+
+    function handleDragEnd() {
+        this.classList.remove('table-active');
+        const rows = tbody.querySelectorAll('.admin-submodule-row');
+        rows.forEach(function (row) {
+            row.classList.remove('table-warning');
+        });
+    }
+
+    function addDnDHandlers(row) {
+        row.addEventListener('dragstart', handleDragStart);
+        row.addEventListener('dragenter', handleDragEnter);
+        row.addEventListener('dragover', handleDragOver);
+        row.addEventListener('dragleave', handleDragLeave);
+        row.addEventListener('drop', handleDrop);
+        row.addEventListener('dragend', handleDragEnd);
+    }
+
+    function saveNewOrder() {
+        const rows = tbody.querySelectorAll('.admin-submodule-row');
+        rows.forEach(function (row, index) {
+            const id = row.getAttribute('data-id');
+            const newOrder = index + 1;
+
+            const badge = row.querySelector('.order-badge');
+            if (badge) {
+                badge.textContent = newOrder;
+            }
+
+            fetch("{{ url('admin/sub-modules') }}/" + id + "/reorder", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content'),
+                },
+                body: JSON.stringify({
+                    sub_module_id: parseInt(id, 10),
+                    new_order: newOrder
+                }),
+            }).then(function (response) {
+                if (!response.ok) {
+                    console.error('Failed to save order for sub-module ' + id);
+                }
+            }).catch(function (error) {
+                console.error('Error saving order for sub-module ' + id, error);
+            });
+        });
+    }
+
+    const rows = tbody.querySelectorAll('.admin-submodule-row');
+    rows.forEach(function (row) {
+        addDnDHandlers(row);
+    });
 });
 </script>
 @endsection

@@ -22,10 +22,8 @@
             <textarea name="deskripsi" id="subModuleDeskripsi" class="form-control" rows="3"></textarea>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label">Urutan <span class="text-danger">*</span></label>
-            <input type="number" name="urutan" id="subModuleUrutan" class="form-control" min="1" required>
-          </div>
+          <!-- Order is managed automatically and via drag-and-drop, so we hide this from the user -->
+          <input type="hidden" name="urutan" id="subModuleUrutan" value="">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

@@ -16,7 +16,8 @@ class UpdateModuleRequest extends FormRequest
         return [
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'urutan' => 'required|integer',
+      // Order is managed via drag-and-drop reorder endpoint
+      'urutan' => 'nullable|integer',
         ];
     }
 }

@@ -11,6 +11,23 @@
             $instructorEmail = $firstEnrollment->user->email;
         }
     }
+
+    // Schedule & enrollment window (best-practice LMS behavior)
+    $nowUtc = \Carbon\CarbonImmutable::now('UTC');
+    $scheduleStatus = $course instanceof \App\Models\Course
+        ? $course->scheduleStatus($nowUtc)
+        : null;
+    $canEnroll = $course instanceof \App\Models\Course
+        ? $course->canEnroll($nowUtc)
+        : true;
+    $hideCtaOutsideWindow = config('lms.hide_enroll_cta_outside_window', false);
+
+    $startLocal = $course->start_date_time
+        ? $course->start_date_time->setTimezone(config('app.timezone'))
+        : null;
+    $endLocal = $course->end_date_time
+        ? $course->end_date_time->setTimezone(config('app.timezone'))
+        : null;
 @endphp
 
 @if ($view === 'grid')
@@ -63,6 +80,44 @@
                 @endif
             </div>
 
+            {{-- Enrollment window (schedule) --}}
+            <div class="small text-muted">
+                @if($startLocal || $endLocal)
+                    <div>
+                        <i class="bi bi-calendar-event me-1"></i>
+                        <span>
+                            @if($startLocal)
+                                Mulai: {{ $startLocal->format('Y-m-d H:i') }}
+                            @else
+                                Mulai: tidak dibatasi
+                            @endif
+                            &mdash;
+                            @if($endLocal)
+                                Selesai: {{ $endLocal->format('Y-m-d H:i') }}
+                            @else
+                                Selesai: tidak dibatasi
+                            @endif
+                        </span>
+                    </div>
+                    @if($scheduleStatus)
+                        <span class="badge mt-1
+                            @if($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_BEFORE_START) bg-secondary
+                            @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_IN_PROGRESS) bg-success
+                            @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_AFTER_END) bg-danger
+                            @else bg-info
+                            @endif
+                        ">
+                            {{ $scheduleStatus }}
+                        </span>
+                    @endif
+                @else
+                    <div>
+                        <i class="bi bi-calendar-check me-1"></i>
+                        <span>Pendaftaran selalu terbuka</span>
+                    </div>
+                @endif
+            </div>
+
             {{-- Rating/Enrollments --}}
             @if ($course->enrollments_count ?? 0)
                 <p class="text-warning mb-2 small">
@@ -93,12 +148,30 @@
             {{-- CTA Button --}}
             @if($actions)
                 @if(Route::has('student.enroll'))
-                    <form action="{{ route('student.enroll', $course) }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus-circle me-1"></i>Daftar
-                        </button>
-                    </form>
+                    @php
+                        $shouldShowCta = $canEnroll || ! $hideCtaOutsideWindow;
+                    @endphp
+                    @if($shouldShowCta)
+                        <form action="{{ route('student.enroll', $course) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-sm"
+                                @if(! $canEnroll)
+                                    disabled
+                                    title="@if($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_BEFORE_START)
+                                        {{ __('schedule.enrollment_opens_in', ['time' => $course->start_date_time?->diffForHumans() ?? '']) }}
+                                    @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_AFTER_END)
+                                        {{ __('schedule.enrollment_closed_ago', ['time' => $course->end_date_time?->diffForHumans() ?? '']) }}
+                                    @else
+                                        {{ __('Enrollment is not available at this time.') }}
+                                    @endif"
+                                @endif
+                            >
+                                <i class="bi bi-plus-circle me-1"></i>Daftar
+                            </button>
+                        </form>
+                    @endif
                 @elseif ($hasRoute)
                     <a href="{{ route('courses.show', $course->id) }}" class="btn btn-primary btn-sm">
                         <i class="bi bi-play-circle me-1"></i>Mulai
@@ -147,15 +220,75 @@
                             </svg>
                             <span>{{ $instructorEmail }}</span>
                         </div>
+
+                        {{-- Enrollment window (schedule) --}}
+                        <div class="mt-1 text-sm text-gray-600">
+                            @if($startLocal || $endLocal)
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>
+                                        @if($startLocal)
+                                            Mulai: {{ $startLocal->format('Y-m-d H:i') }}
+                                        @else
+                                            Mulai: tidak dibatasi
+                                        @endif
+                                        &mdash;
+                                        @if($endLocal)
+                                            Selesai: {{ $endLocal->format('Y-m-d H:i') }}
+                                        @else
+                                            Selesai: tidak dibatasi
+                                        @endif
+                                    </span>
+                                </div>
+                                @if($scheduleStatus)
+                                    <span class="inline-flex items-center px-2 py-0.5 mt-1 rounded-full text-xs font-medium
+                                        @if($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_BEFORE_START) bg-gray-200 text-gray-800
+                                        @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_IN_PROGRESS) bg-green-100 text-green-800
+                                        @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_AFTER_END) bg-red-100 text-red-800
+                                        @else bg-blue-100 text-blue-800
+                                        @endif
+                                    ">
+                                        {{ $scheduleStatus }}
+                                    </span>
+                                @endif
+                            @else
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>Pendaftaran selalu terbuka</span>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                     @if($actions)
                         @if(Route::has('student.enroll'))
-                            <form action="{{ route('student.enroll', $course) }}" method="POST" class="mt-3 lg:mt-0 lg:ml-4">
-                                @csrf
-                                <button type="submit" class="btn-primary whitespace-nowrap">
-                                    Daftar
-                                </button>
-                            </form>
+                            @php
+                                $shouldShowCta = $canEnroll || ! $hideCtaOutsideWindow;
+                            @endphp
+                            @if($shouldShowCta)
+                                <form action="{{ route('student.enroll', $course) }}" method="POST" class="mt-3 lg:mt-0 lg:ml-4">
+                                    @csrf
+                                    <button
+                                        type="submit"
+                                        class="btn-primary whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
+                                        @if(! $canEnroll)
+                                            disabled
+                                            title="@if($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_BEFORE_START)
+                                                {{ __('schedule.enrollment_opens_in', ['time' => $course->start_date_time?->diffForHumans() ?? '']) }}
+                                            @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_AFTER_END)
+                                                {{ __('schedule.enrollment_closed_ago', ['time' => $course->end_date_time?->diffForHumans() ?? '']) }}
+                                            @else
+                                                {{ __('Enrollment is not available at this time.') }}
+                                            @endif"
+                                        @endif
+                                    >
+                                        Daftar
+                                    </button>
+                                </form>
+                            @endif
                         @elseif ($hasRoute)
                             <a href="{{ route('courses.show', $course->id) }}" class="mt-3 lg:mt-0 lg:ml-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 whitespace-nowrap">
                                 {{ __('Start Course') }}

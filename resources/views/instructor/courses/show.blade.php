@@ -18,7 +18,50 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <h5 class="mb-1">Ringkasan</h5>
-      <div class="text-muted small">Modules: {{ $course->modules_count }} | Enrollments: {{ $course->user_enrollments_count ?? $course->enrollments_count }} | Completion: {{ $stats['completion_rate'] ?? 0 }}%</div>
+      <div class="text-muted small">
+        Modules: {{ $course->modules_count }} |
+        Enrollments: {{ $course->user_enrollments_count ?? $course->enrollments_count }} |
+        Completion: {{ $stats['completion_rate'] ?? 0 }}%
+      </div>
+      @php
+          $startLocal = $course->start_date_time
+              ? $course->start_date_time->setTimezone(config('app.timezone'))
+              : null;
+          $endLocal = $course->end_date_time
+              ? $course->end_date_time->setTimezone(config('app.timezone'))
+              : null;
+          $scheduleStatus = $course->scheduleStatus();
+      @endphp
+      <div id="course-schedule-summary" class="text-muted small mt-1">
+        @if($startLocal || $endLocal)
+          <span class="me-2">
+            <strong>Enrollment window:</strong>
+            @if($startLocal)
+              starts {{ $startLocal->format('Y-m-d H:i') }}
+            @else
+              no start limit
+            @endif
+            &ndash;
+            @if($endLocal)
+              ends {{ $endLocal->format('Y-m-d H:i') }}
+            @else
+              no end limit
+            @endif
+          </span>
+          <span class="badge
+            @if($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_BEFORE_START) bg-secondary
+            @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_IN_PROGRESS) bg-success
+            @elseif($scheduleStatus === \App\Models\Course::SCHEDULE_STATUS_AFTER_END) bg-danger
+            @else bg-info
+            @endif
+          ">
+            {{ $scheduleStatus }}
+          </span>
+        @else
+          <span class="badge bg-success me-1">ALWAYS_OPEN</span>
+          <span>Enrollment is always open (no start/end set).</span>
+        @endif
+      </div>
     </div>
     <div>
       @can('update', $course)
@@ -203,6 +246,7 @@ document.getElementById('scheduleForm')?.addEventListener('submit', async functi
     const form = this;
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
+    const scheduleSummaryEl = document.getElementById('course-schedule-summary');
     
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
@@ -223,10 +267,57 @@ document.getElementById('scheduleForm')?.addEventListener('submit', async functi
         
         if (response.ok && data.success) {
             alert('Schedule updated successfully!');
+
+            // Update header schedule summary without full page reload
+            if (scheduleSummaryEl && data.course) {
+                const startUtc = data.course.start_date_time;
+                const endUtc = data.course.end_date_time;
+                const status = data.course.schedule_status || 'ALWAYS_OPEN';
+
+                function formatLocal(dt) {
+                    if (!dt) return null;
+                    const d = new Date(dt);
+                    if (isNaN(d.getTime())) return dt;
+                    return d.toLocaleString(undefined, {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    });
+                }
+
+                const startLocal = formatLocal(startUtc);
+                const endLocal = formatLocal(endUtc);
+
+                let badgeClass = 'bg-info';
+                if (status === 'BEFORE_START') badgeClass = 'bg-secondary';
+                else if (status === 'IN_PROGRESS') badgeClass = 'bg-success';
+                else if (status === 'AFTER_END') badgeClass = 'bg-danger';
+
+                if (startLocal || endLocal) {
+                    scheduleSummaryEl.innerHTML = `
+                        <span class="me-2">
+                            <strong>Enrollment window:</strong>
+                            ${startLocal ? `starts ${startLocal}` : 'no start limit'}
+                            &ndash;
+                            ${endLocal ? `ends ${endLocal}` : 'no end limit'}
+                        </span>
+                        <span class="badge ${badgeClass}">
+                            ${status}
+                        </span>
+                    `;
+                } else {
+                    scheduleSummaryEl.innerHTML = `
+                        <span class="badge bg-success me-1">ALWAYS_OPEN</span>
+                        <span>Enrollment is always open (no start/end set).</span>
+                    `;
+                }
+            }
+
             if (data.meta?.warning) {
                 alert('Warning: ' + data.meta.warning);
             }
-            location.reload();
         } else {
             alert('Error: ' + (data.message || 'Failed to update schedule'));
         }

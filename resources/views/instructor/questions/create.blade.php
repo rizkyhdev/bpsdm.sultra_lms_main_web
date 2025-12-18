@@ -15,6 +15,18 @@
 
 @section('content')
 <div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h4 class="mb-0">Tambah Pertanyaan</h4>
+      <small class="text-muted">Quiz: {{ $quiz->judul }}</small>
+    </div>
+    <div>
+      <a href="{{ route('instructor.questions.index', $quiz->id) }}" class="btn btn-light btn-sm">
+        <i class="bi bi-arrow-left"></i> Kembali ke Daftar Pertanyaan
+      </a>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-body">
       <form action="{{ route('instructor.questions.store', $quiz->id) }}" method="post">
@@ -46,6 +58,10 @@
         @endphp
         <div id="answerOptionsSection" style="display: {{ $showOptions ? 'block' : 'none' }};">
         <h6>Opsi Jawaban (untuk Multiple Choice / True False)</h6>
+        @error('answer_options')
+          <small class="text-danger d-block">{{ $message }}</small>
+        @enderror
+        <div id="answerOptionsError" class="text-danger small mt-1 d-none"></div>
         <div id="optionsContainer">
           {{-- Dynamic repeatable group: name="answer_options[index][teks_jawaban]" & answer_options[index][is_correct] --}}
           @php $oldOptions = old('answer_options', []); @endphp
@@ -88,6 +104,18 @@
     var addBtn = document.getElementById('addOptionBtn');
     var answerOptionsSection = document.getElementById('answerOptionsSection');
     var tipeSelect = document.getElementById('tipeSelect');
+    var form = document.querySelector('form');
+    var optionsError = document.getElementById('answerOptionsError');
+    
+    if (!container) {
+      console.error('Options container not found');
+      return;
+    }
+    
+    if (!addBtn) {
+      console.error('Add option button not found');
+      return;
+    }
     
     function getCurrentIndex() {
       return container ? container.querySelectorAll('.option-row').length : 0;
@@ -142,32 +170,72 @@
         var row = e.target.closest('.option-row');
         if (row) {
           row.remove();
+        }
       }
     }
+
+    function validateCorrectAnswer() {
+      if (!tipeSelect || !container) return true;
+
+      var selectedType = tipeSelect.value;
+      if (selectedType !== 'multiple_choice' && selectedType !== 'true_false') {
+        return true;
+      }
+
+      var checkboxes = container.querySelectorAll('input.form-check-input[type="checkbox"]');
+      var checkedCount = 0;
+      checkboxes.forEach(function(cb) {
+        if (cb.checked) checkedCount++;
+      });
+
+      if (checkedCount === 0) {
+        if (optionsError) {
+          optionsError.textContent = 'Pilih minimal satu jawaban yang benar untuk pertanyaan ini.';
+          optionsError.classList.remove('d-none');
+        }
+        return false;
+      }
+
+      if (checkedCount > 1) {
+        if (optionsError) {
+          optionsError.textContent = 'Pilih tepat satu jawaban yang benar untuk pertanyaan pilihan ganda / benar-salah.';
+          optionsError.classList.remove('d-none');
+        }
+        return false;
+      }
+
+      if (optionsError) {
+        optionsError.textContent = '';
+        optionsError.classList.add('d-none');
+      }
+      return true;
+    }
+    
+    // Add event listener for add button
+    addBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      addRow();
+    });
+    
+    // Add event listener for remove buttons (delegated)
+    if (container) {
+      container.addEventListener('click', onClick);
+    }
+
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        if (!validateCorrectAnswer()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
     }
     
     // Initialize on page load
     if (tipeSelect) {
       toggleAnswerOptions();
       tipeSelect.addEventListener('change', toggleAnswerOptions);
-    }
-    
-    // Add event listeners
-    if (addBtn) {
-      addBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('Add button clicked');
-        addRow();
-      });
-    } else {
-      console.error('Add button not found');
-    }
-    
-    if (container) {
-      container.addEventListener('click', onClick);
-    } else {
-      console.error('Container not found');
     }
   });
 </script>
