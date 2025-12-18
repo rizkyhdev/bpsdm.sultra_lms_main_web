@@ -78,6 +78,13 @@ class InstructorQuestionController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validated();
+            
+            // Auto-calculate urutan if not provided (next available order number)
+            if (empty($data['urutan'])) {
+                $maxUrutan = Question::where('quiz_id', $quiz->id)->max('urutan') ?? 0;
+                $data['urutan'] = $maxUrutan + 1;
+            }
+            
             $question = new Question();
             $question->quiz_id = $quiz->id;
             $question->pertanyaan = $data['pertanyaan'];
@@ -106,11 +113,22 @@ class InstructorQuestionController extends Controller
 
             DB::commit();
             Log::info('Question created', ['question_id' => $question->id, 'instructor_id' => Auth::id()]);
-            return redirect()->route('instructor.questions.index', $quiz->id)->with('success', 'Question created successfully.');
+            return redirect()->route('instructor.questions.index', $quiz->id)
+                ->with('success', 'Pertanyaan berhasil ditambahkan!');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create question', ['quiz_id' => $quiz->id, 'error' => $e->getMessage()]);
-            return redirect()->back()->withInput()->with('error', 'Failed to create question: ' . $e->getMessage());
+            
+            $errorMessage = 'Gagal menyimpan pertanyaan. ';
+            if (str_contains($e->getMessage(), 'exactly one correct option')) {
+                $errorMessage .= 'Pertanyaan pilihan ganda atau benar/salah harus memiliki tepat satu jawaban yang benar.';
+            } else {
+                $errorMessage .= $e->getMessage();
+            }
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $errorMessage);
         }
     }
 

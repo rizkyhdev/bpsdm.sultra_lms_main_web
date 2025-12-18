@@ -15,6 +15,18 @@
 
 @section('content')
 <div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h4 class="mb-0">Tambah Pertanyaan</h4>
+      <small class="text-muted">Quiz: {{ $quiz->judul }}</small>
+    </div>
+    <div>
+      <a href="{{ route('instructor.questions.index', $quiz->id) }}" class="btn btn-light btn-sm">
+        <i class="bi bi-arrow-left"></i> Kembali ke Daftar Pertanyaan
+      </a>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-body">
       <form action="{{ route('instructor.questions.store', $quiz->id) }}" method="post">
@@ -89,6 +101,16 @@
     var answerOptionsSection = document.getElementById('answerOptionsSection');
     var tipeSelect = document.getElementById('tipeSelect');
     
+    if (!container) {
+      console.error('Options container not found');
+      return;
+    }
+    
+    if (!addBtn) {
+      console.error('Add option button not found');
+      return;
+    }
+    
     function getCurrentIndex() {
       return container ? container.querySelectorAll('.option-row').length : 0;
     }
@@ -142,32 +164,26 @@
         var row = e.target.closest('.option-row');
         if (row) {
           row.remove();
+        }
       }
     }
+    
+    // Add event listener for add button
+    addBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      addRow();
+    });
+    
+    // Add event listener for remove buttons (delegated)
+    if (container) {
+      container.addEventListener('click', onClick);
     }
     
     // Initialize on page load
     if (tipeSelect) {
       toggleAnswerOptions();
       tipeSelect.addEventListener('change', toggleAnswerOptions);
-    }
-    
-    // Add event listeners
-    if (addBtn) {
-      addBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('Add button clicked');
-        addRow();
-      });
-    } else {
-      console.error('Add button not found');
-    }
-    
-    if (container) {
-      container.addEventListener('click', onClick);
-    } else {
-      console.error('Container not found');
     }
   });
 </script>
