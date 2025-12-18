@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\CourseScheduleUpdated;
 use App\Http\Requests\UpdateCourseScheduleRequest;
 use App\Models\Course;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
@@ -15,17 +16,33 @@ class CourseScheduleController extends Controller
      */
     public function update(UpdateCourseScheduleRequest $request, $id): JsonResponse
     {
+        // Trigger validation (rules live in the FormRequest); we ignore the returned array
+        // and read directly from the request to avoid any casting/merge side-effects.
+        $request->validated();
+
         $course = Course::findOrFail($id);
         $this->authorize('updateSchedule', $course);
 
         $oldStart = $course->start_date_time?->toIso8601String();
         $oldEnd = $course->end_date_time?->toIso8601String();
 
-        $course->update([
-            'start_date_time' => $request->input('start_date_time'),
-            'end_date_time' => $request->input('end_date_time'),
-            'updated_by' => $request->user()->id,
-        ]);
+        // Read raw local datetimes from the request (HTML datetime-local format)
+        $rawStart = $request->input('start_date_time');
+        $rawEnd = $request->input('end_date_time');
+
+        // Normalize empty strings to null (best practice for optional datetime fields)
+        $rawStart = $rawStart === '' ? null : $rawStart;
+        $rawEnd = $rawEnd === '' ? null : $rawEnd;
+
+        // Convert from local timezone to immutable UTC instances before saving
+        $course->start_date_time = $rawStart
+            ? CarbonImmutable::parse($rawStart, config('app.timezone'))->setTimezone('UTC')
+            : null;
+        $course->end_date_time = $rawEnd
+            ? CarbonImmutable::parse($rawEnd, config('app.timezone'))->setTimezone('UTC')
+            : null;
+        $course->updated_by = $request->user()->id;
+        $course->save();
 
         // Log schedule change
         Log::info('Course schedule updated', [

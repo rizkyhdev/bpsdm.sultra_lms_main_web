@@ -273,6 +273,34 @@
                         <dd class="col-sm-7 small">{{ $courseData->bidang_kompetensi ?? $course->bidang_kompetensi }}</dd>
                         @endif
                         
+                        @php
+                            $startLocal = $course->start_date_time
+                                ? $course->start_date_time->setTimezone(config('app.timezone'))
+                                : null;
+                            $endLocal = $course->end_date_time
+                                ? $course->end_date_time->setTimezone(config('app.timezone'))
+                                : null;
+                        @endphp
+                        @if($startLocal || $endLocal)
+                        <dt class="col-sm-5 text-muted small">Jadwal Pendaftaran</dt>
+                        <dd class="col-sm-7 small">
+                            @if($startLocal)
+                                Mulai: {{ $startLocal->format('Y-m-d H:i') }}
+                            @else
+                                Mulai: tidak dibatasi
+                            @endif
+                            <br>
+                            @if($endLocal)
+                                Selesai: {{ $endLocal->format('Y-m-d H:i') }}
+                            @else
+                                Selesai: tidak dibatasi
+                            @endif
+                        </dd>
+                        @else
+                        <dt class="col-sm-5 text-muted small">Jadwal Pendaftaran</dt>
+                        <dd class="col-sm-7 small">Selalu terbuka</dd>
+                        @endif
+                        
                         <dt class="col-sm-5 text-muted small">Total Modul</dt>
                         <dd class="col-sm-7 small">{{ $modules->count() ?? 0 }} Modul</dd>
                         
