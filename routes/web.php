@@ -14,6 +14,7 @@ use App\Http\Controllers\Instructor\InstructorEnrollmentController;
 use App\Http\Controllers\Instructor\InstructorProgressController;
 use App\Http\Controllers\Instructor\InstructorAttemptController;
 use App\Http\Controllers\Instructor\InstructorReportController;
+use App\Http\Controllers\Instructor\InstructorCertificateController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminCourseController;
@@ -280,6 +281,9 @@ Route::group([
     Route::get('/courses/{courseId}/report', [InstructorReportController::class, 'courseReport'])->name('reports.course');
     Route::get('/quizzes/{quizId}/report', [InstructorReportController::class, 'quizReport'])->name('reports.quiz');
     Route::get('/reports/export/{type}/{scopeId}', [InstructorReportController::class, 'export'])->name('reports.export');
+
+    // Certificates for instructor-owned courses
+    Route::get('/certificates', [InstructorCertificateController::class, 'index'])->name('certificates.index');
 });
 
 // Rute untuk Admin

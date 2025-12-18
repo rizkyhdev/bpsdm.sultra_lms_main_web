@@ -52,9 +52,9 @@
           <i class="fas fa-user-check me-2"></i>Peserta Pelatihan
         </a>
       </li>
-      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.progress') ? 'active' : '' }}">
-        <a class="nav-link text-black" href="#" onclick="event.preventDefault();">
-          <i class="fas fa-tasks me-2"></i>Sertifikat
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'instructor.certificates') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('instructor.certificates.index') }}">
+          <i class="fas fa-certificate me-2"></i>Sertifikat
         </a>
       </li>
      
