@@ -94,20 +94,12 @@ class InstructorQuestionController extends Controller
             $question->save();
 
             if (in_array($question->tipe, ['multiple_choice', 'true_false']) && !empty($data['answer_options'])) {
-                $correctCount = 0;
                 foreach ($data['answer_options'] as $opt) {
                     $option = new AnswerOption();
                     $option->question_id = $question->id;
                     $option->teks_jawaban = $opt['teks_jawaban'];
                     $option->is_correct = !empty($opt['is_correct']) ? 1 : 0;
-                    if ($option->is_correct) { $correctCount++; }
                     $option->save();
-                }
-                if ($question->tipe === 'multiple_choice' && $correctCount !== 1) {
-                    throw new \RuntimeException('Multiple choice must have exactly one correct option.');
-                }
-                if ($question->tipe === 'true_false' && $correctCount !== 1) {
-                    throw new \RuntimeException('True/False must have exactly one correct option.');
                 }
             }
 
@@ -178,20 +170,12 @@ class InstructorQuestionController extends Controller
 
             if (in_array($question->tipe, ['multiple_choice', 'true_false'])) {
                 $question->answerOptions()->delete();
-                $correctCount = 0;
                 foreach ($data['answer_options'] as $opt) {
                     $option = new AnswerOption();
                     $option->question_id = $question->id;
                     $option->teks_jawaban = $opt['teks_jawaban'];
                     $option->is_correct = !empty($opt['is_correct']) ? 1 : 0;
-                    if ($option->is_correct) { $correctCount++; }
                     $option->save();
-                }
-                if ($question->tipe === 'multiple_choice' && $correctCount !== 1) {
-                    throw new \RuntimeException('Multiple choice must have exactly one correct option.');
-                }
-                if ($question->tipe === 'true_false' && $correctCount !== 1) {
-                    throw new \RuntimeException('True/False must have exactly one correct option.');
                 }
             } else {
                 // Essay: ensure no options remain

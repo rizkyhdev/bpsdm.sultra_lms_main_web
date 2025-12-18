@@ -42,6 +42,10 @@
 
         <hr>
         <h6>Opsi Jawaban</h6>
+        @error('answer_options')
+          <small class="text-danger d-block">{{ $message }}</small>
+        @enderror
+        <div id="answerOptionsError" class="text-danger small mt-1 d-none"></div>
         <div id="optionsContainer">
           @foreach($question->answerOptions as $idx => $opt)
             <div class="form-row align-items-center mb-2 option-row">
@@ -78,6 +82,9 @@
     var container = document.getElementById('optionsContainer');
     var addBtn = document.getElementById('addOptionBtn');
     var index = container.querySelectorAll('.option-row').length;
+    var tipeSelect = document.getElementById('tipeSelect');
+    var form = document.querySelector('form');
+    var optionsError = document.getElementById('answerOptionsError');
     function addRow() {
       var row = document.createElement('div');
       row.className = 'form-row align-items-center mb-2 option-row';
@@ -101,8 +108,53 @@
         e.target.closest('.option-row').remove();
       }
     }
+    function validateCorrectAnswer() {
+      if (!tipeSelect || !container) return true;
+
+      var selectedType = tipeSelect.value;
+      if (selectedType !== 'multiple_choice' && selectedType !== 'true_false') {
+        return true;
+      }
+
+      var checkboxes = container.querySelectorAll('input.form-check-input[type="checkbox"]');
+      var checkedCount = 0;
+      checkboxes.forEach(function(cb) {
+        if (cb.checked) checkedCount++;
+      });
+
+      if (checkedCount === 0) {
+        if (optionsError) {
+          optionsError.textContent = 'Pilih minimal satu jawaban yang benar untuk pertanyaan ini.';
+          optionsError.classList.remove('d-none');
+        }
+        return false;
+      }
+
+      if (checkedCount > 1) {
+        if (optionsError) {
+          optionsError.textContent = 'Pilih tepat satu jawaban yang benar untuk pertanyaan pilihan ganda / benar-salah.';
+          optionsError.classList.remove('d-none');
+        }
+        return false;
+      }
+
+      if (optionsError) {
+        optionsError.textContent = '';
+        optionsError.classList.add('d-none');
+      }
+      return true;
+    }
+
     addBtn && addBtn.addEventListener('click', addRow);
     container && container.addEventListener('click', onClick);
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        if (!validateCorrectAnswer()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+    }
   })();
   </script>
 @endpush
