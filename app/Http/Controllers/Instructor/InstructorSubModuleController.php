@@ -73,8 +73,17 @@ class InstructorSubModuleController extends Controller
         $this->authorize('update', $module);
 
         try {
-            $sub = new SubModule($request->validated());
+      $data = $request->validated();
+
+      // Set order automatically to the last position + 1 within the module
+      $nextOrder = (int) SubModule::where('module_id', $module->id)->max('urutan') + 1;
+
+      // Ignore any manually provided order from the request
+      unset($data['urutan']);
+
+      $sub = new SubModule($data);
             $sub->module_id = $module->id;
+      $sub->urutan = $nextOrder;
             $sub->save();
             Log::info('SubModule created', ['sub_module_id' => $sub->id, 'module_id' => $module->id, 'instructor_id' => Auth::id()]);
             
@@ -156,12 +165,11 @@ class InstructorSubModuleController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update sub-module basic info
-            $updateData = [
-                'judul' => $request->input('judul'),
-                'deskripsi' => $request->input('deskripsi') ?? '',
-                'urutan' => $request->input('urutan'),
-            ];
+      // Update sub-module basic info (order handled via reorder endpoint)
+      $updateData = [
+        'judul' => $request->input('judul'),
+        'deskripsi' => $request->input('deskripsi') ?? '',
+      ];
             $sub->update($updateData);
 
             // Handle contents

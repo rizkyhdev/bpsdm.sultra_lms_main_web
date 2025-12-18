@@ -76,22 +76,27 @@ class AdminSubModuleController extends Controller
             $validated = $request->validate([
                 'judul' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
-                'urutan' => 'required|integer|min:1'
+        // If not provided, order will be set to last + 1
+        'urutan' => 'nullable|integer|min:1'
             ]);
 
             $validated['module_id'] = $moduleId;
 
-            // Periksa apakah nomor urutan sudah ada
-            $existingSubModule = SubModule::where('module_id', $moduleId)
-                                         ->where('urutan', $validated['urutan'])
-                                         ->first();
+      // Jika urutan tidak diisi, tempatkan di posisi terakhir + 1
+      if (empty($validated['urutan'])) {
+        $validated['urutan'] = (int) SubModule::where('module_id', $moduleId)->max('urutan') + 1;
+      } else {
+        // Periksa apakah nomor urutan sudah ada dan geser bila perlu
+        $existingSubModule = SubModule::where('module_id', $moduleId)
+                                     ->where('urutan', $validated['urutan'])
+                                     ->first();
 
-            if ($existingSubModule) {
-                // Geser sub-modul yang ada untuk memberi ruang
-                SubModule::where('module_id', $moduleId)
-                         ->where('urutan', '>=', $validated['urutan'])
-                         ->increment('urutan');
-            }
+        if ($existingSubModule) {
+          SubModule::where('module_id', $moduleId)
+                   ->where('urutan', '>=', $validated['urutan'])
+                   ->increment('urutan');
+        }
+      }
 
             SubModule::create($validated);
 

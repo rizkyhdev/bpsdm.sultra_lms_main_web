@@ -75,22 +75,27 @@ class AdminModuleController extends Controller
             $validated = $request->validate([
                 'judul' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
-                'urutan' => 'required|integer|min:1'
+        // If not provided, order will be set to last + 1
+        'urutan' => 'nullable|integer|min:1'
             ]);
 
             $validated['course_id'] = $courseId;
 
-            // Periksa apakah nomor urutan sudah ada
-            $existingModule = Module::where('course_id', $courseId)
-                                   ->where('urutan', $validated['urutan'])
-                                   ->first();
+      // Jika urutan tidak diisi, tempatkan di posisi terakhir + 1
+      if (empty($validated['urutan'])) {
+        $validated['urutan'] = (int) Module::where('course_id', $courseId)->max('urutan') + 1;
+      } else {
+        // Periksa apakah nomor urutan sudah ada dan geser bila perlu
+        $existingModule = Module::where('course_id', $courseId)
+                               ->where('urutan', $validated['urutan'])
+                               ->first();
 
-            if ($existingModule) {
-                // Geser modul yang ada untuk memberi ruang
-                Module::where('course_id', $courseId)
-                      ->where('urutan', '>=', $validated['urutan'])
-                      ->increment('urutan');
-            }
+        if ($existingModule) {
+          Module::where('course_id', $courseId)
+                ->where('urutan', '>=', $validated['urutan'])
+                ->increment('urutan');
+        }
+      }
 
             Module::create($validated);
 

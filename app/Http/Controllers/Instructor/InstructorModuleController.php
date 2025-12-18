@@ -73,8 +73,17 @@ class InstructorModuleController extends Controller
         $this->authorize('update', $course);
 
         try {
-            $module = new Module($request->validated());
+      $data = $request->validated();
+
+      // Set order automatically to the last position + 1 within the course
+      $nextOrder = (int) Module::where('course_id', $course->id)->max('urutan') + 1;
+
+      // Ignore any manually provided order from the request
+      unset($data['urutan']);
+
+      $module = new Module($data);
             $module->course_id = $course->id;
+      $module->urutan = $nextOrder;
             $module->save();
             Log::info('Module created', ['module_id' => $module->id, 'course_id' => $course->id, 'instructor_id' => Auth::id()]);
             
@@ -145,7 +154,12 @@ class InstructorModuleController extends Controller
         $this->authorize('update', $module);
 
         try {
-            $module->update($request->validated());
+      $data = $request->validated();
+
+      // Keep order managed via dedicated reorder endpoint, not via edit form
+      unset($data['urutan']);
+
+      $module->update($data);
             Log::info('Module updated', ['module_id' => $module->id, 'instructor_id' => Auth::id()]);
             
             if ($request->expectsJson()) {

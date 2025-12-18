@@ -62,11 +62,11 @@
               <th width="200" class="text-center">Actions</th>
             </tr>
           </thead>
-        <tbody>
+        <tbody id="module-order-body">
           @forelse($modules as $m)
-            <tr>
+            <tr class="module-row" data-id="{{ $m->id }}" draggable="true">
                 <td class="text-center">
-                  <span class="badge bg-secondary">{{ $m->urutan }}</span>
+                  <span class="badge bg-secondary order-badge">{{ $m->urutan }}</span>
                 </td>
                 <td>
                   <strong>{{ $m->judul }}</strong>
@@ -126,6 +126,109 @@
     @endif
   </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const tbody = document.getElementById('module-order-body');
+    if (!tbody) return;
+
+    let dragSrcEl = null;
+
+    function handleDragStart(e) {
+      dragSrcEl = this;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/html', this.outerHTML);
+      this.classList.add('table-active');
+    }
+
+    function handleDragOver(e) {
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+      e.dataTransfer.dropEffect = 'move';
+      return false;
+    }
+
+    function handleDragEnter() {
+      this.classList.add('table-warning');
+    }
+
+    function handleDragLeave() {
+      this.classList.remove('table-warning');
+    }
+
+    function handleDrop(e) {
+      if (e.stopPropagation) {
+        e.stopPropagation();
+      }
+
+      if (dragSrcEl !== this) {
+        this.parentNode.removeChild(dragSrcEl);
+        const dropHTML = e.dataTransfer.getData('text/html');
+        this.insertAdjacentHTML('beforebegin', dropHTML);
+        const droppedRow = this.previousSibling;
+        addDnDHandlers(droppedRow);
+        saveNewOrder();
+      }
+      this.classList.remove('table-warning');
+      return false;
+    }
+
+    function handleDragEnd() {
+      this.classList.remove('table-active');
+      const rows = tbody.querySelectorAll('.module-row');
+      rows.forEach(function (row) {
+        row.classList.remove('table-warning');
+      });
+    }
+
+    function addDnDHandlers(row) {
+      row.addEventListener('dragstart', handleDragStart);
+      row.addEventListener('dragenter', handleDragEnter);
+      row.addEventListener('dragover', handleDragOver);
+      row.addEventListener('dragleave', handleDragLeave);
+      row.addEventListener('drop', handleDrop);
+      row.addEventListener('dragend', handleDragEnd);
+    }
+
+    function saveNewOrder() {
+      const rows = tbody.querySelectorAll('.module-row');
+      const items = [];
+      rows.forEach(function (row, index) {
+        const id = row.getAttribute('data-id');
+        const order = index + 1;
+        items.push({ id: parseInt(id, 10), urutan: order });
+        const badge = row.querySelector('.order-badge');
+        if (badge) {
+          badge.textContent = order;
+        }
+      });
+
+      fetch("{{ route('instructor.modules.reorder') }}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content'),
+        },
+        body: JSON.stringify({ items }),
+      }).then(function (response) {
+        if (!response.ok) {
+          console.error('Failed to save order');
+        }
+      }).catch(function (error) {
+        console.error('Error saving order', error);
+      });
+    }
+
+    const rows = tbody.querySelectorAll('.module-row');
+    rows.forEach(function (row) {
+      addDnDHandlers(row);
+    });
+  });
+</script>
 @endsection
 
 
