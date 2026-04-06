@@ -1,20 +1,28 @@
-FROM richarvey/nginx-php-fpm:1.7.2
+FROM serversideup/php:8.2-fpm-nginx
 
-COPY . .
+# Set the working directory
+WORKDIR /var/www/html
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Define environment variables for Laravel production
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    LOG_CHANNEL=stderr
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Switch to root to copy folders and set ownership properly
+USER root
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Copy application files and set ownership to www-data
+COPY --chown=www-data:www-data . /var/www/html
 
-CMD ["/start.sh"]
+# Switch back to the www-data user to run setup commands safely
+USER www-data
+
+# Install Laravel dependencies (ignoring dev packages)
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Cache Laravel configuration for faster boot times
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# Note: The serversideup image automatically starts nginx and php-fpm on container boot.
