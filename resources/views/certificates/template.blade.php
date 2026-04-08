@@ -33,31 +33,31 @@
 
         .page {
             position: relative;
-            width: 90%;
-            height: 70%;
-            /* Remove internal padding so the border can be centered consistently
-               and use an inner margin on .page-content instead. This helps DomPDF
-               produce a certificate that is properly aligned when printed. */
+            width: 297mm;
+            height: 210mm;
+            page-break-after: always;
+            overflow: hidden;
         }
 
         .page-background {
             position: absolute;
-            inset: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0.08;
-            z-index: 0;
+            z-index: -1;
         }
 
         .page-content {
-            position: relative;
-            z-index: 1;
-            /* Add uniform margins from the paper edge so the border is visually centered */
-            margin: 24px 32px;
-            width: calc(100% - 64px);
-            height: calc(100% - 48px);
+            position: absolute;
+            top: 15mm;
+            bottom: 15mm;
+            left: 15mm;
+            right: 15mm;
             border: 2px solid #003f7d;
-            padding: 28px 40px;
-            display: flex;
-            flex-direction: column;
+            padding: 24px 32px;
+            z-index: 1;
         }
 
         .header-row {
@@ -116,14 +116,16 @@
         }
 
         .signature-section {
-            margin-top: auto;
-            display: flex;
-            justify-content: center;
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
             text-align: center;
         }
 
         .signature-block {
-            min-width: 260px;
+            margin: 0 auto;
+            width: 260px;
         }
 
         .signature-line {
@@ -146,10 +148,10 @@
         }
 
         .footer-row {
-            margin-top: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+            position: absolute;
+            bottom: 10px;
+            left: 32px;
+            right: 32px;
             font-size: 10px;
         }
 
@@ -232,16 +234,14 @@
         @endif
 
         <div class="page-content">
-            <div class="header-row">
-                {{-- Left logo placeholder (configure in background or edit template as needed) --}}
-                <div>
-                    {{-- You can replace this with an <img> pointing to the LAN RI logo --}}
-                    <img src="{{ asset('image/LOGO AURA.png') }}" alt="Logo" height="40">
+            <div class="header-row clearfix" style="display: block; width: 100%;">
+                <div style="float: left;">
+                    <img src="{{ asset('image/logo_sultra_images.png') }}" alt="Logo Sultra" height="60">
                 </div>
-                <div>
-                    {{-- You can replace this with an <img> pointing to the ASN BERPIJAR logo --}}
-                    <img src="{{ asset('image/LOGO AURA 1.png') }}" alt="Logo" height="40">
+                <div style="float: right;">
+                    <img src="{{ asset('image/logo bpsdm.jpeg') }}" alt="Logo BPSDM" height="60">
                 </div>
+                <div style="clear: both;"></div>
             </div>
 
             <div class="title-wrapper">
@@ -261,7 +261,7 @@
             </div>
 
             <div class="course-meta">
-                Jakarta, {{ $completion_date }}
+                Kendari, {{ $completion_date }}
             </div>
 
             <div class="signature-section">

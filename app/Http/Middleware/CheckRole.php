@@ -27,6 +27,16 @@ class CheckRole
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
+        // Restrict access for unverified students
+        if ($role === 'student' && !$user->is_validated) {
+            $allowedRoutes = ['student.profile.show', 'student.profile.edit', 'student.profile.update', 'logout'];
+            
+            if (!in_array($request->route()?->getName(), $allowedRoutes)) {
+                return redirect()->route('student.profile.edit')
+                    ->with('warning', 'Akun Anda belum diverifikasi oleh Admin. Silakan lengkapi Surat Tugas atau Surat Bukti ASN Anda terlebih dahulu.');
+            }
+        }
+
         return $next($request);
     }
 } 

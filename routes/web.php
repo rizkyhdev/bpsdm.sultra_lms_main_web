@@ -33,6 +33,7 @@ use App\Http\Controllers\Student\StudentWishlistController;
 use App\Http\Controllers\Student\EnrollmentController;
 use App\Http\Controllers\Student\StudentCalendarPageController;
 use App\Http\Controllers\Student\StudentCalendarController;
+use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\CertificateController;
 use App\Models\Course;
 
@@ -146,18 +147,9 @@ Route::group([
     })->name('progress.index');
 
     // Profile
-    Route::get('/profile', function () {
-        $user = auth()->user();
-        return view('student.profile.show', compact('user'));
-    })->name('profile.show');
-    Route::get('/profile/edit', function () {
-        $user = auth()->user();
-        return view('student.profile.edit', compact('user'));
-    })->name('profile.edit');
-    Route::patch('/profile', function () {
-        // TODO: implementasi update profil di controller
-        return back()->with('status', __('Profile updated.'));
-    })->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Notifications
     Route::get('/notifications', function () {

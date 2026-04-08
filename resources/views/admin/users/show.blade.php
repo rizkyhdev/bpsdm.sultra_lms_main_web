@@ -41,6 +41,20 @@
                         <dt class="col-5">Unit Kerja</dt><dd class="col-7">{{ $user->unit_kerja }}</dd>
                         <dt class="col-5">Peran</dt><dd class="col-7 text-uppercase"><span class="badge badge-info">{{ $user->role }}</span></dd>
                         <dt class="col-5">Validasi</dt><dd class="col-7">@if($user->is_validated)<span class="badge badge-success">Ya</span>@else<span class="badge badge-secondary">Tidak</span>@endif</dd>
+                        <dt class="col-5">Surat Tugas (Link)</dt><dd class="col-7">
+                            @if($user->surat_tugas_url)
+                                <a href="{{ $user->surat_tugas_url }}" target="_blank" rel="noopener noreferrer">Buka Tautan</a>
+                            @else
+                                -
+                            @endif
+                        </dd>
+                        <dt class="col-5">Surat Tugas (File)</dt><dd class="col-7">
+                            @if($user->surat_tugas_file_path)
+                                <a href="{{ Storage::disk('public')->url($user->surat_tugas_file_path) }}" target="_blank" rel="noopener noreferrer">Unduh File</a>
+                            @else
+                                -
+                            @endif
+                        </dd>
                     </dl>
                 </div>
             </div>

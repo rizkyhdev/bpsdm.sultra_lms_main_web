@@ -123,7 +123,7 @@ class AdminUserController extends Controller
             ]);
 
             $validated['password'] = Hash::make($validated['password']);
-            $validated['is_validated'] = $request->has('is_validated');
+            $validated['is_validated'] = $request->boolean('is_validated');
 
             User::create($validated);
 
@@ -221,7 +221,7 @@ class AdminUserController extends Controller
                 unset($validated['password']);
             }
 
-            $validated['is_validated'] = $request->has('is_validated');
+            $validated['is_validated'] = $request->boolean('is_validated');
 
             $user->update($validated);
 

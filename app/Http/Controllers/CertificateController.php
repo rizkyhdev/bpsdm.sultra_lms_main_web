@@ -82,9 +82,19 @@ class CertificateController extends Controller
             $mode = $request->query('mode', 'download');
             $dispositionType = $mode === 'view' ? 'inline' : 'attachment';
 
+            $uid = $result['uid'];
+            $certRecord = \App\Models\Certificate::where('certificate_uid', $uid)->first();
+            $dateFormatted = $certRecord && $certRecord->generated_at 
+                            ? $certRecord->generated_at->format('Ymd') 
+                            : now()->format('Ymd');
+            
+            // Clean user name from spaces and special chars safely
+            $safeUserName = \Illuminate\Support\Str::slug($user->name);
+            $filename = "{$safeUserName}-{$uid}-{$dateFormatted}.pdf";
+
             return Storage::disk($disk)->response($filePath, 'certificate.pdf', [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => $dispositionType . '; filename="certificate-' . $course->slug . '.pdf"',
+                'Content-Disposition' => $dispositionType . '; filename="' . $filename . '"',
             ]);
         } catch (\Exception $e) {
             abort(403, $e->getMessage());

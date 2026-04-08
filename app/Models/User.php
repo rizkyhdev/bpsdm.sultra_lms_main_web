@@ -28,6 +28,8 @@ class User extends Authenticatable
         'unit_kerja',
         'role',
         'is_validated',
+        'surat_tugas_url',
+        'surat_tugas_file_path',
     ];
 
     /**
