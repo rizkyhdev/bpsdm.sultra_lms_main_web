@@ -18,9 +18,8 @@
 
         html,
         body {
-            /* Explicit A4 landscape dimensions so browser print preview respects orientation */
-            width: 297mm;
-            height: 210mm;
+            width: 100%;
+            height: 100%;
             margin: 0;
             padding: 0;
         }
@@ -33,10 +32,14 @@
 
         .page {
             position: relative;
-            width: 297mm;
-            height: 210mm;
+            width: 100%;
+            height: 100%;
             page-break-after: always;
             overflow: hidden;
+        }
+
+        .page:last-child {
+            page-break-after: avoid;
         }
 
         .page-background {
@@ -157,10 +160,6 @@
 
         .uid-text {
             font-family: 'Courier New', monospace;
-        }
-
-        .page-break {
-            page-break-before: always;
         }
 
         /* Second page: competencies table */
@@ -289,7 +288,7 @@
     </div>
 
     {{-- PAGE 2: competencies + score --}}
-    <div class="page page-break">
+    <div class="page">
         @if($background_image)
             <img src="{{ $background_image }}" alt="" class="page-background">
         @endif
