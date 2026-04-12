@@ -120,7 +120,7 @@
 
         .signature-section {
             position: absolute;
-            bottom: 40px;
+            bottom: 180px; /* Increased from 40px */
             left: 0;
             right: 0;
             text-align: center;
@@ -132,11 +132,9 @@
         }
 
         .signature-line {
-            margin-top: 56px;
+            margin-top: 40px; /* Slightly reduced */
             border-top: 1px solid #000;
-            width: 60%;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
         }
 
         .signature-name {
@@ -152,9 +150,9 @@
 
         .footer-row {
             position: absolute;
-            bottom: 10px;
-            left: 32px;
-            right: 32px;
+            bottom: 30px; /* Increased from 10px */
+            left: 40px;
+            right: 40px;
             font-size: 10px;
         }
 
@@ -164,9 +162,7 @@
 
         /* Second page: competencies table */
         .second-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: block;
             margin-bottom: 20px;
         }
 
@@ -198,8 +194,9 @@
         }
 
         .score-box {
-            margin-top: 24px;
-            margin-left: auto;
+            position: absolute;
+            bottom: 120px;
+            right: 40px;
             border: 1.5px solid #003f7d;
             width: 180px;
         }
@@ -224,6 +221,20 @@
     $jp = $jp_value ?? null;
     $score = $final_score ?? null;
     $competencyList = isset($competencies) && is_array($competencies) ? $competencies : [];
+    
+    // Convert images to base64 to ensure they show up in PDF
+    $logoSultraPath = public_path('image/logo_sultra_images.png');
+    $logoBpsdmPath = public_path('image/logo bpsdm.jpeg');
+    
+    $logoSultraBase64 = '';
+    if (file_exists($logoSultraPath)) {
+        $logoSultraBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoSultraPath));
+    }
+    
+    $logoBpsdmBase64 = '';
+    if (file_exists($logoBpsdmPath)) {
+        $logoBpsdmBase64 = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoBpsdmPath));
+    }
 @endphp
 <body>
     {{-- PAGE 1: main certificate --}}
@@ -235,10 +246,18 @@
         <div class="page-content">
             <div class="header-row clearfix" style="display: block; width: 100%;">
                 <div style="float: left;">
-                    <img src="{{ asset('image/logo_sultra_images.png') }}" alt="Logo Sultra" height="60">
+                    @if($logoSultraBase64)
+                        <img src="{{ $logoSultraBase64 }}" alt="Logo Sultra" height="60">
+                    @else
+                        <span>LOGO SULTRA</span>
+                    @endif
                 </div>
                 <div style="float: right;">
-                    <img src="{{ asset('image/logo bpsdm.jpeg') }}" alt="Logo BPSDM" height="60">
+                    @if($logoBpsdmBase64)
+                        <img src="{{ $logoBpsdmBase64 }}" alt="Logo BPSDM" height="60">
+                    @else
+                        <span>LOGO BPSDM</span>
+                    @endif
                 </div>
                 <div style="clear: both;"></div>
             </div>
