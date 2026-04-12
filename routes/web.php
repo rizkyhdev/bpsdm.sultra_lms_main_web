@@ -103,10 +103,7 @@ Route::middleware(['auth', 'verified', 'role:student', 'prevent-back-history'])-
     Route::get('/api/student/calendar', [StudentCalendarController::class, 'index'])->name('api.student.calendar');
 });
 
-// Routes for all authenticated users (Student, Instructor, Admin)
-Route::middleware(['auth', 'verified', 'prevent-back-history'])->group(function () {
-    Route::get('/student/courses/{course:id}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('student.courses.show');
-});
+
 
 // Legacy routes for backward compatibility
 Route::group([
@@ -117,7 +114,7 @@ Route::group([
 
     // Courses
     Route::get('/courses', [\App\Http\Controllers\Student\StudentCourseController::class, 'enrolledCourses'])->name('courses.index');
-    Route::get('/courses/{course:slug}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{course}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
 
     // Certificates list for students
     Route::get('/certificates', [\App\Http\Controllers\Student\StudentCertificateController::class, 'index'])->name('certificates.index');
