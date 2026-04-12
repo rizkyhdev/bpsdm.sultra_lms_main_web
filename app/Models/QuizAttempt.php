@@ -34,6 +34,8 @@ class QuizAttempt extends Model
     protected function casts(): array
     {
         return [
+            'user_id' => 'integer',
+            'quiz_id' => 'integer',
             'nilai' => 'float',
             'is_passed' => 'boolean',
             'attempt_number' => 'integer',

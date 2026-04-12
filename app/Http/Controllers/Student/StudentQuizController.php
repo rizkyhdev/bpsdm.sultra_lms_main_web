@@ -485,7 +485,7 @@ class StudentQuizController extends Controller
         $user = Auth::user();
         
         // Check if attempt belongs to user
-        if ($attempt->user_id !== $user->id) {
+        if ($attempt->user_id != $user->id) {
             abort(403, 'Anda tidak dapat mengakses hasil quiz ini.');
         }
 
@@ -541,7 +541,7 @@ class StudentQuizController extends Controller
         $user = Auth::user();
         
         // Check if attempt belongs to user
-        if ($attempt->user_id !== $user->id) {
+        if ($attempt->user_id != $user->id) {
             abort(403, 'Anda tidak dapat mengakses attempt quiz ini.');
         }
 

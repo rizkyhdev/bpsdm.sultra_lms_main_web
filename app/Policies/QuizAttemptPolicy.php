@@ -9,6 +9,12 @@ class QuizAttemptPolicy
 {
     public function view(User $user, QuizAttempt $attempt)
     {
+        // Students can view their own attempts
+        if ($user->role === 'student' && (int) $attempt->user_id === (int) $user->id) {
+            return true;
+        }
+
+        // Instructors can view attempts for their courses
         return $user->role === 'instructor' && (int) $attempt->quiz->subModule->module->course->user_id === (int) $user->id;
     }
 
