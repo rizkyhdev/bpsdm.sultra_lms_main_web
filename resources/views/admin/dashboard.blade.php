@@ -6,7 +6,8 @@
     <li class="text-gray-600 dark:text-gray-400" aria-current="page">{{ __('Dashboard') }}</li>
 @endsection
 
-@section('content')
+@section('admin_content')
+
     @php /** @var array{users_total?:int,courses_total?:int,enrollments_total?:int,completion_rate?:int|float} $metrics */ @endphp
     @php /** @var \Illuminate\Support\Collection|array $recentEnrollments */ @endphp
     @php /** @var \Illuminate\Support\Collection|array $recentCertificates */ @endphp

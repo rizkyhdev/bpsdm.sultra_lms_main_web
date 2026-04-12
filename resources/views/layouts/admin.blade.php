@@ -15,7 +15,8 @@
   @endif
   @include('partials._flash')
   @include('partials._errors')
-  @yield('content')
+  @yield('admin_content')
+
 @endsection
 
 

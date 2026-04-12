@@ -73,6 +73,8 @@ class AdminCertificateController extends Controller
             $courses = Course::orderBy('judul')->get();
 
             return view('admin.certificates.index', compact('certificates', 'courses'));
+
+
         } catch (\Exception $e) {
             Log::error('Error in AdminCertificateController@index: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat memuat data sertifikat.');

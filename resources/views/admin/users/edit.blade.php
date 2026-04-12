@@ -12,7 +12,8 @@
     </nav>
 @endsection
 
-@section('content')
+@section('admin_content')
+
     @php /** @var App\Models\User $user */ @endphp
     <style>
         .edit-user-container {
