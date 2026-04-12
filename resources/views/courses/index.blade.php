@@ -100,12 +100,13 @@
             localStorage.setItem('course_view', 'grid');
             this.submitForm();
         }
-    }" class="min-h-screen flex-fill">
-        <div class="container mx-auto px-4 py-6">
-            <form id="filter-form" method="GET" action="{{ route('courses.index') }}" class="hidden">
-                <input type="text" name="q" x-model="q">
-                <input type="text" name="sort" x-model="sort">
-                <input type="text" name="view" x-model="view">
+    }" class="flex-fill py-5">
+        <div class="container">
+            {{-- Hidden Filter Form --}}
+            <form id="filter-form" method="GET" action="{{ route('courses.index') }}" class="d-none">
+                <input type="hidden" name="q" x-model="q">
+                <input type="hidden" name="sort" x-model="sort">
+                <input type="hidden" name="view" x-model="view">
                 <template x-for="cat in categories">
                     <input type="hidden" name="categories[]" :value="cat">
                 </template>
@@ -115,113 +116,121 @@
                 <input type="hidden" name="rating" x-model="rating">
             </form>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                {{-- Sidebar Filters (md+) --}}
-                <aside class="md:col-span-3">
-                    <div class="bg-white rounded-3 shadow-sm border-0 p-4 sticky top-4">
+            <div class="row g-4">
+                {{-- Sidebar Filters --}}
+                <aside class="col-lg-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px;">
                         <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
                             <i class="fas fa-filter text-primary me-2"></i>
-                            <h2 class="text-lg font-bold text-dark mb-0">Filter Pelatihan</h2>
+                            <h5 class="fw-bold text-dark mb-0">Filter Pelatihan</h5>
                         </div>
 
                         {{-- Categories --}}
-                        <fieldset class="mb-4">
-                            <button type="button" @click="categoriesOpen = !categoriesOpen" class="flex items-center justify-between w-full text-left font-semibold text-gray-800 mb-2" :aria-expanded="categoriesOpen">
-                                <span>Bidang Kompetensi</span>
+                        <div class="filter-group mb-4">
+                            <button type="button" @click="categoriesOpen = !categoriesOpen" class="btn btn-link p-0 w-100 text-decoration-none d-flex align-items-center justify-content-between text-dark fw-bold mb-3 shadow-none">
+                                <span style="font-size: 0.95rem;">Bidang Kompetensi</span>
                                 <i class="fas fa-chevron-down small transition-transform" :class="{ 'rotate-180': categoriesOpen }"></i>
                             </button>
-                            <div class="space-y-2 mt-2" x-show="categoriesOpen" x-transition x-cloak>
+                            <div class="ps-1" x-show="categoriesOpen" x-transition x-cloak>
                                 @foreach ($categories as $category)
-                                    <label class="flex items-center cursor-pointer group">
-                                        <input type="checkbox" 
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input shadow-none cursor-pointer" 
+                                               type="checkbox" 
+                                               id="cat-{{ $loop->index }}"
                                                :checked="categories.includes('{{ $category }}')"
-                                               @change="toggleCategory('{{ $category }}')"
-                                               class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4">
-                                        <span class="ml-2 text-sm text-gray-600 group-hover:text-dark transition-colors">{{ $category }}</span>
-                                    </label>
+                                               @change="toggleCategory('{{ $category }}')">
+                                        <label class="form-check-label small text-secondary cursor-pointer ms-1" for="cat-{{ $loop->index }}">
+                                            {{ $category }}
+                                        </label>
+                                    </div>
                                 @endforeach
                             </div>
-                        </fieldset>
+                        </div>
 
                         {{-- Difficulty --}}
-                        <fieldset class="mb-4">
-                            <button type="button" @click="difficultyOpen = !difficultyOpen" class="flex items-center justify-between w-full text-left font-semibold text-gray-800 mb-2" :aria-expanded="difficultyOpen">
-                                <span>Tingkat Kesulitan</span>
+                        <div class="filter-group mb-4">
+                            <button type="button" @click="difficultyOpen = !difficultyOpen" class="btn btn-link p-0 w-100 text-decoration-none d-flex align-items-center justify-content-between text-dark fw-bold mb-3 shadow-none">
+                                <span style="font-size: 0.95rem;">Tingkat Kesulitan</span>
                                 <i class="fas fa-chevron-down small transition-transform" :class="{ 'rotate-180': difficultyOpen }"></i>
                             </button>
-                            <div class="space-y-2 mt-2" x-show="difficultyOpen" x-transition x-cloak>
+                            <div class="ps-1" x-show="difficultyOpen" x-transition x-cloak>
                                 @foreach ($difficulties as $diff)
-                                    <label class="flex items-center cursor-pointer group">
-                                        <input type="checkbox" 
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input shadow-none cursor-pointer" 
+                                               type="checkbox" 
+                                               id="diff-{{ $loop->index }}"
                                                :checked="difficulty.includes('{{ $diff }}')"
-                                               @change="toggleDifficulty('{{ $diff }}')"
-                                               class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4">
-                                        <span class="ml-2 text-sm text-gray-600 group-hover:text-dark transition-colors">{{ $diff }}</span>
-                                    </label>
+                                               @change="toggleDifficulty('{{ $diff }}')">
+                                        <label class="form-check-label small text-secondary cursor-pointer ms-1" for="diff-{{ $loop->index }}">
+                                            {{ $diff }}
+                                        </label>
+                                    </div>
                                 @endforeach
                             </div>
-                        </fieldset>
+                        </div>
 
                         {{-- Rating --}}
-                        <fieldset class="mb-4">
-                            <button type="button" @click="ratingOpen = !ratingOpen" class="flex items-center justify-between w-full text-left font-semibold text-gray-800 mb-2" :aria-expanded="ratingOpen">
-                                <span>Penilaian</span>
+                        <div class="filter-group mb-4">
+                            <button type="button" @click="ratingOpen = !ratingOpen" class="btn btn-link p-0 w-100 text-decoration-none d-flex align-items-center justify-content-between text-dark fw-bold mb-3 shadow-none">
+                                <span style="font-size: 0.95rem;">Penilaian</span>
                                 <i class="fas fa-chevron-down small transition-transform" :class="{ 'rotate-180': ratingOpen }"></i>
                             </button>
-                            <div class="space-y-2 mt-2" x-show="ratingOpen" x-transition x-cloak>
+                            <div class="ps-1" x-show="ratingOpen" x-transition x-cloak>
                                 @for ($i = 5; $i >= 1; $i--)
-                                    <label class="flex items-center cursor-pointer group">
-                                        <input type="radio" 
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input shadow-none cursor-pointer" 
+                                               type="radio" 
                                                name="rating_radio"
+                                               id="rate-{{ $i }}"
                                                :checked="rating === '{{ $i }}'"
-                                               @change="setRating('{{ $i }}')"
-                                               class="text-primary focus:ring-primary h-4 w-4">
-                                        <div class="ml-2 flex items-center">
-                                            @for ($j = 0; $j < 5; $j++)
-                                                <i class="fas fa-star text-sm {{ $j < $i ? 'text-warning' : 'text-gray-200' }}"></i>
-                                            @endfor
-                                            <span class="ml-2 text-xs text-gray-500">{{ $i }} Bintang</span>
-                                        </div>
-                                    </label>
+                                               @change="setRating('{{ $i }}')">
+                                        <label class="form-check-label d-flex align-items-center cursor-pointer ms-1" for="rate-{{ $i }}">
+                                            <div class="d-flex align-items-center gap-1">
+                                                @for ($j = 0; $j < 5; $j++)
+                                                    <i class="fas fa-star" style="font-size: 0.75rem; color: {{ $j < $i ? '#ffc107' : '#e9ecef' }}"></i>
+                                                @endfor
+                                                <span class="ms-2 text-muted" style="font-size: 0.8rem;">{{ $i }} {{ __('Bintang') }}</span>
+                                            </div>
+                                        </label>
+                                    </div>
                                 @endfor
                             </div>
-                        </fieldset>
+                        </div>
 
-                        {{-- Reset Filters --}}
-                        <button type="button" @click="resetFilters()" class="w-full mt-2 px-4 py-2 bg-light text-dark font-semibold rounded-pill border hover:bg-white hover:border-primary transition-all duration-200">
-                             Hapus Semua Filter
+                        {{-- Reset --}}
+                        <button type="button" @click="resetFilters()" class="btn btn-outline-primary w-100 rounded-pill btn-sm fw-bold py-2 mt-2">
+                            <i class="fas fa-sync-alt me-2"></i>Hapus Semua Filter
                         </button>
                     </div>
                 </aside>
 
                 {{-- Main Content --}}
-                <main class="md:col-span-9">
-                    {{-- Toolbar --}}
-                    <div class="bg-white rounded-3 shadow-sm border-0 p-4 mb-6">
-                        <div class="d-flex flex-column lg:flex-row gap-3 align-items-center justify-content-between">
-                            {{-- Search --}}
-                            <div class="flex-grow-1 w-full">
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-search text-gray-400 group-focus-within:text-primary transition-colors"></i>
-                                    </div>
+                <main class="col-lg-9">
+                    {{-- Toolbar Card --}}
+                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                        <div class="row align-items-center g-3">
+                            {{-- Search field --}}
+                            <div class="col-lg-6">
+                                <div class="position-relative">
+                                    <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                                        <i class="fas fa-search"></i>
+                                    </span>
                                     <input type="text" 
-                                           id="search" 
+                                           class="form-control rounded-pill border-0 bg-light ps-5 py-2 shadow-none" 
                                            x-model="q"
                                            @keyup.enter="submitForm()"
-                                           placeholder="Cari pelatihan yang Anda inginkan..."
-                                           class="block w-full pl-10 pr-4 py-2 border-0 bg-light rounded-pill focus:ring-2 focus:ring-primary focus:bg-white transition-all text-sm">
+                                           placeholder="Cari pelatihan yang Anda inginkan...">
                                 </div>
                             </div>
 
-                            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                                {{-- Sort --}}
-                                <div class="flex items-center bg-light rounded-pill px-3 py-1">
-                                    <i class="fas fa-sort-amount-down text-gray-400 mr-2 text-sm"></i>
-                                    <select id="sort" 
+                            <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end align-items-center gap-3">
+                                {{-- Sort Dropdown --}}
+                                <div class="d-flex align-items-center bg-light rounded-pill px-3 py-1">
+                                    <i class="fas fa-sort-amount-down text-muted me-2 small"></i>
+                                    <select class="form-select form-select-sm border-0 bg-transparent py-1 shadow-none fw-semibold text-dark" 
+                                            style="width: auto; font-size: 0.85rem;"
                                             x-model="sort"
-                                            @change="changeSort()"
-                                            class="bg-transparent border-0 focus:ring-0 text-sm font-medium text-gray-700 py-1">
+                                            @change="changeSort()">
                                         <option value="latest">Terbaru</option>
                                         <option value="oldest">Terlama</option>
                                         <option value="highest_rated">Rating Tertinggi</option>
@@ -229,18 +238,18 @@
                                     </select>
                                 </div>
 
-                                {{-- View Toggle --}}
-                                <div class="flex items-center bg-gray-100 rounded-pill p-1 shadow-inner">
+                                {{-- View Toggles --}}
+                                <div class="bg-light rounded-pill p-1 d-flex gap-1">
                                     <button type="button" 
                                             @click="changeView('grid')"
-                                            :class="view === 'grid' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-dark'"
-                                            class="w-10 h-8 flex items-center justify-center rounded-pill transition-all duration-200">
+                                            :class="view === 'grid' ? 'bg-white shadow-sm text-primary' : 'text-muted'"
+                                            class="btn btn-sm rounded-pill border-0 px-3 py-1 transition-all">
                                         <i class="fas fa-th-large"></i>
                                     </button>
                                     <button type="button" 
                                             @click="changeView('list')"
-                                            :class="view === 'list' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-dark'"
-                                            class="w-10 h-8 flex items-center justify-center rounded-pill transition-all duration-200">
+                                            :class="view === 'list' ? 'bg-white shadow-sm text-primary' : 'text-muted'"
+                                            class="btn btn-sm rounded-pill border-0 px-3 py-1 transition-all">
                                         <i class="fas fa-list"></i>
                                     </button>
                                 </div>
@@ -248,39 +257,49 @@
                         </div>
                     </div>
 
-                    {{-- Results --}}
-                    @if ($courses->count() > 0)
-                        <div x-show="view === 'grid'" x-cloak class="row g-4">
-                            @foreach ($courses as $course)
-                                <div class="col-12 col-md-6 col-lg-4">
-                                    <x-course-card :course="$course" view="grid" :actions="true" />
+                    {{-- Results Area --}}
+                    <div class="results-container">
+                        @if ($courses->count() > 0)
+                            {{-- Grid View --}}
+                            <div x-show="view === 'grid'" x-cloak x-transition>
+                                <div class="row g-4">
+                                    @foreach ($courses as $course)
+                                        <div class="col-12 col-md-6 col-xl-4">
+                                            <x-course-card :course="$course" view="grid" :actions="true" />
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endforeach
-                        </div>
-                        <div x-show="view === 'list'" x-cloak x-transition class="space-y-4">
-                            @foreach ($courses as $course)
-                                <x-course-card :course="$course" view="list" />
-                            @endforeach
-                        </div>
-
-                        {{-- Pagination --}}
-                        <div class="mt-8 d-flex justify-content-center">
-                            {{ $courses->links() }}
-                        </div>
-                    @else
-                        <div class="bg-white rounded-4 shadow-sm py-12 px-6 text-center">
-                            <div class="bg-light rounded-circle w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-search-minus text-4xl text-gray-300"></i>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Pelatihan Tidak Ditemukan</h3>
-                            <p class="text-gray-500 max-w-md mx-auto mb-6">
-                                Maaf, pelatihan yang Anda cari tidak tersedia. Coba gunakan kata kunci lain atau bersihkan filter yang aktif.
-                            </p>
-                            <button @click="resetFilters()" class="btn btn-primary rounded-pill px-6 py-2">
-                                <i class="fas fa-sync-alt me-2"></i>Lihat Semua Pelatihan
-                            </button>
-                        </div>
-                    @endif
+
+                            {{-- List View --}}
+                            <div x-show="view === 'list'" x-cloak x-transition>
+                                <div class="d-flex flex-column gap-3">
+                                    @foreach ($courses as $course)
+                                        <x-course-card :course="$course" view="list" :actions="true" />
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Pagination Integration --}}
+                            <div class="mt-5 d-flex justify-content-center">
+                                {!! $courses->links() !!}
+                            </div>
+                        @else
+                            {{-- Empty State --}}
+                            <div class="card border-0 shadow-sm rounded-4 py-5 px-4 text-center">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                                    <i class="fas fa-search-minus fs-1 text-muted opacity-50"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-2">Pelatihan Tidak Ditemukan</h4>
+                                <p class="text-secondary mx-auto mb-4" style="max-width: 450px;">
+                                    Maaf, kami tidak dapat menemukan pelatihan yang sesuai dengan kriteria Anda. Cari dengan kata kunci lain atau bersihkan semua filter.
+                                </p>
+                                <button type="button" @click="resetFilters()" class="btn btn-primary rounded-pill px-4 py-2 fw-bold">
+                                    <i class="fas fa-redo-alt me-2"></i>Lihat Semua Pelatihan
+                                </button>
+                            </div>
+                        @endif
+                    </div>
                 </main>
             </div>
         </div>
