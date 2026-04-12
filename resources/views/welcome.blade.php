@@ -359,93 +359,84 @@ function renderPelatihan(date) {
 
 
 <!--  Struktur Organisasi -->
-    <section class="meet-our-team py-5 py-lg-11 py-xl-12">
+    <section class="meet-our-team py-5 py-lg-11 py-xl-12" id="pimpinan">
       <div class="container">
         <div class="d-flex flex-column gap-5 gap-xl-11">
           <div class="row">
-        <div class="col-12">
-          <div class="text-center" data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000">
-            <h2 class="mb-5">Meet our team</h2>
+            <div class="col-12">
+              <div class="text-center" data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000">
+                <h2 class="mb-5 fw-bold text-gradient">Struktur Pimpinan BPSDM Provinsi Sultra</h2>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-          <div class="row">
-            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0" data-aos="fade-up" data-aos-delay="100">
-              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="100"
-                data-aos-duration="1000">
-                <div class="meet-team-img position-relative overflow-hidden">
-                  <img src="{{ asset('image/kepala-badan.jpg') }}" alt="team-img" class="img-fluid w-100">
-                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
-                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
-                    </ul>
-                  </div>
+          <div class="row justify-content-center">
+            @php
+              $team = [
+                [
+                  'name' => 'Syahruddin Nurdin, SE.', 
+                  'role' => 'Kepala Badan (Kaban)', 
+                  'icon' => 'fa-user-tie',
+                  'delay' => 100
+                ],
+                [
+                  'name' => 'Ahmad Yasir', 
+                  'role' => 'Sekretaris Badan (Sekban)', 
+                  'icon' => 'fa-user-pen',
+                  'delay' => 200
+                ],
+                [
+                  'name' => 'Rahmad Dwi Anto, SSTP', 
+                  'role' => 'Kepala Bidang Pengembangan Kompetensi Teknis Umum dan Fungsional', 
+                  'icon' => 'fa-laptop-code',
+                  'delay' => 300
+                ],
+                [
+                  'name' => 'Kepala Bidang', 
+                  'role' => 'Pengembangan Kompetensi Manajerial', 
+                  'icon' => 'fa-users-gear',
+                  'delay' => 400
+                ],
+                [
+                  'name' => 'Kepala Bidang', 
+                  'role' => 'Sertifikasi Kompetensi dan Penjaminan Mutu', 
+                  'icon' => 'fa-file-shield',
+                  'delay' => 500
+                ],
+              ];
+            @endphp
+
+            @foreach($team as $member)
+            <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="{{ $member['delay'] }}">
+              <div class="pimpinan-card d-flex align-items-center gap-4 shadow-sm rounded-4 bg-white p-4 border-start border-4 border-primary h-100" 
+                   style="transition: transform 0.3s ease; cursor: default;">
+                <div class="pimpinan-icon bg-light rounded-circle hstack justify-content-center shadow-sm" style="width: 60px; height: 60px; min-width: 60px;">
+                  <i class="fas {{ $member['icon'] }} text-primary fs-4"></i>
                 </div>
-                <div class="meet-team-details">
-                  <h4 class="mb-0">kepala-badan</h4>
-                  <p class="mb-0">kepala-badan</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0" data-aos="fade-up" data-aos-delay="200">
-              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="200"
-                data-aos-duration="1000">
-                <div class="meet-team-img position-relative overflow-hidden">
-                  <img src="{{ asset('image/kaban.JPG') }}" alt="team-img" class="img-fluid w-100">
-                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
-                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="meet-team-details">
-                  <h4 class="mb-0">kaban</h4>
-                  <p class="mb-0">kaban</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0" data-aos="fade-up" data-aos-delay="300">
-              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="300"
-                data-aos-duration="1000">
-                <div class="meet-team-img position-relative overflow-hidden">
-                  <img src="{{ asset('image/sekban.png') }}" alt="team-img" class="img-fluid w-100">
-                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
-                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="meet-team-details">
-                  <h4 class="mb-0">sekban</h4>
-                  <p class="mb-0">sekban</p>
+                <div>
+                  <h6 class="mb-1 fw-bold text-dark">{{ $member['name'] }}</h6>
+                  <p class="mb-0 text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.5px; line-height: 1.2;">
+                    {{ $member['role'] }}
+                  </p>
                 </div>
               </div>
             </div>
-            <div class="col-md-6 col-xl-3 mb-7 mb-xl-0" data-aos="fade-up" data-aos-delay="400">
-              <div class="meet-team d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="400"
-                data-aos-duration="1000">
-                <div class="meet-team-img position-relative overflow-hidden">
-                  <img src="{{ asset('image/kadis.png') }}" alt="team-img" class="img-fluid w-100">
-                  <div class="meet-team-overlay p-7 d-flex flex-column justify-content-end">
-                    <ul class="social list-unstyled mb-0 hstack gap-2 justify-content-end">
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-square-facebook"></i></a></li>
-                      <li><a href="#!" class="btn bg-white p-2 round-45 rounded-circle hstack justify-content-center"><i class="fa-brands fa-instagram"></i></a></li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="meet-team-details">
-                  <h4 class="mb-0">kadis</h4>
-                  <p class="mb-0">kadis</p>
-                </div>
-              </div>
-            </div>
+            @endforeach
           </div>
         </div>
       </div>
     </section>
+
+    <style>
+      .pimpinan-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+      }
+      .text-gradient {
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    </style>
 {{-- Akhir Section Struktur Organisasi --}}
 
 {{-- Article --}}
