@@ -30,6 +30,7 @@ class User extends Authenticatable
         'is_validated',
         'surat_tugas_url',
         'surat_tugas_file_path',
+        'avatar',
     ];
 
     /**
@@ -109,5 +110,18 @@ class User extends Authenticatable
     public function enrollments(): HasMany
     {
         return $this->userEnrollments();
+    }
+
+    /**
+     * Get the avatar URL attribute.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar)) {
+            return \Illuminate\Support\Facades\Storage::url($this->avatar);
+        }
+
+        $hash = md5(strtolower(trim($this->email)));
+        return "https://www.gravatar.com/avatar/{$hash}?s=200&d=mp";
     }
 }

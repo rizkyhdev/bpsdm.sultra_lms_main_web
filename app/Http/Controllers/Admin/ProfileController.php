@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Student;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,25 +9,25 @@ use Illuminate\Support\Facades\Storage;
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Display the admin's profile form.
      */
     public function show(Request $request)
     {
         $user = $request->user();
-        return view('student.profile.show', compact('user'));
+        return view('admin.profile.show', compact('user'));
     }
 
     /**
-     * Edit the user's profile form.
+     * Edit the admin's profile form.
      */
     public function edit(Request $request)
     {
         $user = $request->user();
-        return view('student.profile.edit', compact('user'));
+        return view('admin.profile.edit', compact('user'));
     }
 
     /**
-     * Update the user's profile information.
+     * Update the admin's profile information.
      */
     public function update(Request $request)
     {
@@ -41,8 +41,6 @@ class ProfileController extends Controller
             'locale' => 'nullable|string|max:255',
             'bio' => 'nullable|string',
             'avatar' => 'nullable|image|max:2048', // up to 2MB
-            'surat_tugas_url' => 'nullable|url|max:255',
-            'surat_tugas_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
         ]);
 
         $user->name = $validated['name'];
@@ -61,20 +59,8 @@ class ProfileController extends Controller
             $user->avatar = $path;
         }
 
-        if ($request->has('surat_tugas_url')) {
-            $user->surat_tugas_url = $validated['surat_tugas_url'];
-        }
-
-        if ($request->hasFile('surat_tugas_file')) {
-            if ($user->surat_tugas_file_path) {
-                Storage::disk('public')->delete($user->surat_tugas_file_path);
-            }
-            $path = $request->file('surat_tugas_file')->store('surat_tugas', 'public');
-            $user->surat_tugas_file_path = $path;
-        }
-
         $user->save();
 
-        return redirect()->route('student.profile.show')->with('status', 'Profil berhasil diperbarui.');
+        return redirect()->route('admin.profile.show')->with('status', 'Profil berhasil diperbarui.');
     }
 }

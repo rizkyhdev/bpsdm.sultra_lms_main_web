@@ -276,6 +276,11 @@ Route::group([
 
     // Certificates for instructor-owned courses
     Route::get('/certificates', [InstructorCertificateController::class, 'index'])->name('certificates.index');
+
+    // Profile
+    Route::get('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [\App\Http\Controllers\Instructor\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Rute untuk Admin
@@ -410,4 +415,9 @@ Route::group([
     Route::get('/reports/courses/export', [AdminReportController::class, 'exportCourses'])->name('reports.courses.export');
     Route::get('/reports/jp/export', [AdminReportController::class, 'exportJp'])->name('reports.jp.export');
     Route::get('/reports/quizzes/export', [AdminReportController::class, 'exportQuizzes'])->name('reports.quizzes.export');
+
+    // Profile
+    Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
 });
