@@ -24,6 +24,7 @@ class Quiz extends Model
         'deskripsi',
         'nilai_minimum',
         'max_attempts',
+        'urutan',
     ];
 
     /**

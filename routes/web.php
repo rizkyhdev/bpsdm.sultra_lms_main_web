@@ -248,6 +248,7 @@ Route::group([
     Route::get('/quizzes/{id}/edit', [InstructorQuizController::class, 'edit'])->name('quizzes.edit');
     Route::put('/quizzes/{id}', [InstructorQuizController::class, 'update'])->name('quizzes.update');
     Route::delete('/quizzes/{id}', [InstructorQuizController::class, 'destroy'])->name('quizzes.destroy');
+    Route::post('/quizzes/reorder', [InstructorQuizController::class, 'reorder'])->name('quizzes.reorder');
     Route::get('/quizzes/{id}/results', [InstructorQuizController::class, 'results'])->name('quizzes.results');
 
     Route::get('/quizzes/{quizId}/questions', [InstructorQuestionController::class, 'index'])->name('questions.index');

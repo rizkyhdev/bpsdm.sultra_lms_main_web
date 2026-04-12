@@ -18,6 +18,7 @@ class StoreQuizRequest extends FormRequest
             'deskripsi' => 'required|string',
             'nilai_minimum' => 'required|numeric|min:0|max:100',
             'max_attempts' => 'required|integer|min:1',
+            'urutan' => 'nullable|integer|min:1',
         ];
     }
 }

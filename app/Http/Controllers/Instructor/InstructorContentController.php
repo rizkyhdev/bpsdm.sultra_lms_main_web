@@ -95,7 +95,7 @@ class InstructorContentController extends Controller
             $content = new Content();
             $content->judul = $data['judul'];
             $content->tipe = $data['tipe'];
-            $content->urutan = $data['urutan'];
+            $content->urutan = $data['urutan'] ?? (Content::where('sub_module_id', $subModule->id)->max('urutan') + 1) ?: 1;
             $content->sub_module_id = $subModule->id;
             $content->html_content = $data['html_content'] ?? null;
             $content->external_url = $data['external_url'] ?? null;
@@ -181,7 +181,7 @@ class InstructorContentController extends Controller
             $data = $request->validated();
             $content->judul = $data['judul'];
             $content->tipe = $data['tipe'];
-            $content->urutan = $data['urutan'];
+            $content->urutan = $data['urutan'] ?? $content->urutan;
             $content->html_content = $data['html_content'] ?? null;
             $content->external_url = $data['external_url'] ?? null;
             $content->youtube_url = $data['youtube_url'] ?? null;

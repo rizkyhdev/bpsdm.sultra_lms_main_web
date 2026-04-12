@@ -116,7 +116,10 @@ class InstructorQuizController extends Controller
         $this->authorize('update', $sub);
 
         try {
-            $quiz = new Quiz($request->validated());
+            $data = $request->validated();
+            $data['urutan'] = $data['urutan'] ?? (Quiz::where('sub_module_id', $sub->id)->max('urutan') + 1) ?: 1;
+            
+            $quiz = new Quiz($data);
             $quiz->sub_module_id = $sub->id;
             $quiz->save();
             Log::info('Quiz created', ['quiz_id' => $quiz->id, 'instructor_id' => Auth::id()]);
@@ -189,7 +192,11 @@ class InstructorQuizController extends Controller
         $this->authorize('update', $quiz);
 
         try {
-            $quiz->update($request->validated());
+            $data = $request->validated();
+            if (empty($data['urutan'])) {
+                unset($data['urutan']);
+            }
+            $quiz->update($data);
             Log::info('Quiz updated', ['quiz_id' => $quiz->id, 'instructor_id' => Auth::id()]);
             
             if ($request->expectsJson()) {
@@ -243,6 +250,38 @@ class InstructorQuizController extends Controller
             }
             
             return redirect()->back()->with('error', 'Failed to delete quiz.');
+        }
+    }
+
+    /**
+     * Mengubah urutan kuis.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reorder(Request $request)
+    {
+        $data = $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|integer|exists:quizzes,id',
+            'items.*.urutan' => 'required|integer',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            foreach ($data['items'] as $item) {
+                $quiz = Quiz::find($item['id']);
+                if ($quiz) {
+                    $this->authorize('update', $quiz);
+                    $quiz->urutan = $item['urutan'];
+                    $quiz->save();
+                }
+            }
+            DB::commit();
+            return response()->json(['message' => 'Order updated']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to reorder quizzes', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Failed to update order'], 500);
         }
     }
 

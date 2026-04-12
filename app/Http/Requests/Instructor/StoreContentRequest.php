@@ -21,7 +21,7 @@ class StoreContentRequest extends FormRequest
             'external_url' => 'nullable|url|required_if:tipe,link',
             'youtube_url' => 'nullable|url|required_if:tipe,youtube',
             'required_duration' => 'nullable|integer|min:1',
-            'urutan' => 'required|integer|min:1',
+            'urutan' => 'nullable|integer|min:1',
         ];
     }
     
