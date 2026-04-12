@@ -32,32 +32,33 @@
 
 @if ($view === 'grid')
     <div class="card shadow border-0 h-100 hover-card" style="border-radius: 22px; overflow: hidden; cursor: pointer;">
-        {{-- Header/Thumbnail --}}
-        <div class="text-white d-flex align-items-center position-relative" 
-             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 95px; border-top-left-radius: 22px; border-top-right-radius: 22px;">
-            @if (isset($course->cover_url) && $course->cover_url)
-                <img src="{{ $course->cover_url }}" alt="{{ $course->judul }}" class="w-100 h-100" style="object-fit: cover; border-top-left-radius: 22px; border-top-right-radius: 22px;">
-            @else
-                <div class="w-100 h-100 d-flex align-items-center justify-content-center">
-                    <i class="bi bi-book fs-1 text-white opacity-75"></i>
-                </div>
-            @endif
-            
-            {{-- Category Tag --}}
-            @if ($course->bidang_kompetensi)
-                <div class="position-absolute top-0 start-0 m-2">
-                    <span class="badge bg-success text-uppercase" style="font-size: 0.7rem;">
-                        {{ $course->bidang_kompetensi }}
-                    </span>
-                </div>
-            @endif
-            
-            {{-- Course Title Overlay --}}
-            <h5 class="position-absolute bottom-0 start-0 ms-3 mb-2 fw-bold text-white" 
-                style="font-size: 1.1rem; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
-                {{ Str::limit($course->judul, 40) }}
-            </h5>
-        </div>
+        <a href="{{ route('courses.public_show', $course->slug) }}" class="text-decoration-none">
+            <div class="text-white d-flex align-items-center position-relative" 
+                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 95px; border-top-left-radius: 22px; border-top-right-radius: 22px;">
+                @if (isset($course->cover_url) && $course->cover_url)
+                    <img src="{{ $course->cover_url }}" alt="{{ $course->judul }}" class="w-100 h-100" style="object-fit: cover; border-top-left-radius: 22px; border-top-right-radius: 22px;">
+                @else
+                    <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-book fs-1 text-white opacity-75"></i>
+                    </div>
+                @endif
+                
+                {{-- Category Tag --}}
+                @if ($course->bidang_kompetensi)
+                    <div class="position-absolute top-0 start-0 m-2">
+                        <span class="badge bg-success text-uppercase" style="font-size: 0.7rem;">
+                            {{ $course->bidang_kompetensi }}
+                        </span>
+                    </div>
+                @endif
+                
+                {{-- Course Title Overlay --}}
+                <h5 class="position-absolute bottom-0 start-0 ms-3 mb-2 fw-bold text-white" 
+                    style="font-size: 1.1rem; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+                    {{ Str::limit($course->judul, 40) }}
+                </h5>
+            </div>
+        </a>
 
         {{-- Content --}}
         <div class="card-body p-3">
@@ -172,14 +173,10 @@
                             </button>
                         </form>
                     @endif
-                @elseif ($hasRoute)
-                    <a href="{{ route('courses.show', $course->id) }}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-play-circle me-1"></i>Mulai
-                    </a>
                 @else
-                    <button disabled class="btn btn-secondary btn-sm" disabled>
-                        Mulai
-                    </button>
+                    <a href="{{ route('courses.public_show', $course->slug) }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-info-circle me-1"></i>Detail
+                    </a>
                 @endif
             @endif
         </div>

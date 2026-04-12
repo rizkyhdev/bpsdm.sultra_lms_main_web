@@ -147,6 +147,41 @@ class CourseController extends Controller
         });
 
         return view('courses.index', compact('courses', 'categories', 'difficulties', 'ratings'));
+    /**
+     * Display the specified course details (Public).
+     */
+    public function show(Course $course)
+    {
+        // Load relationships for curriculum and owner
+        $course->load([
+            'owner',
+            'modules' => function ($q) {
+                $q->orderBy('urutan', 'asc');
+            },
+            'modules.subModules' => function ($q) {
+                $q->orderBy('urutan', 'asc');
+            }
+        ]);
+
+        // Check if user is enrolled
+        $isEnrolled = false;
+        if (auth()->check()) {
+            $isEnrolled = $course->userEnrollments()
+                ->where('user_id', auth()->id())
+                ->exists();
+        }
+
+        // Add calculated attributes
+        $subModulesCount = $course->subModules()->count();
+        if ($subModulesCount <= 4) {
+            $course->difficulty = 'Beginner';
+        } elseif ($subModulesCount >= 5 && $subModulesCount <= 9) {
+            $course->difficulty = 'Intermediate';
+        } else {
+            $course->difficulty = 'Expert';
+        }
+
+        return view('courses.show', compact('course', 'isEnrolled'));
     }
 }
 

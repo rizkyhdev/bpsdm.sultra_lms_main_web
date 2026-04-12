@@ -44,6 +44,7 @@ Route::get('/', [PelatihanController::class, 'index']);
 
 // Public courses catalog
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/pelatihan/{course:slug}', [CourseController::class, 'show'])->name('courses.public_show');
 
 // Public certificate verification
 Route::get('/certificates/verify/{uid}', [CertificateController::class, 'verify'])->name('certificates.verify');

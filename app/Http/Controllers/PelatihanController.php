@@ -25,7 +25,7 @@ class PelatihanController extends Controller
                 'end_date' => $end ? $end->toDateString() : null,
                 'duration' => $course->jp_value . ' JP',
                 'level' => 'Umum',
-                'url' => route('courses.show', $course->id)
+                'url' => route('courses.public_show', $course->slug)
             ];
         })->toArray();
 
