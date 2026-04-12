@@ -48,7 +48,7 @@
     @include('layouts.partials.courses.header')
     
     <div x-data="{
-        view: '{{ request('view', 'grid') }}',
+        view: localStorage.getItem('course_view') || '{{ request('view', 'grid') }}',
         categoriesOpen: true,
         difficultyOpen: true,
         ratingOpen: true,
@@ -88,7 +88,7 @@
         },
         changeView(v) {
             this.view = v;
-            this.submitForm();
+            localStorage.setItem('course_view', v);
         },
         resetFilters() {
             this.categories = [];
@@ -97,6 +97,7 @@
             this.q = '';
             this.sort = 'latest';
             this.view = 'grid';
+            localStorage.setItem('course_view', 'grid');
             this.submitForm();
         }
     }" class="min-h-screen flex-fill">
