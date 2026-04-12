@@ -73,7 +73,7 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 // Rute untuk Student Area (auth + role:student)
-Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:student', 'prevent-back-history'])->group(function () {
     // Dashboard
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
     
@@ -106,7 +106,7 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
 Route::group([
     'prefix' => 'student',
     'as' => 'student.',
-    'middleware' => ['auth', 'role:student'],
+    'middleware' => ['auth', 'role:student', 'prevent-back-history'],
 ], function () {
 
     // Courses
@@ -176,7 +176,7 @@ Route::group([
 Route::group([
     'prefix' => 'instructor',
     'as' => 'instructor.',
-    'middleware' => ['auth', 'role:instructor'],
+    'middleware' => ['auth', 'role:instructor', 'prevent-back-history'],
 ], function () {
     Route::get('/dashboard', [InstructorDashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/courses/{id}/overview', [InstructorDashboardController::class, 'courseOverview'])->name('courses.overview');
@@ -287,7 +287,7 @@ Route::group([
 Route::group([
     'prefix' => 'admin',
     'as' => 'admin.',
-    'middleware' => ['auth', 'role:admin'],
+    'middleware' => ['auth', 'role:admin', 'prevent-back-history'],
 ], function () {
     // Dashboard
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
