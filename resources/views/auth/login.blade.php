@@ -165,6 +165,19 @@
             </div>
         @endif
 
+        {{-- Intended Redirect Context --}}
+        @if(session('url.intended') && str_contains(session('url.intended'), '/courses/'))
+            <div class="alert alert-info border-0 shadow-sm rounded-4 py-3" role="alert" style="background-color: #e3f2fd; color: #0d47a1;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-3 fs-3"></i>
+                    <div>
+                        <h6 class="mb-1 fw-bold">Login Diperlukan</h6>
+                        <p class="mb-0 small">Silakan login untuk dapat melihat detail pelatihan ini dan fitur menarik lainnya.</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('login') }}">
   <!-- Field NIP -->
   <div class="mb-3 input-group-custom">

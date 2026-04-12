@@ -89,7 +89,7 @@ Route::middleware(['auth', 'verified', 'role:student', 'prevent-back-history'])-
     Route::post('/student/enroll/{course:id}', [EnrollmentController::class, 'store'])->name('student.enroll');
     
     // Course schedule (for countdown display)
-    Route::get('/courses/{course:id}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
+    // Route::get('/courses/{course:id}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
     
     // Certificates (use signed URLs generated in controller; no extra middleware to avoid env signature issues)
     Route::post('/courses/{course:slug}/certificate/generate', [CertificateController::class, 'generate'])->name('certificates.generate');
@@ -100,6 +100,11 @@ Route::middleware(['auth', 'verified', 'role:student', 'prevent-back-history'])-
     // Calendar
     Route::get('/student/calendar', [StudentCalendarPageController::class, 'index'])->name('student.calendar.index');
     Route::get('/api/student/calendar', [StudentCalendarController::class, 'index'])->name('api.student.calendar');
+});
+
+// Routes for all authenticated users (Student, Instructor, Admin)
+Route::middleware(['auth', 'verified', 'prevent-back-history'])->group(function () {
+    Route::get('/courses/{course:id}', [\App\Http\Controllers\Student\StudentCourseController::class, 'show'])->name('courses.show');
 });
 
 // Legacy routes for backward compatibility

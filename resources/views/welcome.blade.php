@@ -330,7 +330,10 @@ function renderPelatihan(date) {
                             <i class="fas fa-star"></i>
                             <small class="text-muted ms-1">(5.0)</small>
                         </div>
-                        <a href="${item.url}" class="btn btn-outline-primary btn-sm w-100 rounded-pill">Lihat Detail</a>
+                        <a href="${item.url}" class="btn btn-outline-primary btn-sm w-100 rounded-pill" 
+                           title="{{ Auth::guest() ? 'Silakan login untuk melihat detail' : '' }}">
+                           Lihat Detail
+                        </a>
                     </div>
                 </div>
             </div>

@@ -23,7 +23,7 @@ class StudentCourseController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:student');
+        $this->middleware('role:student')->except(['show']);
     }
 
     /**
