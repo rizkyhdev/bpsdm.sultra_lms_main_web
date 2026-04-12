@@ -27,34 +27,36 @@
     </button> -->
     @auth
     <div class="dropdown">
-      <button class="btn rounded-circle d-flex align-items-center justify-content-center shadow"
+      <button class="btn rounded-circle d-flex align-items-center justify-content-center shadow p-0 overflow-hidden"
         style="background-color: #88d4e1; width: 40px; height: 40px; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1); border: none;"
         data-bs-toggle="dropdown"
         onfocus="this.blur();">
-        <i class="far fa-user" style="color: black;"></i>
+        <img src="{{ auth()->user()->avatar_url }}" alt="Avatar" class="w-100 h-100 object-fit-cover">
       </button>
       <div class="dropdown-menu dropdown-menu-end p-0 rounded-4 overflow-hidden mt-2" style="min-width: 240px; border-radius: 16px; background-color: #fff;
         font-family: sans-serif; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important; z-index: 1055;">
         <div class="border-bottom p-3 d-flex align-items-center gap-2">
-          <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: #21b3ca; flex-shrink:0;">
-            <i class="far fa-user text-black" style="line-height: 1; font-size:18px;"></i>
+          <div class="rounded-circle d-flex align-items-center justify-content-center overflow-hidden" style="width: 40px; height: 40px; background-color: #21b3ca; flex-shrink:0;">
+            <img src="{{ auth()->user()->avatar_url }}" alt="Avatar" class="w-100 h-100 object-fit-cover">
           </div>
           <div>
             <p class="mb-0 fw-bold" style="font-size: 14px; color: #000;">{{ auth()->user()->name }}</p>
             <small class="text-muted" style="font-size: 12px;">{{ auth()->user()->email }}</small>
           </div>
         </div>
-        <a class="dropdown-item dropdown-link" href="{{ route('student.profile.show') }}">
+        <a class="dropdown-item dropdown-link" href="{{ route((auth()->user()->role ?? 'student') . '.profile.show') }}">
           <div class="hover-bg">
             <i class="far fa-user me-2"></i> Profil
           </div>
         </a>
       
+        @if((auth()->user()->role ?? 'student') === 'student')
         <a class="dropdown-item dropdown-link" href="{{ route('student.settings.index') }}">
           <div class="hover-bg">
             <i class="fas fa-cog me-2"></i> Pengaturan
           </div>
         </a>
+        @endif
         <div style="border-top: 1px solid #e0e0e0;"></div>
         <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
           @csrf
