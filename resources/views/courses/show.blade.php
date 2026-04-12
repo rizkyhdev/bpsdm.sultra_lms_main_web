@@ -134,11 +134,11 @@
                             {{-- CTA logic --}}
                             @auth
                                 @if($isEnrolled)
-                                    <a href="{{ route('student.courses.show', $course) }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold">
+                                    <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold">
                                         <i class="bi bi-play-fill me-2"></i>Lanjut Belajar
                                     </a>
                                 @else
-                                    <form action="{{ route('student.enroll', $course->id) }}" method="POST">
+                                    <form action="{{ route('student.courses.show', $course->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold shadow">
                                             Daftar Sekarang
@@ -146,7 +146,7 @@
                                     </form>
                                 @endif
                             @else
-                                <a href="{{ route('student.courses.show', $course) }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold shadow">
+                                <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold shadow">
                                     Daftar Sekarang
                                 </a>
                                 <p class="text-center small text-muted mb-0">Login diperlukan untuk mendaftar</p>
