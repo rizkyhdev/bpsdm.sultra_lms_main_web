@@ -106,6 +106,9 @@
             {{-- Quiz Actions --}}
             <div class="card shadow-sm border-0" style="border-radius: 12px;">
                 <div class="card-body">
+                    @php
+                        $passedAttempt = $previousAttempts->where('is_passed', true)->sortByDesc('nilai')->first();
+                    @endphp
                     @if($canTakeQuiz)
                         @if($activeAttempt)
                             <button id="startQuizBtn" class="btn btn-primary w-100 mb-2">
@@ -117,31 +120,50 @@
                             </button>
                         @endif
                     @else
-                            @php
-                                $passedAttempt = $previousAttempts->where('is_passed', true)->first();
-                            @endphp
                             @if($passedAttempt)
-                                <div class="alert alert-success">
-                                    <i class="bi bi-check-circle me-2"></i>
-                                    <strong>Selamat!</strong> Anda telah lulus quiz ini dengan nilai {{ number_format($passedAttempt->nilai, 1) }}%.
+                                <div class="alert alert-success border-0 shadow-sm" style="border-radius: 12px; background-color: #e8f5e9;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <i class="bi bi-check-circle-fill fs-3 text-success"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <h6 class="fw-bold text-success mb-1">Selamat! Anda Telah Lulus</h6>
+                                            <p class="text-success small mb-0">Anda lulus dengan nilai <strong>{{ number_format($passedAttempt->nilai, 1) }}%</strong>.</p>
+                                        </div>
+                                    </div>
+                                    @if($canTakeQuiz)
+                                        <hr class="my-2 text-success opacity-25">
+                                        <p class="text-success small mb-0">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Anda masih dapat mengambil kuis kembali untuk meningkatkan nilai Anda selama sisa percobaan masih tersedia. Nilai tertinggi yang akan diambil.
+                                        </p>
+                                    @endif
                                 </div>
-                            <a href="{{ route('student.quizzes.review', $passedAttempt->id) }}" 
-                               class="btn btn-outline-success w-100">
-                                <i class="bi bi-eye me-1"></i>Lihat Hasil
-                            </a>
-                        @elseif(isset($hasCompletedRequiredContents) && !$hasCompletedRequiredContents)
-                            <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <strong>Perhatian:</strong> Kuis ini tidak dapat dimulai karena Anda belum menyelesaikan seluruh konten pada sub-modul ini 100%.
-                                <br>
-                                Silakan selesaikan semua materi terlebih dahulu sebelum memulai kuis.
-                            </div>
-                        @else
-                            <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <strong>Perhatian:</strong> Anda telah mencapai batas maksimum attempts untuk quiz ini.
-                            </div>
-                        @endif
+                            @endif
+                            
+                            @if(!$canTakeQuiz)
+                                @if(isset($hasCompletedRequiredContents) && !$hasCompletedRequiredContents)
+                                    <div class="alert alert-warning border-0 shadow-sm" style="border-radius: 12px; background-color: #fff8e1;">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-exclamation-triangle-fill fs-3 text-warning me-3"></i>
+                                            <div>
+                                                <h6 class="fw-bold text-warning mb-1">Konten Belum Selesai</h6>
+                                                <p class="text-warning small mb-0">Silakan selesaikan semua materi pada sub-modul ini terlebih dahulu.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @elseif(!$passedAttempt)
+                                    <div class="alert alert-danger border-0 shadow-sm" style="border-radius: 12px; background-color: #ffebee;">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-exclamation-octagon-fill fs-3 text-danger me-3"></i>
+                                            <div>
+                                                <h6 class="fw-bold text-danger mb-1">Batas Percobaan Tercapai</h6>
+                                                <p class="text-danger small mb-0">Anda telah mencapai batas maksimum attempts untuk quiz ini.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
                     @endif
 
                     @if($quiz->subModule)

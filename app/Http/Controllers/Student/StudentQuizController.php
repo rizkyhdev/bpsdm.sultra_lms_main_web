@@ -785,6 +785,8 @@ class StudentQuizController extends Controller
             return true; // Can continue existing attempt
         }
 
+        /* 
+        // Logic modified: allows re-take to improve score if attempts are remaining
         // Check if user has passed the quiz
         $passedAttempt = $user->quizAttempts()
             ->where('quiz_id', $quiz->id)
@@ -794,6 +796,7 @@ class StudentQuizController extends Controller
         if ($passedAttempt) {
             return false; // Already passed
         }
+        */
 
         // New rule: user must complete all required contents before starting a quiz
         if (!$this->hasCompletedRequiredContents($user, $quiz)) {

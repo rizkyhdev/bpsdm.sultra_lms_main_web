@@ -113,7 +113,20 @@ class CertificateService
     public function pdfHtmlData(User $user, Course $course, UserEnrollment $enrollment, string $uid): array
     {
         // Eager-load modules once for competency listing on the certificate
-        $course->loadMissing('modules');
+        $course->loadMissing(['modules', 'quizzes.quizAttempts' => function($query) use ($user) {
+            $query->where('user_id', $user->id)->whereNotNull('completed_at');
+        }]);
+
+        // Find the highest score from course-level quizzes
+        $finalScore = null;
+        if ($course->quizzes->isNotEmpty()) {
+            $allScores = $course->quizzes->flatMap(function($quiz) {
+                return $quiz->quizAttempts->pluck('nilai');
+            });
+            if ($allScores->isNotEmpty()) {
+                $finalScore = $allScores->max();
+            }
+        }
 
         return [
             'student_name' => $user->name,
@@ -128,8 +141,7 @@ class CertificateService
             'competencies' => $course->modules
                 ? $course->modules->pluck('judul')->filter()->values()->all()
                 : [],
-            // Final score can be wired later if you add it to enrollments; keep nullable for now
-            'final_score' => null,
+            'final_score' => $finalScore,
         ];
     }
 
