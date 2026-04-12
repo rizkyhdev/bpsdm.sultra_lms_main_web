@@ -32,7 +32,7 @@
 
 @if ($view === 'grid')
     <div class="card shadow border-0 h-100 hover-card" style="border-radius: 22px; overflow: hidden; cursor: pointer;">
-        <a href="{{ route('courses.public_show', $course->slug) }}" class="text-decoration-none">
+        <a href="{{ route('courses.public_show', $course) }}" class="text-decoration-none">
             <div class="text-white d-flex align-items-center position-relative" 
                  style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 95px; border-top-left-radius: 22px; border-top-right-radius: 22px;">
                 @if (isset($course->cover_url) && $course->cover_url)
@@ -174,7 +174,7 @@
                         </form>
                     @endif
                 @else
-                    <a href="{{ route('courses.public_show', $course->slug) }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('courses.public_show', $course) }}" class="btn btn-primary btn-sm">
                         <i class="bi bi-info-circle me-1"></i>Detail
                     </a>
                 @endif
@@ -185,8 +185,7 @@
     {{-- List View --}}
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
         <div class="flex flex-col lg:flex-row">
-            {{-- Thumbnail --}}
-            <div class="relative w-full lg:w-48 h-40 lg:h-auto bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center flex-shrink-0">
+            <a href="{{ route('courses.public_show', $course) }}" class="relative w-full lg:w-48 h-40 lg:h-auto bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center flex-shrink-0">
                 @if (isset($course->cover_url) && $course->cover_url)
                     <img src="{{ $course->cover_url }}" alt="{{ $course->judul }}" class="w-full h-full object-cover">
                 @else
@@ -202,14 +201,16 @@
                         </span>
                     </div>
                 @endif
-            </div>
+            </a>
 
             {{-- Content --}}
             <div class="flex-1 p-4 lg:p-6">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-3">
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                            {{ $course->judul }}
+                            <a href="{{ route('courses.public_show', $course) }}" class="hover:text-blue-600 transition-colors">
+                                {{ $course->judul }}
+                            </a>
                         </h3>
                         <div class="flex items-center text-sm text-gray-600 mb-3">
                             <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

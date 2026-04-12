@@ -147,6 +147,8 @@ class CourseController extends Controller
         });
 
         return view('courses.index', compact('courses', 'categories', 'difficulties', 'ratings'));
+    }
+
     /**
      * Display the specified course details (Public).
      */
