@@ -134,23 +134,44 @@
                             {{-- CTA logic --}}
                             @auth
                                 @if($isEnrolled)
-                                    <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold">
-                                        <i class="bi bi-play-fill me-2"></i>Lanjut Belajar
+                                    <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold premium-btn">
+                                        <i class="bi bi-play-circle-fill me-2"></i>Lanjut Belajar
                                     </a>
+                                    <p class="text-center small text-success fw-semibold"><i class="bi bi-patch-check-fill me-1"></i>Anda sudah terdaftar</p>
                                 @else
                                     <form action="{{ route('student.enroll', $course->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold shadow">
-                                            Daftar Sekarang
+                                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold shadow premium-btn">
+                                            <i class="bi bi-pencil-square me-2"></i>Daftar Sekarang
                                         </button>
                                     </form>
                                 @endif
                             @else
-                                <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold shadow">
-                                    Daftar Sekarang
+                                <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 rounded-pill mb-3 py-3 fw-bold shadow premium-btn">
+                                    <i class="bi bi-pencil-square me-2"></i>Daftar Sekarang
                                 </a>
-                                <p class="text-center small text-muted mb-0">Login diperlukan untuk mendaftar</p>
+                                <p class="text-center small text-muted mb-0">Silakan login untuk pendaftaran</p>
                             @endauth
+                        </div>
+
+<style>
+    .premium-btn {
+        background: linear-gradient(135deg, #21b3ca 0%, #003f7d 100%);
+        border: none;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .premium-btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(33, 179, 202, 0.3);
+        background: linear-gradient(135deg, #26c7e1 0%, #004d99 100%);
+    }
+    .premium-btn:active {
+        transform: translateY(0) scale(1);
+    }
+</style>
                         </div>
 
                         <div class="p-4 bg-light border-top">
