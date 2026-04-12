@@ -1,53 +1,152 @@
 @extends('layouts.admin')
 
-@section('title', __('Edit Admin Profile'))
+@section('title', 'Edit Profil Admin')
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.profile.show') }}">{{ __('Profile') }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ __('Edit') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.profile.show') }}">Profil Saya</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Sunting</li>
 @endsection
 
 @section('content')
-    <div class="mt-4 max-w-4xl mx-auto">
-        <x-admin.card :title="__('Update your profile')">
-            <form method="POST" action="{{ route('admin.profile.update') }}" class="space-y-4" enctype="multipart/form-data">
-                @csrf
-                @method('PATCH')
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <x-admin.input name="name" :label="__('Name')" :value="old('name', $user->name)" required />
-                    <x-admin.input name="email" type="email" :label="__('Email')" :value="old('email', $user->email)" required />
-                    <x-admin.input name="phone" :label="__('Phone')" :value="old('phone', $user->phone)" />
-                    <x-admin.select name="timezone" :label="__('Timezone')" :value="old('timezone', $user->timezone)" :options="array_combine(timezone_identifiers_list(), timezone_identifiers_list())" :placeholder="__('Select timezone')" />
-                    <x-admin.select name="locale" :label="__('Locale')" :value="old('locale', $user->locale ?? 'id')" :options="['en' => 'English', 'id' => 'Bahasa Indonesia']" :placeholder="__('Select locale')" />
-                    
-                    <div class="col-span-1 md:col-span-1">
-                        <label for="avatar" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Avatar (Optional)') }}</label>
-                        <input id="avatar" name="avatar" type="file" accept="image/*" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
-                        @error('avatar')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                        @if($user->avatar)
-                            <p class="text-xs text-green-600 mt-1 flex items-center"><i class="fas fa-check-circle mr-1"></i> Current avatar is set.</p>
-                        @endif
-                    </div>
-                    
-                    <div class="col-span-1 md:col-span-2">
-                        <label for="bio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Bio (Optional)') }}</label>
-                        <textarea id="bio" name="bio" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">{{ old('bio', $user->bio ?? '') }}</textarea>
-                    </div>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-primary py-3 px-4 border-0">
+                    <h5 class="mb-0 text-white fw-bold">Sunting Profil Anda</h5>
                 </div>
+                <div class="card-body p-4 p-md-5">
+                    @if(session('status'))
+                        <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4 alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i> {{ session('status') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
-                <div class="flex items-center justify-end gap-3 mt-6">
-                    <a href="{{ route('admin.profile.show') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                        {{ __('Cancel') }}
-                    </a>
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        <i class="fas fa-save mr-2"></i> {{ __('Save changes') }}
-                    </button>
+                    <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="row g-4">
+                            <!-- Avatar Section -->
+                            <div class="col-md-4 text-center border-end-md">
+                                <div class="mb-4">
+                                    <label class="form-label d-block fw-bold small text-uppercase text-muted mb-3">Foto Profil</label>
+                                    <div class="position-relative d-inline-block">
+                                        <img id="avatar-preview" src="{{ $user->avatar_url }}" alt="Avatar" class="rounded-circle border border-4 border-light shadow-sm" style="width: 160px; height: 160px; object-fit: cover;">
+                                        <label for="avatar-input" class="position-absolute bottom-0 end-0 bg-white text-primary p-2 rounded-circle shadow-sm border cursor-pointer" title="Ubah Foto">
+                                            <i class="bi bi-camera-fill"></i>
+                                        </label>
+                                        <input type="file" name="avatar" id="avatar-input" class="d-none" accept="image/*" onchange="previewImage(this)">
+                                    </div>
+                                    <div class="mt-3">
+                                        <small class="text-muted d-block">Ukuran maksimal 2MB (JPG, PNG)</small>
+                                        @error('avatar')
+                                            <span class="text-danger small">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Basic Info Section -->
+                            <div class="col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
+                                        <input type="text" name="name" class="form-control rounded-3 @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" required>
+                                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Alamat Email <span class="text-danger">*</span></label>
+                                        <input type="email" name="email" class="form-control rounded-3 @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required>
+                                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">NIP</label>
+                                        <input type="text" name="nip" class="form-control rounded-3" value="{{ old('nip', $user->nip) }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Nomor Telepon</label>
+                                        <input type="text" name="phone" id="phone" class="form-control rounded-3 @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}">
+                                        @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Jabatan</label>
+                                        <input type="text" name="jabatan" class="form-control rounded-3" value="{{ old('jabatan', $user->jabatan) }}" placeholder="Misal: Administrator Utama">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Unit Kerja</label>
+                                        <input type="text" name="unit_kerja" class="form-control rounded-3" value="{{ old('unit_kerja', $user->unit_kerja) }}" placeholder="Misal: BPSDM Provinsi">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Prefrences Section -->
+                            <div class="col-12">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Zona Waktu</label>
+                                        <select name="timezone" class="form-select rounded-3">
+                                            @foreach(timezone_identifiers_list() as $tz)
+                                                <option value="{{ $tz }}" {{ old('timezone', $user->timezone ?? 'Asia/Makassar') == $tz ? 'selected' : '' }}>{{ $tz }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Bahasa</label>
+                                        <select name="locale" class="form-select rounded-3">
+                                            <option value="id" {{ old('locale', $user->locale ?? 'id') == 'id' ? 'selected' : '' }}>Bahasa Indonesia</option>
+                                            <option value="en" {{ old('locale', $user->locale) == 'en' ? 'selected' : '' }}>English</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">Bio / Tentang Saya</label>
+                                        <textarea name="bio" class="form-control rounded-3" rows="4" placeholder="Tuliskan sedikit tentang diri Anda...">{{ old('bio', $user->bio) }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                            <a href="{{ route('admin.profile.show') }}" class="btn btn-link text-muted text-decoration-none">
+                                <i class="bi bi-arrow-left me-1"></i> Kembali ke Profil
+                            </a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
+                                <i class="bi bi-save me-2"></i>Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </x-admin.card>
+            </div>
+        </div>
     </div>
+</div>
+
+<style>
+    .rounded-4 { border-radius: 1rem !important; }
+    .rounded-3 { border-radius: 0.75rem !important; }
+    .cursor-pointer { cursor: pointer; }
+    .form-control:focus, .form-select:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.1);
+    }
+    @media (min-width: 768px) {
+        .border-end-md { border-right: 1px solid #dee2e6 !important; }
+    }
+</style>
+
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('avatar-preview').src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 @endsection

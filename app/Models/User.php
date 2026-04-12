@@ -31,6 +31,10 @@ class User extends Authenticatable
         'surat_tugas_url',
         'surat_tugas_file_path',
         'avatar',
+        'phone',
+        'timezone',
+        'locale',
+        'bio',
     ];
 
     /**

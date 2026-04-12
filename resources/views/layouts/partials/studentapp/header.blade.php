@@ -62,13 +62,13 @@
           </div>
         </a>
       
-        @if((auth()->user()->role ?? 'student') === 'student')
+        <!-- @if((auth()->user()->role ?? 'student') === 'student')
         <a class="dropdown-item dropdown-link" href="{{ route('student.settings.index') }}">
           <div class="hover-bg">
             <i class="fas fa-cog me-2"></i> Pengaturan
           </div>
         </a>
-        @endif
+        @endif -->
         <div style="border-top: 1px solid #e0e0e0;"></div>
         <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
           @csrf
