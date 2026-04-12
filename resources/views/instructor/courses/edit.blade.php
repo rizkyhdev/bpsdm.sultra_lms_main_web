@@ -71,6 +71,19 @@
               <input type="text" name="bidang_kompetensi" value="{{ old('bidang_kompetensi', $course->bidang_kompetensi) }}" class="form-control" required>
               @error('bidang_kompetensi')<small class="text-danger d-block">{{ $message }}</small>@enderror
             </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Tanggal Mulai Akses <small class="text-muted">(Opsional)</small></label>
+              <input type="datetime-local" name="start_date_time" value="{{ old('start_date_time', $course->start_date_time ? \Carbon\Carbon::parse($course->start_date_time)->format('Y-m-d\TH:i') : '') }}" class="form-control">
+              @error('start_date_time')<small class="text-danger d-block">{{ $message }}</small>@enderror
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Tanggal Berakhir Akses <small class="text-muted">(Opsional)</small></label>
+              <input type="datetime-local" name="end_date_time" value="{{ old('end_date_time', $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time)->format('Y-m-d\TH:i') : '') }}" class="form-control">
+              @error('end_date_time')<small class="text-danger d-block">{{ $message }}</small>@enderror
+            </div>
+          </div>
           </div>
 
           <div class="d-flex justify-content-end mt-4">
@@ -109,6 +122,8 @@
               <p><strong>Deskripsi:</strong> <span id="reviewDeskripsi"></span></p>
               <p><strong>JP Value:</strong> <span id="reviewJpValue"></span></p>
               <p><strong>Bidang Kompetensi:</strong> <span id="reviewBidangKompetensi"></span></p>
+              <p><strong>Tanggal Mulai:</strong> <span id="reviewStartDate"></span></p>
+              <p><strong>Tanggal Berakhir:</strong> <span id="reviewEndDate"></span></p>
             </div>
           </div>
 
@@ -1348,6 +1363,11 @@ function updateReview() {
   document.getElementById('reviewDeskripsi').textContent = document.querySelector('textarea[name="deskripsi"]').value;
   document.getElementById('reviewJpValue').textContent = document.querySelector('input[name="jp_value"]').value;
   document.getElementById('reviewBidangKompetensi').textContent = document.querySelector('input[name="bidang_kompetensi"]').value;
+  
+  const startDate = document.querySelector('input[name="start_date_time"]').value;
+  const endDate = document.querySelector('input[name="end_date_time"]').value;
+  document.getElementById('reviewStartDate').textContent = startDate ? new Date(startDate).toLocaleString() : '-';
+  document.getElementById('reviewEndDate').textContent = endDate ? new Date(endDate).toLocaleString() : '-';
   
   const modulesContainer = document.getElementById('reviewModules');
   modulesContainer.innerHTML = '';

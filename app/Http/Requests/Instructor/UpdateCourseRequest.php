@@ -18,6 +18,8 @@ class UpdateCourseRequest extends FormRequest
             'deskripsi' => 'required|string',
             'jp_value' => 'required|integer|min:1',
             'bidang_kompetensi' => 'required|string',
+            'start_date_time' => 'nullable|date',
+            'end_date_time' => 'nullable|date|after:start_date_time',
         ];
     }
 }

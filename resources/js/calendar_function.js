@@ -104,6 +104,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 cell.classList.add("selected");
             }
 
+            // Highlight dates with events from global pelatihanData
+            if (window.pelatihanData && window.pelatihanData.some(item => item.date === formatted)) {
+                cell.classList.add("has-event");
+            }
+
             date++;
         }
     }

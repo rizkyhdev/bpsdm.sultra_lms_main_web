@@ -154,6 +154,8 @@ class InstructorCourseController extends Controller
                 'deskripsi' => 'required|string',
                 'jp_value' => 'required|integer|min:1',
                 'bidang_kompetensi' => 'required|string',
+                'start_date_time' => 'nullable|date',
+                'end_date_time' => 'nullable|date|after:start_date_time',
                 'modules' => 'required|array|min:1',
                 'modules.*.judul' => 'required|string|max:255',
                 'modules.*.deskripsi' => 'nullable|string',
@@ -212,6 +214,8 @@ class InstructorCourseController extends Controller
             $course->deskripsi = $request->deskripsi;
             $course->jp_value = $request->jp_value;
             $course->bidang_kompetensi = $request->bidang_kompetensi;
+            $course->start_date_time = $request->start_date_time;
+            $course->end_date_time = $request->end_date_time;
             $course->user_id = Auth::id();
             $course->save();
 
@@ -496,6 +500,8 @@ class InstructorCourseController extends Controller
                 'deskripsi' => 'required|string',
                 'jp_value' => 'required|integer|min:1',
                 'bidang_kompetensi' => 'required|string',
+                'start_date_time' => 'nullable|date',
+                'end_date_time' => 'nullable|date|after:start_date_time',
                 'modules' => 'required|array|min:1',
                 'modules.*.id' => 'nullable|integer|exists:modules,id',
                 'modules.*.judul' => 'required|string|max:255',
@@ -550,6 +556,8 @@ class InstructorCourseController extends Controller
             $course->deskripsi = $request->deskripsi;
             $course->jp_value = $request->jp_value;
             $course->bidang_kompetensi = $request->bidang_kompetensi;
+            $course->start_date_time = $request->start_date_time;
+            $course->end_date_time = $request->end_date_time;
             $course->save();
 
             Log::info('Course updated', ['course_id' => $course->id]);

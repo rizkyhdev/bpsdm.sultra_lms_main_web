@@ -8,41 +8,23 @@ class PelatihanController extends Controller
 {
     public function index()
     {
-        $pelatihan = [
-            [
-                'title' => 'Pelatihan Sertifikasi PBJ',
-                'description' => 'Pelatihan Sertifikasi PBJ untuk pemula',
-                'date' => '2025-08-09',
-                'duration' => '2 hours',
-                'level' => 'Beginner',
-                'url' => '#'
-            ],
-            [
-                'title' => 'Pelatihan Lanjutan PBJ',
-                'description' => 'Materi lanjutan PBJ',
-                'date' => '2025-08-15',
-                'duration' => '3 hours',
-                'level' => 'Intermediate',
-                'url' => '#'
-            ],
-            [
-                'title' => 'Pelatihan Manajemen Bencana',
-                'description' => 'Pelatihan Manajemen Bencana Lever Dasar',
-                'date' => '2025-08-17',
-                'duration' => '2 hours',
-                'level' => 'Beginner',
-                'url' => '#'
-            ],
-             [
-                'title' => 'Pelatihan Sertifikasi PBJ',
-                'description' => 'Pelatihan Sertifikasi PBJ untuk pemula',
-                'date' => '2025-08-17',
-                'duration' => '2 hours',
-                'level' => 'Beginner',
-                'url' => '#'
-            ]
-            
-        ];
+        $courses = \App\Models\Course::whereNotNull('start_date_time')
+            ->orderBy('start_date_time', 'asc')
+            ->get();
+
+        $pelatihan = $courses->map(function ($course) {
+            return [
+                'title' => $course->judul,
+                'description' => \Illuminate\Support\Str::limit($course->deskripsi, 100),
+                'date' => \Carbon\Carbon::parse($course->start_date_time)->toDateString(),
+                'start_time' => \Carbon\Carbon::parse($course->start_date_time)->format('H:i'),
+                'end_time' => $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time)->format('H:i') : null,
+                'end_date' => $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time)->toDateString() : null,
+                'duration' => $course->jp_value . ' JP',
+                'level' => 'Umum', // Default level or logic if available
+                'url' => route('courses.show', $course->id)
+            ];
+        })->toArray();
 
         return view('welcome', compact('pelatihan'));
     }

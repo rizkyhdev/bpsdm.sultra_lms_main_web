@@ -294,31 +294,44 @@ function renderPelatihan(date) {
     const levelColors = {
         "Beginner": "#1E90FF",
         "Intermediate": "#FFC107",
-        "Advanced": "#2E8B57"
+        "Advanced": "#2E8B57",
+        "Umum": "#6f42c1"
     };
 
     let cardsHTML = "";
     filtered.forEach(item => {
         const headerColor = levelColors[item.level] || "#6c757d";
+        const endTimeStr = item.end_time ? ` - ${item.end_time}` : '';
+        const endDateStr = item.end_date && item.end_date !== item.date ? `<br><small class="text-white">s/d ${item.end_date}</small>` : '';
         cardsHTML += `
             <div class="col-md-4">
                 <div class="cardCalendar shadow-sm border-0 rounded-4 h-100">
-                    <div class="cardCalendar-header text-white fw-bold p-3" 
+                    <div class="cardCalendar-header text-white fw-bold p-3 d-flex justify-content-between align-items-center" 
                         style="background-color: ${headerColor}; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
-                        ${item.title}
+                        <div>
+                            ${item.title}
+                            ${endDateStr}
+                        </div>
+                        <span class="badge bg-white text-dark small">${item.level}</span>
                     </div>
                     <div class="cardCalendar-body p-3">
-                        <p class="text-muted">${item.description}</p>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fa fa-clock me-2 text-danger"></i> ${item.duration}
+                        <p class="text-muted small mb-3">${item.description}</p>
+                        <div class="d-flex align-items-center mb-2 small">
+                            <i class="fa fa-clock me-2 text-primary"></i> 
+                            <strong>${item.start_time}${endTimeStr}</strong>
                         </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="fa fa-signal me-2 text-warning"></i> ${item.level}
+                        <div class="d-flex align-items-center mb-2 small">
+                            <i class="fa fa-hourglass-half me-2 text-info"></i> ${item.duration}
                         </div>
-                        <div class="text-warning mb-2">
-                            ★★★★★ <small class="text-muted">(5.0)</small>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <small class="text-muted ms-1">(5.0)</small>
                         </div>
-                        <a href="${item.url}" class="btn btn-outline-warning w-100 rounded-pill">Start Learning</a>
+                        <a href="${item.url}" class="btn btn-outline-primary btn-sm w-100 rounded-pill">Lihat Detail</a>
                     </div>
                 </div>
             </div>
