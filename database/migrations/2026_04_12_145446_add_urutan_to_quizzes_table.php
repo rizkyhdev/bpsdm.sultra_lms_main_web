@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('quizzes', function (Blueprint $table) {
-            $table->integer('urutan')->default(1)->after('max_attempts');
+            if (!Schema::hasColumn('quizzes', 'urutan')) {
+                $table->integer('urutan')->default(1)->after('max_attempts');
+            }
         });
     }
 
@@ -22,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('quizzes', function (Blueprint $table) {
-            $table->dropColumn('urutan');
+            if (Schema::hasColumn('quizzes', 'urutan')) {
+                $table->dropColumn('urutan');
+            }
         });
     }
 };
