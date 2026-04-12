@@ -272,7 +272,6 @@
 </section>
 
 <script>
-const pelatihanData = @json($pelatihan);
 
 document.addEventListener("click", function (e) {
     if (e.target.classList.contains("calendar-day") && e.target.dataset.date) {
@@ -284,7 +283,7 @@ function renderPelatihan(date) {
     const container = document.getElementById("pelatihan-list");
     container.innerHTML = "";
 
-    const filtered = pelatihanData.filter(item => item.date === date);
+    const filtered = (window.pelatihanData || []).filter(item => item.date === date);
 
     if (filtered.length === 0) {
         container.innerHTML = `<div class="col-12"><p class="text-muted">Tidak ada pelatihan di tanggal ini.</p></div>`;
@@ -585,7 +584,8 @@ function renderPelatihan(date) {
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-/xUj+QAT/7rjG5Qbqseb3CidRub9pzQZAlPfMwVz6I6+w4n1vCtbmZh9rqx8uxFZ" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
   <script>
-    window.pelatihanData = @json($pelatihan);
-</script>
+    // Global pelatihan data for the calendar script
+    window.pelatihanData = @json($pelatihan ?? []);
+  </script>
   </body>
 </html>

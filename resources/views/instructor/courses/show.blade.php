@@ -255,7 +255,7 @@ document.getElementById('scheduleForm')?.addEventListener('submit', async functi
     
     try {
         const response = await fetch(form.action, {
-            method: 'PATCH',
+            method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Accept': 'application/json',

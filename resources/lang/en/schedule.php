@@ -2,7 +2,7 @@
 
 return [
     'starts_in' => 'Course starts in: :countdown',
-    'ends_in' => 'Course ends in: :countdown',
+    'ends_in' => 'Pelatihan Berakhir dalam: :countdown',
     'ended' => 'Course has ended',
     'enrollment_opens_in' => 'Enrollment opens in :time.',
     'enrollment_closed_ago' => 'Enrollment closed :time ago.',

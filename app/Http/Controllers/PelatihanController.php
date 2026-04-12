@@ -13,15 +13,18 @@ class PelatihanController extends Controller
             ->get();
 
         $pelatihan = $courses->map(function ($course) {
+            $start = \Carbon\Carbon::parse($course->start_date_time);
+            $end = $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time) : null;
+            
             return [
                 'title' => $course->judul,
                 'description' => \Illuminate\Support\Str::limit($course->deskripsi, 100),
-                'date' => \Carbon\Carbon::parse($course->start_date_time)->toDateString(),
-                'start_time' => \Carbon\Carbon::parse($course->start_date_time)->format('H:i'),
-                'end_time' => $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time)->format('H:i') : null,
-                'end_date' => $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time)->toDateString() : null,
+                'date' => $start->toDateString(),
+                'start_time' => $start->format('H:i'),
+                'end_time' => $end ? $end->format('H:i') : null,
+                'end_date' => $end ? $end->toDateString() : null,
                 'duration' => $course->jp_value . ' JP',
-                'level' => 'Umum', // Default level or logic if available
+                'level' => 'Umum',
                 'url' => route('courses.show', $course->id)
             ];
         })->toArray();

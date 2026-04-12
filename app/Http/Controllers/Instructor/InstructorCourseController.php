@@ -214,8 +214,12 @@ class InstructorCourseController extends Controller
             $course->deskripsi = $request->deskripsi;
             $course->jp_value = $request->jp_value;
             $course->bidang_kompetensi = $request->bidang_kompetensi;
-            $course->start_date_time = $request->start_date_time;
-            $course->end_date_time = $request->end_date_time;
+            $course->start_date_time = !empty($request->start_date_time)
+                ? \Carbon\Carbon::parse($request->start_date_time, config('app.timezone'))->setTimezone('UTC')
+                : null;
+            $course->end_date_time = !empty($request->end_date_time)
+                ? \Carbon\Carbon::parse($request->end_date_time, config('app.timezone'))->setTimezone('UTC')
+                : null;
             $course->user_id = Auth::id();
             $course->save();
 
@@ -556,8 +560,12 @@ class InstructorCourseController extends Controller
             $course->deskripsi = $request->deskripsi;
             $course->jp_value = $request->jp_value;
             $course->bidang_kompetensi = $request->bidang_kompetensi;
-            $course->start_date_time = $request->start_date_time;
-            $course->end_date_time = $request->end_date_time;
+            $course->start_date_time = !empty($request->start_date_time)
+                ? \Carbon\Carbon::parse($request->start_date_time, config('app.timezone'))->setTimezone('UTC')
+                : null;
+            $course->end_date_time = !empty($request->end_date_time)
+                ? \Carbon\Carbon::parse($request->end_date_time, config('app.timezone'))->setTimezone('UTC')
+                : null;
             $course->save();
 
             Log::info('Course updated', ['course_id' => $course->id]);
