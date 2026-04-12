@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Saat klik link, tampilkan preloader lagi
+    /* 
+    // Link hijacking disabled for core navigation reliability
     document.querySelectorAll("a").forEach(link => {
         link.addEventListener("click", function (e) {
             const url = this.getAttribute("href");
@@ -46,4 +48,5 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 400);
         });
     });
+    */
 });
