@@ -3,7 +3,30 @@
  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sobat AURA</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Sobat AURA - Portal Pengembangan Kompetensi ASN BPSDM Sultra</title>
+    <meta name="title" content="Sobat AURA - Portal Pengembangan Kompetensi ASN BPSDM Sultra">
+    <meta name="description" content="Portal resmi Sobat AURA (Aparatur Unggul Responsif Adaptif) BPSDM Sulawesi Tenggara. Platform pembelajaran mandiri terintegrasi untuk meningkatkan profesionalisme ASN secara digital.">
+    <meta name="keywords" content="BPSDM Sultra, Sobat AURA, Pelatihan ASN, Sultra, LMS ASN, Kompetensi ASN, Sulawesi Tenggara, Pengembangan Kompetensi">
+    <meta name="author" content="BPSDM Provinsi Sulawesi Tenggara">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="Sobat AURA - Portal Pengembangan Kompetensi ASN Sultra">
+    <meta property="og:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat AURA. Akses pelatihan kapan saja dan di mana saja.">
+    <meta property="og:image" content="{{ asset('image/LOGO_AURA.png') }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url('/') }}">
+    <meta property="twitter:title" content="Sobat AURA - Portal Pengembangan Kompetensi ASN Sultra">
+    <meta property="twitter:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat AURA. Akses pelatihan kapan saja dan di mana saja.">
+    <meta property="twitter:image" content="{{ asset('image/LOGO_AURA.png') }}">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url('/') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
