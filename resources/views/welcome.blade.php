@@ -78,10 +78,10 @@
         <div class="d-flex align-items-center justify-content-center text-white position-relative"
              style="background-image: url('{{ asset('image/slide1.jpeg') }}'); background-size: cover; background-position: center; height: 100%;">
           <div class="container text-center">
-            <h1 class="hero-title" data-splitting="chars">Selamat Datang</h1>
-            <h5 class="hero-sub"  data-splitting="chars">Sistem Informasi Bangkom Teknis<br>Aparatur Unggul Responsif Adaptif</h5>
-            <p class="mt-3 text-shadow">"Lorem ipsum dolor sit amet, consectetur adipiscing elit..."</p>
-            <a href="#" class="btn btn-gradient px-4 py-2 mt-3">Lihat Kursus</a>
+            <h1 class="hero-title" data-splitting="chars">Selamat Datang di Sobat AURA</h1>
+            <h5 class="hero-sub" data-splitting="chars">Aparatur Unggul Responsif Adaptif</h5>
+            <p class="mt-3 text-shadow">Platform Pengembangan Kompetensi Mandiri Terintegrasi untuk Aparatur Sipil Negara di Sulawesi Tenggara.</p>
+            <a href="#calendar" class="btn btn-gradient px-4 py-2 mt-3">Lihat Pelatihan</a>
           </div>
         </div>
       </div>
@@ -92,9 +92,9 @@
         <div class="d-flex align-items-center justify-content-center text-white position-relative"
              style="background-image: url('{{ asset('image/slide2.jpg') }}'); background-size: cover; background-position: center; height: 100%;">
           <div class="container text-center">
-            <h1 class="hero-title" data-splitting="chars">Pelatihan Terbaik</h1>
-            <h5 class="hero-sub"  data-splitting="chars">Pelatihan kami dirancang untuk ASN dengan pendekatan aplikatif.</h5>
-            <a href="#" class="btn btn-gradient px-4 py-2 mt-3">Lihat Kursus</a>
+            <h1 class="hero-title" data-splitting="chars">Pelatihan Kompetensi Teknis</h1>
+            <h5 class="hero-sub" data-splitting="chars">Kurikulum yang dirancang khusus untuk menghadapi tantangan birokrasi masa kini secara profesional.</h5>
+            <a href="#calendar" class="btn btn-gradient px-4 py-2 mt-3">Lihat Pelatihan</a>
           </div>
         </div>
       </div>
@@ -105,9 +105,9 @@
         <div class="d-flex align-items-center justify-content-center text-white position-relative"
              style="background-image: url('{{ asset('image/slide3.jpg') }}'); background-size: cover; background-position: center; height: 100%;">
           <div class="container text-center">
-            <h1 class="hero-title" data-splitting="chars">Gabung Sekarang</h1>
-            <h5 class="hero-sub"  data-splitting="chars">"Transformasi dimulai dari langkah pertama."</h5>
-            <a href="#" class="btn btn-gradient px-4 py-2 mt-3">Lihat Kursus</a>
+            <h1 class="hero-title" data-splitting="chars">Sertifikasi Digital</h1>
+            <h5 class="hero-sub" data-splitting="chars">Dapatkan pengakuan formal atas kompetensi Anda secara instan setelah menyelesaikan pelatihan.</h5>
+            <a href="#calendar" class="btn btn-gradient px-4 py-2 mt-3">Lihat Pelatihan</a>
           </div>
         </div>
       </div>
@@ -185,17 +185,24 @@
       <!-- Langkah-langkah -->
       <div class="col-lg-8">
         <div class="row gy-5 position-relative steps-container">
-          @foreach ([
-            'Langkah Pertama', 'Langkah Kedua', 'Langkah Ketiga',
-            'Langkah Keempat', 'Langkah Kelima', 'Langkah Keenam'
-          ] as $index => $title)
+          @php
+            $steps = [
+              ['title' => 'Registrasi Mandiri', 'desc' => 'Pendaftaran akun menggunakan NIP dan data identitas ASN yang valid di portal Sobat AURA.'],
+              ['title' => 'Verifikasi Profil', 'desc' => 'Unggah Surat Tugas atau bukti status ASN untuk memvalidasi kelayakan pendaftaran pelatihan.'],
+              ['title' => 'Eksplorasi Katalog', 'desc' => 'Pilih jenis pelatihan teknis yang sesuai dengan kebutuhan pengembangan kompetensi Anda.'],
+              ['title' => 'Pembelajaran Digital', 'desc' => 'Pelajari materi melalui modul video dan dokumen secara mandiri sesuai jadwal yang tersedia.'],
+              ['title' => 'Evaluasi Belajar', 'desc' => 'Selesaikan kuis penilaian pada setiap modul untuk memastikan penguasaan substansi materi pelatihan.'],
+              ['title' => 'Sertifikat Digital', 'desc' => 'Unduh sertifikat kelulusan secara mandiri setelah seluruh progres pembelajaran mencapai 100%.'],
+            ];
+          @endphp
+          @foreach ($steps as $index => $step)
           <div class="col-md-4 step-wrapper" data-aos="fade-up" data-aos-delay="{{ $index * 150 }}" data-aos-duration="800">
             <div class="d-flex align-items-start gap-3 step-item">
               <div class="step-number">{{ $index + 1 }}</div>
               <div>
-                <h6 class="mb-1">{{ $title }}</h6>
-                <p class="small mb-0">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                <h6 class="mb-1 fw-bold">{{ $step['title'] }}</h6>
+                <p class="small mb-0 text-muted">
+                  {{ $step['desc'] }}
                 </p>
               </div>
             </div>
