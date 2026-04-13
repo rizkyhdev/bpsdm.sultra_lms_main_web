@@ -9,6 +9,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/student.js',
+                'resources/js/student-calendar.js',
             ],
             refresh: true,
         }),
