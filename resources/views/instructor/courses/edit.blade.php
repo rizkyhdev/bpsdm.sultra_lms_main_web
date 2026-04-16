@@ -1,1437 +1,203 @@
 @extends('layouts.instructor')
 
-@section('title','Edit Course')
+@section('title', 'Edit Informasi Pelatihan')
 
 @section('breadcrumb')
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb mb-0">
     <li class="breadcrumb-item"><a href="{{ route('instructor.dashboard') }}">Instructor</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('instructor.courses.index') }}">Courses</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    <li class="breadcrumb-item"><a href="{{ route('instructor.courses.index') }}">Pelatihan</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit - {{ $course->judul }}</li>
   </ol>
-  {{-- Binding: $course --}}
 </nav>
 @endsection
 
 @section('content')
-<div class="container-fluid">
-  <div class="card">
-    <div class="card-header bg-primary text-white">
-      <h5 class="mb-0">Course Edit Wizard</h5>
-      <small>Edit course lengkap dengan modules, sub-modules, dan contents dalam satu alur</small>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1 text-dark">Edit Informasi Pelatihan</h2>
+                    <p class="text-muted mb-0">Perbarui data detail untuk pelatihan "{{ $course->judul }}"</p>
+                </div>
+                <a href="{{ route('instructor.courses.index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-2"></i>Kembali
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom p-4">
+                    <h5 class="fw-bold mb-0 text-primary">
+                        <i class="bi bi-journal-text me-2"></i>Formulir Data Pelatihan
+                    </h5>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    @if(session('error'))
+                        <div class="alert alert-danger bg-danger text-white border-0 alert-dismissible fade show rounded-3" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
+                    @if($errors->any())
+                        <div class="alert alert-danger bg-danger-subtle text-danger border-0 alert-dismissible fade show rounded-3" role="alert">
+                            <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-circle-fill me-2"></i>Mohon periksa kembali form Anda:</h6>
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
+                    <form action="{{ route('instructor.courses.update', $course->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Judul Pelatihan <span class="text-danger">*</span></label>
+                            <input type="text" name="judul" value="{{ old('judul', $course->judul) }}" class="form-control form-control-lg @error('judul') is-invalid @enderror" placeholder="Contoh: Dasar Dasar Kepemimpinan 101" required>
+                            @error('judul')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">Usahakan judul menarik dan merepresentasikan isi materi secara akurat.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Deskripsi Lengkap <span class="text-danger">*</span></label>
+                            <textarea name="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror" rows="5" placeholder="Tuliskan deskripsi lengkap mengenai tujuan dan materi pelatihan ini..." required>{{ old('deskripsi', $course->deskripsi) }}</textarea>
+                            @error('deskripsi')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label fw-bold text-dark">Total Jam Pelajaran (JP) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="jp_value" value="{{ old('jp_value', $course->jp_value) }}" class="form-control hover-border @error('jp_value') is-invalid @enderror" min="1" placeholder="Misal: 10" required>
+                                    <span class="input-group-text bg-light text-muted fw-semibold">JP</span>
+                                </div>
+                                @error('jp_value')
+                                    <div class="small text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Bidang Kompetensi <span class="text-danger">*</span></label>
+                                <input type="text" name="bidang_kompetensi" value="{{ old('bidang_kompetensi', $course->bidang_kompetensi) }}" class="form-control @error('bidang_kompetensi') is-invalid @enderror" placeholder="Contoh: Manajemen Waktu" required>
+                                @error('bidang_kompetensi')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="card bg-light border-0 rounded-4 mb-4 mt-5">
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold mb-3 text-dark"><i class="bi bi-calendar-event me-2 text-primary"></i>Pengaturan Waktu Akses <span class="badge bg-secondary ms-1 fw-normal">Opsional</span></h6>
+                                <p class="small text-muted mb-4">Tentukan batas tanggal siswa dapat mengakses pelatihan ini. Biarkan kosong jika dapat diakses kapan saja sepanjang waktu.</p>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <label class="form-label fw-semibold text-secondary small">Tanggal Mulai Akses</label>
+                                        <input type="datetime-local" name="start_date_time" value="{{ old('start_date_time', $course->start_date_time ? \Carbon\Carbon::parse($course->start_date_time)->format('Y-m-d\TH:i') : '') }}" class="form-control @error('start_date_time') is-invalid @enderror">
+                                        @error('start_date_time')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-secondary small">Tanggal Berakhir Akses</label>
+                                        <input type="datetime-local" name="end_date_time" value="{{ old('end_date_time', $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time)->format('Y-m-d\TH:i') : '') }}" class="form-control @error('end_date_time') is-invalid @enderror">
+                                        @error('end_date_time')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 mt-4">
+                            <a href="{{ route('instructor.courses.index') }}" class="btn btn-light border px-4 py-2 fw-semibold rounded-pill me-md-2" style="color: #6c757d">Batal Simpan</a>
+                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow-sm rounded-pill d-flex align-items-center premium-hover">
+                                <i class="bi bi-save me-2"></i>Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="alert alert-info border-0 shadow-sm rounded-4 mt-4 d-flex align-items-center p-4 bg-white" style="border-left: 5px solid #0dcaf0 !important;" role="alert">
+                <i class="bi bi-info-circle-fill fs-3 me-3 text-info"></i>
+                <div class="small text-muted">
+                    <strong class="text-dark d-block mb-1">Catatan Pengelolaan Konten:</strong> 
+                    Halaman ini khusus untuk mengubah data dasar profil pelatihan. Jika Anda ingin mengelola modul, menyusun konten materi, atau membuat kuis interaktif, silakan kunjungi menu <a href="{{ route('instructor.courses.show', $course->id) }}" class="alert-link text-decoration-none fw-bold"><i class="bi bi-box-arrow-up-right ms-1 me-1"></i>Detail Pelatihan</a> untuk manajemen pembelajaran yang lebih lengkap.
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="card-body">
-      @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <strong>Error!</strong> {{ session('error') }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      @endif
-      
-      @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <strong>Validation Errors:</strong>
-          <ul class="mb-0">
-            @foreach($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      @endif
-      
-      <form action="{{ route('instructor.courses.update-wizard', $course->id) }}" method="post" enctype="multipart/form-data" id="courseWizardForm">
-        @csrf
-        @method('PUT')
-        
-        <!-- Step 1: Course Information -->
-        <div class="wizard-step" id="step1">
-          <h4 class="mb-4">Step 1: Course Information</h4>
-          
-          <div class="mb-3">
-            <label class="form-label">Judul Course <span class="text-danger">*</span></label>
-            <input type="text" name="judul" value="{{ old('judul', $course->judul) }}" class="form-control" required>
-            @error('judul')<small class="text-danger d-block">{{ $message }}</small>@enderror
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Deskripsi <span class="text-danger">*</span></label>
-            <textarea name="deskripsi" class="form-control" rows="4" required>{{ old('deskripsi', $course->deskripsi) }}</textarea>
-            @error('deskripsi')<small class="text-danger d-block">{{ $message }}</small>@enderror
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">JP Value <span class="text-danger">*</span></label>
-              <input type="number" name="jp_value" value="{{ old('jp_value', $course->jp_value) }}" class="form-control" min="1" required>
-              @error('jp_value')<small class="text-danger d-block">{{ $message }}</small>@enderror
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Bidang Kompetensi <span class="text-danger">*</span></label>
-              <input type="text" name="bidang_kompetensi" value="{{ old('bidang_kompetensi', $course->bidang_kompetensi) }}" class="form-control" required>
-              @error('bidang_kompetensi')<small class="text-danger d-block">{{ $message }}</small>@enderror
-            </div>
-          
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Tanggal Mulai Akses <small class="text-muted">(Opsional)</small></label>
-              <input type="datetime-local" name="start_date_time" value="{{ old('start_date_time', $course->start_date_time ? \Carbon\Carbon::parse($course->start_date_time)->format('Y-m-d\TH:i') : '') }}" class="form-control">
-              @error('start_date_time')<small class="text-danger d-block">{{ $message }}</small>@enderror
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Tanggal Berakhir Akses <small class="text-muted">(Opsional)</small></label>
-              <input type="datetime-local" name="end_date_time" value="{{ old('end_date_time', $course->end_date_time ? \Carbon\Carbon::parse($course->end_date_time)->format('Y-m-d\TH:i') : '') }}" class="form-control">
-              @error('end_date_time')<small class="text-danger d-block">{{ $message }}</small>@enderror
-            </div>
-          </div>
-          </div>
-
-          <div class="d-flex justify-content-end mt-4">
-            <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next: Manage Modules →</button>
-          </div>
-        </div>
-
-        <!-- Step 2: Modules -->
-        <div class="wizard-step" id="step2" style="display: none;">
-          <h4 class="mb-4">Step 2: Modules</h4>
-          <p class="text-muted mb-4">Kelola modules untuk course ini.</p>
-          
-          <div id="modulesContainer">
-            <!-- Existing and new modules will be added here dynamically -->
-          </div>
-
-          <button type="button" class="btn btn-success mb-4" onclick="addModule()">
-            <i class="bi bi-plus-circle"></i> Tambah Module Baru
-          </button>
-
-          <div class="d-flex justify-content-between mt-4">
-            <button type="button" class="btn btn-secondary" onclick="prevStep(1)">← Back</button>
-            <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next: Review →</button>
-          </div>
-        </div>
-
-        <!-- Step 3: Review and Submit -->
-        <div class="wizard-step" id="step3" style="display: none;">
-          <h4 class="mb-4">Step 3: Review and Submit</h4>
-          <p class="text-muted mb-4">Tinjau informasi course Anda sebelum menyimpan.</p>
-          
-          <div class="card mb-3">
-            <div class="card-header">Course Information</div>
-            <div class="card-body">
-              <p><strong>Judul:</strong> <span id="reviewJudul"></span></p>
-              <p><strong>Deskripsi:</strong> <span id="reviewDeskripsi"></span></p>
-              <p><strong>JP Value:</strong> <span id="reviewJpValue"></span></p>
-              <p><strong>Bidang Kompetensi:</strong> <span id="reviewBidangKompetensi"></span></p>
-              <p><strong>Tanggal Mulai:</strong> <span id="reviewStartDate"></span></p>
-              <p><strong>Tanggal Berakhir:</strong> <span id="reviewEndDate"></span></p>
-            </div>
-          </div>
-
-          <div class="card mb-3">
-            <div class="card-header">Modules Summary</div>
-            <div class="card-body" id="reviewModules">
-              <!-- Modules summary will be shown here -->
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-between mt-4">
-            <button type="button" class="btn btn-secondary" onclick="prevStep(2)">← Back</button>
-            <button type="submit" class="btn btn-success">
-              <i class="bi bi-check-circle"></i> Update Course
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
 
-<!-- Module Template (Hidden) -->
-<template id="moduleTemplate">
-  <div class="card mb-3 module-item" data-module-index="" data-module-id="">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <span>Module <span class="module-number"></span> <span class="module-status-badge"></span></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="removeModule(this)">
-        <i class="bi bi-trash"></i> Hapus
-      </button>
-    </div>
-    <div class="card-body">
-      <input type="hidden" name="modules[][id]" class="module-id" value="">
-      <div class="mb-3">
-        <label class="form-label">Judul Module <span class="text-danger">*</span></label>
-        <input type="text" name="modules[][judul]" class="form-control module-judul" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Deskripsi</label>
-        <textarea name="modules[][deskripsi]" class="form-control module-deskripsi" rows="2"></textarea>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Urutan <span class="text-danger">*</span></label>
-        <input type="number" name="modules[][urutan]" class="form-control module-urutan" min="1" required>
-      </div>
-      
-      <div class="mb-3">
-        <button type="button" class="btn btn-sm btn-info" onclick="toggleSubModules(this)">
-          <i class="bi bi-chevron-down"></i> Sub-Modules
-        </button>
-      </div>
-      
-      <div class="sub-modules-container" style="display: none;">
-        <div class="sub-modules-list"></div>
-        <button type="button" class="btn btn-sm btn-success" onclick="addSubModule(this)">
-          <i class="bi bi-plus-circle"></i> Tambah Sub-Module
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
-
-<!-- Sub-Module Template (Hidden) -->
-<template id="subModuleTemplate">
-  <div class="card mb-3 sub-module-item" data-sub-module-index="" data-sub-module-id="">
-    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-      <span>Sub-Module <span class="sub-module-number"></span> <span class="sub-module-status-badge"></span></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="removeSubModule(this)">
-        <i class="bi bi-trash"></i> Hapus
-      </button>
-    </div>
-    <div class="card-body">
-      <input type="hidden" name="modules[][sub_modules][][id]" class="sub-module-id" value="">
-      <div class="mb-3">
-        <label class="form-label">Judul Sub-Module <span class="text-danger">*</span></label>
-        <input type="text" name="modules[][sub_modules][][judul]" class="form-control sub-module-judul" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Deskripsi</label>
-        <textarea name="modules[][sub_modules][][deskripsi]" class="form-control sub-module-deskripsi" rows="2"></textarea>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Urutan <span class="text-danger">*</span></label>
-        <input type="number" name="modules[][sub_modules][][urutan]" class="form-control sub-module-urutan" min="1" required>
-      </div>
-      
-      <div class="mb-3">
-        <button type="button" class="btn btn-sm btn-warning" onclick="toggleContents(this)">
-          <i class="bi bi-chevron-down"></i> Contents
-        </button>
-      </div>
-      
-      <div class="contents-container" style="display: none;">
-        <div class="contents-list"></div>
-        <button type="button" class="btn btn-sm btn-primary" onclick="addContent(this)">
-          <i class="bi bi-plus-circle"></i> Tambah Content
-        </button>
-      </div>
-      
-      <div class="mb-3">
-        <button type="button" class="btn btn-sm btn-info" onclick="toggleQuizzes(this)">
-          <i class="bi bi-chevron-down"></i> Quizzes
-        </button>
-      </div>
-      
-      <div class="quizzes-container" style="display: none;">
-        <div class="quizzes-list"></div>
-        <button type="button" class="btn btn-sm btn-success" onclick="addQuiz(this)">
-          <i class="bi bi-plus-circle"></i> Tambah Quiz
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
-
-<!-- Content Template (Hidden) -->
-<template id="contentTemplate">
-  <div class="card mb-3 content-item" data-content-index="" data-content-id="">
-    <div class="card-header bg-warning d-flex justify-content-between align-items-center">
-      <span>Content <span class="content-number"></span> <span class="content-status-badge"></span></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="removeContent(this)">
-        <i class="bi bi-trash"></i> Hapus
-      </button>
-    </div>
-    <div class="card-body">
-      <input type="hidden" name="modules[][sub_modules][][contents][][id]" class="content-id" value="">
-      <div class="mb-3">
-        <label class="form-label">Judul Content <span class="text-danger">*</span></label>
-        <input type="text" name="modules[][sub_modules][][contents][][judul]" class="form-control content-judul" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Tipe Content <span class="text-danger">*</span></label>
-        <select name="modules[][sub_modules][][contents][][tipe]" class="form-control content-tipe" required onchange="toggleContentFields(this)">
-          <option value="">Pilih Tipe</option>
-          <option value="text">Text (Plain Text)</option>
-          <option value="html">HTML (Rich Text)</option>
-          <option value="video">Video</option>
-          <option value="youtube">YouTube Video</option>
-          <option value="audio">Audio</option>
-          <option value="pdf">PDF File</option>
-          <option value="image">Image</option>
-          <option value="link">External Link (PDF/File)</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Urutan <span class="text-danger">*</span></label>
-        <input type="number" name="modules[][sub_modules][][contents][][urutan]" class="form-control content-urutan" min="1" required>
-      </div>
-      
-      <!-- HTML Content Field -->
-      <div class="mb-3 content-html-field" style="display: none;">
-        <label class="form-label">HTML Content <span class="text-danger">*</span></label>
-        <textarea name="modules[][sub_modules][][contents][][html_content]" class="form-control" rows="5"></textarea>
-      </div>
-      
-      <!-- File Upload Field -->
-      <div class="mb-3 content-file-field" style="display: none;">
-        <div class="current-file-info" style="display: none;">
-          <label class="form-label">File Saat Ini</label>
-          <div class="mb-2">
-            <a href="" class="current-file-link" target="_blank"></a>
-          </div>
-        </div>
-        <label class="form-label">Upload File Baru (opsional)</label>
-        <input type="file" name="modules[][sub_modules][][contents][][file_path]" class="form-control content-file">
-        <small class="text-muted">Kosongkan jika tidak ingin mengganti file</small>
-      </div>
-      
-      <!-- External URL Field -->
-      <div class="mb-3 content-url-field" style="display: none;">
-        <label class="form-label">External URL <span class="text-danger">*</span></label>
-        <input type="url" name="modules[][sub_modules][][contents][][external_url]" class="form-control" placeholder="https://example.com/file.pdf">
-      </div>
-      
-      <!-- YouTube URL Field -->
-      <div class="mb-3 content-youtube-field" style="display: none;">
-        <label class="form-label">YouTube URL <span class="text-danger">*</span></label>
-        <input type="url" name="modules[][sub_modules][][contents][][youtube_url]" class="form-control" placeholder="https://www.youtube.com/watch?v=VIDEO_ID atau https://youtu.be/VIDEO_ID">
-      </div>
-      
-      <!-- Required Duration Field (for YouTube videos) -->
-      <div class="mb-3 content-required-duration-field" style="display: none;">
-        <label class="form-label">Durasi Video yang Diperlukan (detik) <span class="text-danger">*</span></label>
-        <input type="number" name="modules[][sub_modules][][contents][][required_duration]" class="form-control" min="1" placeholder="Contoh: 300 (untuk 5 menit)">
-        <small class="text-muted">Masukkan durasi video dalam detik. Siswa harus menonton video selama durasi ini sebelum dapat melanjutkan ke konten berikutnya.</small>
-      </div>
-    </div>
-  </div>
-</template>
-
-<!-- Quiz Template (Hidden) -->
-<template id="quizTemplate">
-  <div class="card mb-3 quiz-item" data-quiz-index="" data-quiz-id="">
-    <div class="card-header bg-info d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <button type="button" class="btn btn-sm btn-link text-white p-0 me-2" onclick="toggleQuizCollapse(this)" style="text-decoration: none;">
-          <i class="bi bi-chevron-down quiz-toggle-icon"></i>
-        </button>
-        <span>Quiz <span class="quiz-number"></span> <span class="quiz-status-badge"></span></span>
-      </div>
-      <div>
-        <button type="button" class="btn btn-sm btn-warning me-2" onclick="editQuiz(this)" title="Edit Quiz">
-          <i class="bi bi-pencil"></i> Edit
-        </button>
-        <button type="button" class="btn btn-sm btn-danger" onclick="removeQuiz(this)" title="Hapus Quiz">
-          <i class="bi bi-trash"></i> Hapus
-        </button>
-      </div>
-    </div>
-    <div class="card-body quiz-body">
-      <input type="hidden" name="modules[][sub_modules][][quizzes][][id]" class="quiz-id" value="">
-      <div class="mb-3">
-        <label class="form-label">Judul Quiz <span class="text-danger">*</span></label>
-        <input type="text" name="modules[][sub_modules][][quizzes][][judul]" class="form-control quiz-judul" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Deskripsi</label>
-        <textarea name="modules[][sub_modules][][quizzes][][deskripsi]" class="form-control quiz-deskripsi" rows="2"></textarea>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Nilai Minimum <span class="text-danger">*</span></label>
-          <input type="number" name="modules[][sub_modules][][quizzes][][nilai_minimum]" class="form-control quiz-nilai-minimum" min="0" max="100" step="0.01" required>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Maks Attempts <span class="text-danger">*</span></label>
-          <input type="number" name="modules[][sub_modules][][quizzes][][max_attempts]" class="form-control quiz-max-attempts" min="1" value="3" required>
-        </div>
-      </div>
-      
-      <!-- Questions Section -->
-      <div class="mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="mb-0">Pertanyaan (Pilihan Ganda)</h6>
-          <button type="button" class="btn btn-sm btn-primary" onclick="addQuestion(this)">
-            <i class="bi bi-plus-circle"></i> Tambah Pertanyaan
-          </button>
-        </div>
-        <div class="questions-container"></div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<!-- Question Template (Hidden) -->
-<template id="questionTemplate">
-  <div class="card mb-3 question-item" data-question-index="" data-question-id="">
-    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-      <span>Pertanyaan <span class="question-number"></span> <span class="question-status-badge"></span></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion(this)">
-        <i class="bi bi-trash"></i> Hapus
-      </button>
-    </div>
-    <div class="card-body">
-      <input type="hidden" name="modules[][sub_modules][][quizzes][][questions][][id]" class="question-id" value="">
-      <div class="mb-3">
-        <label class="form-label">Pertanyaan <span class="text-danger">*</span></label>
-        <textarea name="modules[][sub_modules][][quizzes][][questions][][pertanyaan]" class="form-control question-pertanyaan" rows="2" required></textarea>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Bobot <span class="text-danger">*</span></label>
-          <input type="number" name="modules[][sub_modules][][quizzes][][questions][][bobot]" class="form-control question-bobot" min="1" value="1" required>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Urutan <span class="text-danger">*</span></label>
-          <input type="number" name="modules[][sub_modules][][quizzes][][questions][][urutan]" class="form-control question-urutan" min="1" required>
-        </div>
-      </div>
-      <input type="hidden" name="modules[][sub_modules][][quizzes][][questions][][tipe]" class="question-tipe" value="multiple_choice">
-      
-      <!-- Answer Options -->
-      <div class="mt-3">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <label class="form-label mb-0">Opsi Jawaban (Pilih salah satu yang benar) <span class="text-danger">*</span></label>
-          <button type="button" class="btn btn-sm btn-outline-primary" onclick="addAnswerOption(this)">
-            <i class="bi bi-plus"></i> Tambah Opsi
-          </button>
-        </div>
-        <div class="answer-options-container"></div>
-        <small class="text-muted">Minimal 2 opsi, maksimal 5 opsi. Centang salah satu sebagai jawaban benar.</small>
-      </div>
-    </div>
-  </div>
-</template>
-
-<!-- Answer Option Template (Hidden) -->
-<template id="answerOptionTemplate">
-  <div class="input-group mb-2 answer-option-item" data-option-index="">
-    <input type="text" name="modules[][sub_modules][][quizzes][][questions][][answer_options][][teks_jawaban]" class="form-control answer-option-text" placeholder="Teks jawaban" required>
-    <div class="input-group-text">
-      <div class="form-check">
-        <input class="form-check-input answer-option-correct" type="checkbox" name="modules[][sub_modules][][quizzes][][questions][][answer_options][][is_correct]" value="1" onchange="validateCorrectAnswer(this)">
-        <label class="form-check-label">Benar?</label>
-      </div>
-    </div>
-    <button type="button" class="btn btn-outline-danger" onclick="removeAnswerOption(this)">
-      <i class="bi bi-trash"></i>
-    </button>
-  </div>
-</template>
-
-<script>
-let moduleIndex = {{ $course->modules->count() }};
-let subModuleIndex = {};
-let contentIndex = {};
-let quizIndex = {};
-let questionIndex = {};
-let answerOptionIndex = {};
-const existingModules = @json($course->modules->load(['subModules.quizzes.questions.answerOptions', 'subModules.contents']));
-
-function nextStep(step) {
-  if (step === 2) {
-    if (!validateStep1()) {
-      return;
-    }
-  } else if (step === 3) {
-    if (!validateStep2()) {
-      return;
-    }
-    updateReview();
-  }
-  
-  document.querySelectorAll('.wizard-step').forEach(s => s.style.display = 'none');
-  document.getElementById('step' + step).style.display = 'block';
-}
-
-function prevStep(step) {
-  document.querySelectorAll('.wizard-step').forEach(s => s.style.display = 'none');
-  document.getElementById('step' + step).style.display = 'block';
-}
-
-function validateStep1() {
-  const judul = document.querySelector('input[name="judul"]').value;
-  const deskripsi = document.querySelector('textarea[name="deskripsi"]').value;
-  const jpValue = document.querySelector('input[name="jp_value"]').value;
-  const bidangKompetensi = document.querySelector('input[name="bidang_kompetensi"]').value;
-  
-  if (!judul || !deskripsi || !jpValue || !bidangKompetensi) {
-    alert('Please fill in all required fields in Step 1.');
-    return false;
-  }
-  return true;
-}
-
-function validateStep2() {
-  const modules = document.querySelectorAll('.module-item');
-  if (modules.length === 0) {
-    alert('Please add at least one module.');
-    return false;
-  }
-  
-  let isValid = true;
-  modules.forEach((module, index) => {
-    const judul = module.querySelector('.module-judul').value;
-    const urutan = module.querySelector('.module-urutan').value;
-    if (!judul || !urutan) {
-      isValid = false;
-    }
-  });
-  
-  if (!isValid) {
-    alert('Please fill in all required fields for modules.');
-    return false;
-  }
-  return true;
-}
-
-function loadExistingModules() {
-  existingModules.forEach((moduleData, idx) => {
-    addModuleFromData(moduleData, idx);
-  });
-}
-
-function addModuleFromData(moduleData, index) {
-  const template = document.getElementById('moduleTemplate');
-  const clone = template.content.cloneNode(true);
-  const moduleItem = clone.querySelector('.module-item');
-  moduleItem.setAttribute('data-module-index', index);
-  moduleItem.setAttribute('data-module-id', moduleData.id);
-  moduleItem.querySelector('.module-number').textContent = index + 1;
-  moduleItem.querySelector('.module-status-badge').innerHTML = '<span class="badge bg-info">Existing</span>';
-  
-  const idInput = moduleItem.querySelector('.module-id');
-  const judulInput = moduleItem.querySelector('.module-judul');
-  const deskripsiInput = moduleItem.querySelector('.module-deskripsi');
-  const urutanInput = moduleItem.querySelector('.module-urutan');
-  
-  idInput.name = `modules[${index}][id]`;
-  idInput.value = moduleData.id;
-  judulInput.name = `modules[${index}][judul]`;
-  judulInput.value = moduleData.judul;
-  deskripsiInput.name = `modules[${index}][deskripsi]`;
-  deskripsiInput.value = moduleData.deskripsi || '';
-  urutanInput.name = `modules[${index}][urutan]`;
-  urutanInput.value = moduleData.urutan;
-  
-  // Load existing sub-modules
-  if (moduleData.sub_modules && moduleData.sub_modules.length > 0) {
-    if (!subModuleIndex[index]) {
-      subModuleIndex[index] = 0;
-    }
-    moduleData.sub_modules.forEach((subModuleData, subIdx) => {
-      addSubModuleFromData(subModuleData, index, subIdx);
-      subModuleIndex[index]++;
-    });
-  } else {
-    subModuleIndex[index] = 0;
-  }
-  
-  if (!contentIndex[index]) {
-    contentIndex[index] = {};
-  }
-  
-  document.getElementById('modulesContainer').appendChild(clone);
-}
-
-function addSubModuleFromData(subModuleData, moduleIdx, subIdx) {
-  const moduleItem = document.querySelector(`[data-module-index="${moduleIdx}"]`);
-  const subModuleList = moduleItem.querySelector('.sub-modules-list');
-  
-  const template = document.getElementById('subModuleTemplate');
-  const clone = template.content.cloneNode(true);
-  const subModuleItem = clone.querySelector('.sub-module-item');
-  subModuleItem.setAttribute('data-sub-module-index', subIdx);
-  subModuleItem.setAttribute('data-module-index', moduleIdx);
-  subModuleItem.setAttribute('data-sub-module-id', subModuleData.id);
-  subModuleItem.querySelector('.sub-module-number').textContent = subIdx + 1;
-  subModuleItem.querySelector('.sub-module-status-badge').innerHTML = '<span class="badge bg-info">Existing</span>';
-  
-  const idInput = subModuleItem.querySelector('.sub-module-id');
-  const judulInput = subModuleItem.querySelector('.sub-module-judul');
-  const deskripsiInput = subModuleItem.querySelector('.sub-module-deskripsi');
-  const urutanInput = subModuleItem.querySelector('.sub-module-urutan');
-  
-  idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][id]`;
-  idInput.value = subModuleData.id;
-  judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][judul]`;
-  judulInput.value = subModuleData.judul;
-  deskripsiInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][deskripsi]`;
-  deskripsiInput.value = subModuleData.deskripsi || '';
-  urutanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][urutan]`;
-  urutanInput.value = subModuleData.urutan;
-  
-  // Load existing contents
-  if (subModuleData.contents && subModuleData.contents.length > 0) {
-    if (!contentIndex[moduleIdx]) {
-      contentIndex[moduleIdx] = {};
-    }
-    if (!contentIndex[moduleIdx][subIdx]) {
-      contentIndex[moduleIdx][subIdx] = 0;
-    }
-    subModuleData.contents.forEach((contentData, contentIdx) => {
-      addContentFromData(contentData, moduleIdx, subIdx, contentIdx);
-      contentIndex[moduleIdx][subIdx]++;
-    });
-  } else {
-    if (!contentIndex[moduleIdx]) {
-      contentIndex[moduleIdx] = {};
-    }
-    contentIndex[moduleIdx][subIdx] = 0;
-  }
-  
-  // Load existing quizzes
-  if (subModuleData.quizzes && subModuleData.quizzes.length > 0) {
-    if (!quizIndex[moduleIdx]) {
-      quizIndex[moduleIdx] = {};
-    }
-    if (!quizIndex[moduleIdx][subIdx]) {
-      quizIndex[moduleIdx][subIdx] = 0;
-    }
-    subModuleData.quizzes.forEach((quizData, quizIdx) => {
-      addQuizFromData(quizData, moduleIdx, subIdx, quizIdx);
-      quizIndex[moduleIdx][subIdx]++;
-    });
-  } else {
-    if (!quizIndex[moduleIdx]) {
-      quizIndex[moduleIdx] = {};
-    }
-    quizIndex[moduleIdx][subIdx] = 0;
-  }
-  
-  subModuleList.appendChild(clone);
-}
-
-function addContentFromData(contentData, moduleIdx, subIdx, contentIdx) {
-  const moduleItem = document.querySelector(`[data-module-index="${moduleIdx}"]`);
-  if (!moduleItem) return;
-  const subModuleItem = moduleItem.querySelector(`[data-sub-module-index="${subIdx}"]`);
-  if (!subModuleItem) return;
-  const contentList = subModuleItem.querySelector('.contents-list');
-  
-  const template = document.getElementById('contentTemplate');
-  const clone = template.content.cloneNode(true);
-  const contentItem = clone.querySelector('.content-item');
-  contentItem.setAttribute('data-content-index', contentIdx);
-  contentItem.setAttribute('data-module-index', moduleIdx);
-  contentItem.setAttribute('data-sub-module-index', subIdx);
-  contentItem.setAttribute('data-content-id', contentData.id);
-  contentItem.querySelector('.content-number').textContent = contentIdx + 1;
-  contentItem.querySelector('.content-status-badge').innerHTML = '<span class="badge bg-info">Existing</span>';
-  
-  const idInput = contentItem.querySelector('.content-id');
-  const judulInput = contentItem.querySelector('.content-judul');
-  const tipeInput = contentItem.querySelector('.content-tipe');
-  const urutanInput = contentItem.querySelector('.content-urutan');
-  const htmlContentInput = contentItem.querySelector('textarea[name*="html_content"]');
-  const fileInput = contentItem.querySelector('.content-file');
-  const urlInput = contentItem.querySelector('input[name*="external_url"]');
-  const youtubeUrlInput = contentItem.querySelector('input[name*="youtube_url"]');
-  const requiredDurationInput = contentItem.querySelector('input[name*="required_duration"]');
-  const currentFileInfo = contentItem.querySelector('.current-file-info');
-  const currentFileLink = contentItem.querySelector('.current-file-link');
-  
-  idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][id]`;
-  idInput.value = contentData.id;
-  judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][judul]`;
-  judulInput.value = contentData.judul;
-  tipeInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][tipe]`;
-  tipeInput.value = contentData.tipe;
-  urutanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][urutan]`;
-  urutanInput.value = contentData.urutan;
-  
-  if (htmlContentInput) {
-    htmlContentInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][html_content]`;
-    htmlContentInput.value = contentData.html_content || '';
-  }
-  if (fileInput) {
-    fileInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][file_path]`;
-    if (contentData.file_path) {
-      currentFileInfo.style.display = 'block';
-      currentFileLink.href = `/instructor/contents/${contentData.id}/download`;
-      currentFileLink.textContent = contentData.file_path.split('/').pop();
-    }
-  }
-  if (urlInput) {
-    urlInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][external_url]`;
-    urlInput.value = contentData.external_url || '';
-  }
-  if (youtubeUrlInput) {
-    youtubeUrlInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][youtube_url]`;
-    youtubeUrlInput.value = contentData.youtube_url || '';
-  }
-  if (requiredDurationInput) {
-    requiredDurationInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][required_duration]`;
-    requiredDurationInput.value = contentData.required_duration || '';
-  }
-  
-  toggleContentFields(tipeInput);
-  contentList.appendChild(clone);
-}
-
-function addModule() {
-  const template = document.getElementById('moduleTemplate');
-  const clone = template.content.cloneNode(true);
-  const moduleItem = clone.querySelector('.module-item');
-  moduleItem.setAttribute('data-module-index', moduleIndex);
-  moduleItem.setAttribute('data-module-id', '');
-  moduleItem.querySelector('.module-number').textContent = moduleIndex + 1;
-  moduleItem.querySelector('.module-status-badge').innerHTML = '<span class="badge bg-success">New</span>';
-  
-  const idInput = moduleItem.querySelector('.module-id');
-  const judulInput = moduleItem.querySelector('.module-judul');
-  const deskripsiInput = moduleItem.querySelector('.module-deskripsi');
-  const urutanInput = moduleItem.querySelector('.module-urutan');
-  
-  idInput.name = `modules[${moduleIndex}][id]`;
-  idInput.value = '';
-  judulInput.name = `modules[${moduleIndex}][judul]`;
-  deskripsiInput.name = `modules[${moduleIndex}][deskripsi]`;
-  urutanInput.name = `modules[${moduleIndex}][urutan]`;
-  urutanInput.value = moduleIndex + 1;
-  
-  subModuleIndex[moduleIndex] = 0;
-  contentIndex[moduleIndex] = {};
-  
-  document.getElementById('modulesContainer').appendChild(clone);
-  moduleIndex++;
-}
-
-function removeModule(btn) {
-  const moduleItem = btn.closest('.module-item');
-  const moduleIdx = parseInt(moduleItem.getAttribute('data-module-index'));
-  delete subModuleIndex[moduleIdx];
-  delete contentIndex[moduleIdx];
-  moduleItem.remove();
-  renumberModules();
-}
-
-function renumberModules() {
-  const modules = document.querySelectorAll('.module-item');
-  modules.forEach((module, index) => {
-    module.setAttribute('data-module-index', index);
-    module.querySelector('.module-number').textContent = index + 1;
-    const idInput = module.querySelector('.module-id');
-    const judulInput = module.querySelector('.module-judul');
-    const deskripsiInput = module.querySelector('.module-deskripsi');
-    const urutanInput = module.querySelector('.module-urutan');
-    const moduleIdx = index;
-    if (idInput) {
-      idInput.name = `modules[${moduleIdx}][id]`;
-    }
-    judulInput.name = `modules[${moduleIdx}][judul]`;
-    deskripsiInput.name = `modules[${moduleIdx}][deskripsi]`;
-    urutanInput.name = `modules[${moduleIdx}][urutan]`;
-    urutanInput.value = moduleIdx + 1;
-    
-    const subModules = module.querySelectorAll('.sub-module-item');
-    subModules.forEach((subModule, subIdx) => {
-      updateSubModuleNames(subModule, moduleIdx, subIdx);
-    });
-  });
-  moduleIndex = modules.length;
-}
-
-function toggleSubModules(btn) {
-  const container = btn.closest('.card-body').querySelector('.sub-modules-container');
-  container.style.display = container.style.display === 'none' ? 'block' : 'none';
-  const icon = btn.querySelector('i');
-  icon.classList.toggle('bi-chevron-down');
-  icon.classList.toggle('bi-chevron-up');
-}
-
-function addSubModule(btn) {
-  const moduleItem = btn.closest('.module-item');
-  const moduleIdx = parseInt(moduleItem.getAttribute('data-module-index'));
-  const subModuleList = moduleItem.querySelector('.sub-modules-list');
-  
-  if (!subModuleIndex[moduleIdx]) {
-    subModuleIndex[moduleIdx] = 0;
-  }
-  const subIdx = subModuleIndex[moduleIdx];
-  
-  const template = document.getElementById('subModuleTemplate');
-  const clone = template.content.cloneNode(true);
-  const subModuleItem = clone.querySelector('.sub-module-item');
-  subModuleItem.setAttribute('data-sub-module-index', subIdx);
-  subModuleItem.setAttribute('data-module-index', moduleIdx);
-  subModuleItem.setAttribute('data-sub-module-id', '');
-  subModuleItem.querySelector('.sub-module-number').textContent = subIdx + 1;
-  subModuleItem.querySelector('.sub-module-status-badge').innerHTML = '<span class="badge bg-success">New</span>';
-  
-  updateSubModuleNames(subModuleItem, moduleIdx, subIdx);
-  
-  subModuleList.appendChild(clone);
-  subModuleIndex[moduleIdx]++;
-  
-  if (!contentIndex[moduleIdx]) {
-    contentIndex[moduleIdx] = {};
-  }
-  contentIndex[moduleIdx][subIdx] = 0;
-}
-
-function updateSubModuleNames(subModuleItem, moduleIdx, subIdx) {
-  const idInput = subModuleItem.querySelector('.sub-module-id');
-  const judulInput = subModuleItem.querySelector('.sub-module-judul');
-  const deskripsiInput = subModuleItem.querySelector('.sub-module-deskripsi');
-  const urutanInput = subModuleItem.querySelector('.sub-module-urutan');
-  
-  if (idInput) {
-    idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][id]`;
-  }
-  judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][judul]`;
-  deskripsiInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][deskripsi]`;
-  urutanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][urutan]`;
-  urutanInput.value = subIdx + 1;
-  
-  const contents = subModuleItem.querySelectorAll('.content-item');
-  contents.forEach((content, contentIdx) => {
-    updateContentNames(content, moduleIdx, subIdx, contentIdx);
-  });
-  
-  const quizzes = subModuleItem.querySelectorAll('.quiz-item');
-  quizzes.forEach((quiz, quizIdx) => {
-    updateQuizNames(quiz, moduleIdx, subIdx, quizIdx);
-  });
-}
-
-function removeSubModule(btn) {
-  const subModuleItem = btn.closest('.sub-module-item');
-  const moduleIdx = parseInt(subModuleItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(subModuleItem.getAttribute('data-sub-module-index'));
-  delete contentIndex[moduleIdx][subIdx];
-  subModuleItem.remove();
-}
-
-function toggleContents(btn) {
-  const container = btn.closest('.card-body').querySelector('.contents-container');
-  container.style.display = container.style.display === 'none' ? 'block' : 'none';
-  const icon = btn.querySelector('i');
-  icon.classList.toggle('bi-chevron-down');
-  icon.classList.toggle('bi-chevron-up');
-}
-
-function toggleQuizzes(btn) {
-  const container = btn.closest('.card-body').querySelector('.quizzes-container');
-  container.style.display = container.style.display === 'none' ? 'block' : 'none';
-  const icon = btn.querySelector('i');
-  icon.classList.toggle('bi-chevron-down');
-  icon.classList.toggle('bi-chevron-up');
-}
-
-function addContent(btn) {
-  const subModuleItem = btn.closest('.sub-module-item');
-  const moduleIdx = parseInt(subModuleItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(subModuleItem.getAttribute('data-sub-module-index'));
-  const contentList = subModuleItem.querySelector('.contents-list');
-  
-  if (!contentIndex[moduleIdx]) {
-    contentIndex[moduleIdx] = {};
-  }
-  if (!contentIndex[moduleIdx][subIdx]) {
-    contentIndex[moduleIdx][subIdx] = 0;
-  }
-  const contentIdx = contentIndex[moduleIdx][subIdx];
-  
-  const template = document.getElementById('contentTemplate');
-  const clone = template.content.cloneNode(true);
-  const contentItem = clone.querySelector('.content-item');
-  contentItem.setAttribute('data-content-index', contentIdx);
-  contentItem.setAttribute('data-module-index', moduleIdx);
-  contentItem.setAttribute('data-sub-module-index', subIdx);
-  contentItem.setAttribute('data-content-id', '');
-  contentItem.querySelector('.content-number').textContent = contentIdx + 1;
-  contentItem.querySelector('.content-status-badge').innerHTML = '<span class="badge bg-success">New</span>';
-  
-  updateContentNames(contentItem, moduleIdx, subIdx, contentIdx);
-  
-  contentList.appendChild(clone);
-  contentIndex[moduleIdx][subIdx]++;
-}
-
-function updateContentNames(contentItem, moduleIdx, subIdx, contentIdx) {
-  const idInput = contentItem.querySelector('.content-id');
-  const judulInput = contentItem.querySelector('.content-judul');
-  const tipeInput = contentItem.querySelector('.content-tipe');
-  const urutanInput = contentItem.querySelector('.content-urutan');
-  const htmlContentInput = contentItem.querySelector('textarea[name*="html_content"]');
-  const fileInput = contentItem.querySelector('.content-file');
-  const urlInput = contentItem.querySelector('input[name*="external_url"]');
-  const youtubeUrlInput = contentItem.querySelector('input[name*="youtube_url"]');
-  const requiredDurationInput = contentItem.querySelector('input[name*="required_duration"]');
-  
-  if (idInput) {
-    idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][id]`;
-  }
-  judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][judul]`;
-  tipeInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][tipe]`;
-  urutanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][urutan]`;
-  urutanInput.value = contentIdx + 1;
-  
-  if (htmlContentInput) {
-    htmlContentInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][html_content]`;
-  }
-  if (fileInput) {
-    fileInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][file_path]`;
-  }
-  if (urlInput) {
-    urlInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][external_url]`;
-  }
-  if (youtubeUrlInput) {
-    youtubeUrlInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][youtube_url]`;
-  }
-  if (requiredDurationInput) {
-    requiredDurationInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][contents][${contentIdx}][required_duration]`;
-  }
-}
-
-function removeContent(btn) {
-  const contentItem = btn.closest('.content-item');
-  const moduleIdx = parseInt(contentItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(contentItem.getAttribute('data-sub-module-index'));
-  const contentIdx = parseInt(contentItem.getAttribute('data-content-index'));
-  contentItem.remove();
-}
-
-function toggleContentFields(select) {
-  const contentItem = select.closest('.content-item');
-  const htmlField = contentItem.querySelector('.content-html-field');
-  const fileField = contentItem.querySelector('.content-file-field');
-  const urlField = contentItem.querySelector('.content-url-field');
-  const youtubeField = contentItem.querySelector('.content-youtube-field');
-  const requiredDurationField = contentItem.querySelector('.content-required-duration-field');
-  
-  htmlField.style.display = 'none';
-  fileField.style.display = 'none';
-  urlField.style.display = 'none';
-  if (youtubeField) youtubeField.style.display = 'none';
-  if (requiredDurationField) requiredDurationField.style.display = 'none';
-  
-  const type = select.value;
-  if (type === 'text' || type === 'html') {
-    htmlField.style.display = 'block';
-  } else if (type === 'video' || type === 'audio' || type === 'pdf' || type === 'image') {
-    fileField.style.display = 'block';
-    const fileInput = fileField.querySelector('input[type="file"]');
-    if (type === 'video') fileInput.setAttribute('accept', 'video/*');
-    else if (type === 'audio') fileInput.setAttribute('accept', 'audio/*');
-    else if (type === 'pdf') fileInput.setAttribute('accept', '.pdf');
-    else if (type === 'image') fileInput.setAttribute('accept', 'image/*');
-  } else if (type === 'link') {
-    urlField.style.display = 'block';
-  } else if (type === 'youtube') {
-    if (youtubeField) youtubeField.style.display = 'block';
-    if (requiredDurationField) requiredDurationField.style.display = 'block';
-  }
-}
-
-// Quiz Management Functions
-function addQuiz(btn) {
-  const subModuleItem = btn.closest('.sub-module-item');
-  const moduleIdx = parseInt(subModuleItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(subModuleItem.getAttribute('data-sub-module-index'));
-  const quizList = subModuleItem.querySelector('.quizzes-list');
-  
-  if (!quizIndex[moduleIdx]) {
-    quizIndex[moduleIdx] = {};
-  }
-  if (!quizIndex[moduleIdx][subIdx]) {
-    quizIndex[moduleIdx][subIdx] = 0;
-  }
-  const quizIdx = quizIndex[moduleIdx][subIdx];
-  
-  const template = document.getElementById('quizTemplate');
-  const clone = template.content.cloneNode(true);
-  const quizItem = clone.querySelector('.quiz-item');
-  quizItem.setAttribute('data-quiz-index', quizIdx);
-  quizItem.setAttribute('data-module-index', moduleIdx);
-  quizItem.setAttribute('data-sub-module-index', subIdx);
-  quizItem.setAttribute('data-quiz-id', '');
-  quizItem.querySelector('.quiz-number').textContent = quizIdx + 1;
-  quizItem.querySelector('.quiz-status-badge').innerHTML = '<span class="badge bg-success">New</span>';
-  
-  updateQuizNames(quizItem, moduleIdx, subIdx, quizIdx);
-  
-  quizList.appendChild(clone);
-  quizIndex[moduleIdx][subIdx]++;
-}
-
-function addQuizFromData(quizData, moduleIdx, subIdx, quizIdx) {
-  const moduleItem = document.querySelector(`[data-module-index="${moduleIdx}"]`);
-  if (!moduleItem) return;
-  const subModuleItem = moduleItem.querySelector(`[data-sub-module-index="${subIdx}"]`);
-  if (!subModuleItem) return;
-  const quizList = subModuleItem.querySelector('.quizzes-list');
-  
-  const template = document.getElementById('quizTemplate');
-  const clone = template.content.cloneNode(true);
-  const quizItem = clone.querySelector('.quiz-item');
-  quizItem.setAttribute('data-quiz-index', quizIdx);
-  quizItem.setAttribute('data-module-index', moduleIdx);
-  quizItem.setAttribute('data-sub-module-index', subIdx);
-  quizItem.setAttribute('data-quiz-id', quizData.id);
-  quizItem.querySelector('.quiz-number').textContent = quizIdx + 1;
-  quizItem.querySelector('.quiz-status-badge').innerHTML = '<span class="badge bg-info">Existing</span>';
-  
-  const idInput = quizItem.querySelector('.quiz-id');
-  const judulInput = quizItem.querySelector('.quiz-judul');
-  const deskripsiInput = quizItem.querySelector('.quiz-deskripsi');
-  const nilaiMinimumInput = quizItem.querySelector('.quiz-nilai-minimum');
-  const maxAttemptsInput = quizItem.querySelector('.quiz-max-attempts');
-  
-  idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][id]`;
-  idInput.value = quizData.id;
-  judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][judul]`;
-  judulInput.value = quizData.judul;
-  deskripsiInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][deskripsi]`;
-  deskripsiInput.value = quizData.deskripsi || '';
-  nilaiMinimumInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][nilai_minimum]`;
-  nilaiMinimumInput.value = quizData.nilai_minimum;
-  maxAttemptsInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][max_attempts]`;
-  maxAttemptsInput.value = quizData.max_attempts || 3;
-  
-  // Load existing questions
-  if (quizData.questions && quizData.questions.length > 0) {
-    const key = `${moduleIdx}_${subIdx}_${quizIdx}`;
-    if (!questionIndex[key]) {
-      questionIndex[key] = 0;
-    }
-    quizData.questions.forEach((questionData, qIdx) => {
-      addQuestionFromData(questionData, moduleIdx, subIdx, quizIdx, qIdx);
-      questionIndex[key]++;
-    });
-  }
-  
-  updateQuizNames(quizItem, moduleIdx, subIdx, quizIdx);
-  quizList.appendChild(clone);
-}
-
-function updateQuizNames(quizItem, moduleIdx, subIdx, quizIdx) {
-  const idInput = quizItem.querySelector('.quiz-id');
-  const judulInput = quizItem.querySelector('.quiz-judul');
-  const deskripsiInput = quizItem.querySelector('.quiz-deskripsi');
-  const nilaiMinimumInput = quizItem.querySelector('.quiz-nilai-minimum');
-  const maxAttemptsInput = quizItem.querySelector('.quiz-max-attempts');
-  
-  if (idInput) {
-    idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][id]`;
-  }
-  judulInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][judul]`;
-  deskripsiInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][deskripsi]`;
-  nilaiMinimumInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][nilai_minimum]`;
-  maxAttemptsInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][max_attempts]`;
-  
-  // Update question names
-  const questions = quizItem.querySelectorAll('.question-item');
-  questions.forEach((question, qIdx) => {
-    updateQuestionNames(question, moduleIdx, subIdx, quizIdx, qIdx);
-  });
-}
-
-function removeQuiz(btn) {
-  if (confirm('Apakah Anda yakin ingin menghapus quiz ini? Semua pertanyaan yang terkait juga akan dihapus.')) {
-    const quizItem = btn.closest('.quiz-item');
-    const moduleIdx = parseInt(quizItem.getAttribute('data-module-index'));
-    const subIdx = parseInt(quizItem.getAttribute('data-sub-module-index'));
-    const quizIdx = parseInt(quizItem.getAttribute('data-quiz-index'));
-    
-    // Remove from quizIndex if needed
-    if (quizIndex[moduleIdx] && quizIndex[moduleIdx][subIdx] !== undefined) {
-      // Reindex remaining quizzes
-      const subModuleItem = quizItem.closest('.sub-module-item');
-      const remainingQuizzes = subModuleItem.querySelectorAll('.quiz-item');
-      remainingQuizzes.forEach((quiz) => {
-        const currentQuizIdx = parseInt(quiz.getAttribute('data-quiz-index'));
-        if (currentQuizIdx > quizIdx) {
-          const newIdx = currentQuizIdx - 1;
-          quiz.setAttribute('data-quiz-index', newIdx);
-          updateQuizNames(quiz, moduleIdx, subIdx, newIdx);
-          quiz.querySelector('.quiz-number').textContent = newIdx + 1;
-        }
-      });
-      // Decrement index if this was the last quiz
-      if (quizIndex[moduleIdx][subIdx] > quizIdx) {
-        quizIndex[moduleIdx][subIdx]--;
-      }
-    }
-    
-    quizItem.remove();
-  }
-}
-
-function editQuiz(btn) {
-  const quizItem = btn.closest('.quiz-item');
-  const quizBody = quizItem.querySelector('.quiz-body');
-  const inputs = quizBody.querySelectorAll('input, textarea');
-  
-  // In wizard, fields are always editable, so just focus on first input
-  if (inputs.length > 0) {
-    inputs[0].focus();
-    inputs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-}
-
-function toggleQuizCollapse(btn) {
-  const quizItem = btn.closest('.quiz-item');
-  const quizBody = quizItem.querySelector('.quiz-body');
-  const icon = btn.querySelector('.quiz-toggle-icon');
-  
-  if (quizBody.style.display === 'none') {
-    quizBody.style.display = 'block';
-    icon.classList.remove('bi-chevron-right');
-    icon.classList.add('bi-chevron-down');
-  } else {
-    quizBody.style.display = 'none';
-    icon.classList.remove('bi-chevron-down');
-    icon.classList.add('bi-chevron-right');
-  }
-}
-
-// Question Management Functions
-function addQuestion(btn) {
-  const quizItem = btn.closest('.quiz-item');
-  const moduleIdx = parseInt(quizItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(quizItem.getAttribute('data-sub-module-index'));
-  const quizIdx = parseInt(quizItem.getAttribute('data-quiz-index'));
-  const questionsContainer = quizItem.querySelector('.questions-container');
-  
-  const key = `${moduleIdx}_${subIdx}_${quizIdx}`;
-  if (!questionIndex[key]) {
-    questionIndex[key] = 0;
-  }
-  const qIdx = questionIndex[key];
-  
-  const template = document.getElementById('questionTemplate');
-  const clone = template.content.cloneNode(true);
-  const questionItem = clone.querySelector('.question-item');
-  questionItem.setAttribute('data-question-index', qIdx);
-  questionItem.setAttribute('data-module-index', moduleIdx);
-  questionItem.setAttribute('data-sub-module-index', subIdx);
-  questionItem.setAttribute('data-quiz-index', quizIdx);
-  questionItem.setAttribute('data-question-id', '');
-  questionItem.querySelector('.question-number').textContent = qIdx + 1;
-  questionItem.querySelector('.question-status-badge').innerHTML = '<span class="badge bg-success">New</span>';
-  
-  updateQuestionNames(questionItem, moduleIdx, subIdx, quizIdx, qIdx);
-  
-  questionsContainer.appendChild(clone);
-  questionIndex[key]++;
-  
-  // Initialize answer options index for this question
-  const questionKey = `${moduleIdx}_${subIdx}_${quizIdx}_${qIdx}`;
-  if (!answerOptionIndex[questionKey]) {
-    answerOptionIndex[questionKey] = 0;
-  }
-  
-  // Add at least 2 answer options by default
-  const answerOptionsContainer = questionItem.querySelector('.answer-options-container');
-  const addOptionBtn = questionItem.querySelector('button[onclick*="addAnswerOption"]');
-  for (let i = 0; i < 2; i++) {
-    if (addOptionBtn) {
-      addAnswerOption(addOptionBtn);
-    }
-  }
-}
-
-function addQuestionFromData(questionData, moduleIdx, subIdx, quizIdx, qIdx) {
-  const moduleItem = document.querySelector(`[data-module-index="${moduleIdx}"]`);
-  if (!moduleItem) return;
-  const subModuleItem = moduleItem.querySelector(`[data-sub-module-index="${subIdx}"]`);
-  if (!subModuleItem) return;
-  const quizItem = subModuleItem.querySelector(`[data-quiz-index="${quizIdx}"]`);
-  if (!quizItem) return;
-  const questionsContainer = quizItem.querySelector('.questions-container');
-  
-  const template = document.getElementById('questionTemplate');
-  const clone = template.content.cloneNode(true);
-  const questionItem = clone.querySelector('.question-item');
-  questionItem.setAttribute('data-question-index', qIdx);
-  questionItem.setAttribute('data-module-index', moduleIdx);
-  questionItem.setAttribute('data-sub-module-index', subIdx);
-  questionItem.setAttribute('data-quiz-index', quizIdx);
-  questionItem.setAttribute('data-question-id', questionData.id);
-  questionItem.querySelector('.question-number').textContent = qIdx + 1;
-  questionItem.querySelector('.question-status-badge').innerHTML = '<span class="badge bg-info">Existing</span>';
-  
-  const idInput = questionItem.querySelector('.question-id');
-  const pertanyaanInput = questionItem.querySelector('.question-pertanyaan');
-  const bobotInput = questionItem.querySelector('.question-bobot');
-  const urutanInput = questionItem.querySelector('.question-urutan');
-  const tipeInput = questionItem.querySelector('.question-tipe');
-  
-  idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][id]`;
-  idInput.value = questionData.id;
-  pertanyaanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][pertanyaan]`;
-  pertanyaanInput.value = questionData.pertanyaan;
-  bobotInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][bobot]`;
-  bobotInput.value = questionData.bobot || 1;
-  urutanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][urutan]`;
-  urutanInput.value = questionData.urutan || qIdx + 1;
-  tipeInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][tipe]`;
-  tipeInput.value = questionData.tipe || 'multiple_choice';
-  
-  // Load existing answer options
-  if (questionData.answer_options && questionData.answer_options.length > 0) {
-    const questionKey = `${moduleIdx}_${subIdx}_${quizIdx}_${qIdx}`;
-    if (!answerOptionIndex[questionKey]) {
-      answerOptionIndex[questionKey] = 0;
-    }
-    questionData.answer_options.forEach((optionData, optIdx) => {
-      addAnswerOptionFromData(optionData, moduleIdx, subIdx, quizIdx, qIdx, optIdx);
-      answerOptionIndex[questionKey]++;
-    });
-  }
-  
-  updateQuestionNames(questionItem, moduleIdx, subIdx, quizIdx, qIdx);
-  questionsContainer.appendChild(clone);
-}
-
-function updateQuestionNames(questionItem, moduleIdx, subIdx, quizIdx, qIdx) {
-  const idInput = questionItem.querySelector('.question-id');
-  const pertanyaanInput = questionItem.querySelector('.question-pertanyaan');
-  const bobotInput = questionItem.querySelector('.question-bobot');
-  const urutanInput = questionItem.querySelector('.question-urutan');
-  const tipeInput = questionItem.querySelector('.question-tipe');
-  
-  if (idInput) {
-    idInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][id]`;
-  }
-  pertanyaanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes[${quizIdx}][questions][${qIdx}][pertanyaan]`;
-  bobotInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][bobot]`;
-  urutanInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][urutan]`;
-  tipeInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][tipe]`;
-  
-  // Update answer option names
-  const answerOptions = questionItem.querySelectorAll('.answer-option-item');
-  answerOptions.forEach((option, optIdx) => {
-    updateAnswerOptionNames(option, moduleIdx, subIdx, quizIdx, qIdx, optIdx);
-  });
-}
-
-function removeQuestion(btn) {
-  const questionItem = btn.closest('.question-item');
-  const moduleIdx = parseInt(questionItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(questionItem.getAttribute('data-sub-module-index'));
-  const quizIdx = parseInt(questionItem.getAttribute('data-quiz-index'));
-  const qIdx = parseInt(questionItem.getAttribute('data-question-index'));
-  
-  const key = `${moduleIdx}_${subIdx}_${quizIdx}`;
-  const questionKey = `${moduleIdx}_${subIdx}_${quizIdx}_${qIdx}`;
-  delete answerOptionIndex[questionKey];
-  
-  questionItem.remove();
-  
-  // Renumber remaining questions
-  const quizItem = questionItem.closest('.quiz-item');
-  const questions = quizItem.querySelectorAll('.question-item');
-  questions.forEach((q, index) => {
-    const newQIdx = index;
-    q.setAttribute('data-question-index', newQIdx);
-    q.querySelector('.question-number').textContent = newQIdx + 1;
-    updateQuestionNames(q, moduleIdx, subIdx, quizIdx, newQIdx);
-  });
-}
-
-// Answer Option Management Functions
-function addAnswerOption(btn) {
-  const questionItem = btn.closest('.question-item');
-  const answerOptionsContainer = questionItem.querySelector('.answer-options-container');
-  
-  const moduleIdx = parseInt(questionItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(questionItem.getAttribute('data-sub-module-index'));
-  const quizIdx = parseInt(questionItem.getAttribute('data-quiz-index'));
-  const qIdx = parseInt(questionItem.getAttribute('data-question-index'));
-  
-  const questionKey = `${moduleIdx}_${subIdx}_${quizIdx}_${qIdx}`;
-  if (!answerOptionIndex[questionKey]) {
-    answerOptionIndex[questionKey] = 0;
-  }
-  const optIdx = answerOptionIndex[questionKey];
-  
-  // Check max 5 options
-  const existingOptions = answerOptionsContainer.querySelectorAll('.answer-option-item');
-  if (existingOptions.length >= 5) {
-    alert('Maksimal 5 opsi jawaban per pertanyaan.');
-    return;
-  }
-  
-  const template = document.getElementById('answerOptionTemplate');
-  const clone = template.content.cloneNode(true);
-  const optionItem = clone.querySelector('.answer-option-item');
-  optionItem.setAttribute('data-option-index', optIdx);
-  
-  updateAnswerOptionNames(optionItem, moduleIdx, subIdx, quizIdx, qIdx, optIdx);
-  
-  answerOptionsContainer.appendChild(clone);
-  answerOptionIndex[questionKey]++;
-}
-
-function addAnswerOptionFromData(optionData, moduleIdx, subIdx, quizIdx, qIdx, optIdx) {
-  const moduleItem = document.querySelector(`[data-module-index="${moduleIdx}"]`);
-  if (!moduleItem) return;
-  const subModuleItem = moduleItem.querySelector(`[data-sub-module-index="${subIdx}"]`);
-  if (!subModuleItem) return;
-  const quizItem = subModuleItem.querySelector(`[data-quiz-index="${quizIdx}"]`);
-  if (!quizItem) return;
-  const questionItem = quizItem.querySelector(`[data-question-index="${qIdx}"]`);
-  if (!questionItem) return;
-  const answerOptionsContainer = questionItem.querySelector('.answer-options-container');
-  
-  const template = document.getElementById('answerOptionTemplate');
-  const clone = template.content.cloneNode(true);
-  const optionItem = clone.querySelector('.answer-option-item');
-  optionItem.setAttribute('data-option-index', optIdx);
-  
-  const textInput = optionItem.querySelector('.answer-option-text');
-  const correctInput = optionItem.querySelector('.answer-option-correct');
-  
-  textInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][answer_options][${optIdx}][teks_jawaban]`;
-  textInput.value = optionData.teks_jawaban || '';
-  correctInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][answer_options][${optIdx}][is_correct]`;
-  correctInput.checked = optionData.is_correct == 1 || optionData.is_correct === true;
-  
-  updateAnswerOptionNames(optionItem, moduleIdx, subIdx, quizIdx, qIdx, optIdx);
-  answerOptionsContainer.appendChild(clone);
-}
-
-function updateAnswerOptionNames(optionItem, moduleIdx, subIdx, quizIdx, qIdx, optIdx) {
-  const textInput = optionItem.querySelector('.answer-option-text');
-  const correctInput = optionItem.querySelector('.answer-option-correct');
-  
-  textInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][answer_options][${optIdx}][teks_jawaban]`;
-  correctInput.name = `modules[${moduleIdx}][sub_modules][${subIdx}][quizzes][${quizIdx}][questions][${qIdx}][answer_options][${optIdx}][is_correct]`;
-}
-
-function removeAnswerOption(btn) {
-  const optionItem = btn.closest('.answer-option-item');
-  const questionItem = optionItem.closest('.question-item');
-  const moduleIdx = parseInt(questionItem.getAttribute('data-module-index'));
-  const subIdx = parseInt(questionItem.getAttribute('data-sub-module-index'));
-  const quizIdx = parseInt(questionItem.getAttribute('data-quiz-index'));
-  const qIdx = parseInt(questionItem.getAttribute('data-question-index'));
-  
-  const answerOptionsContainer = questionItem.querySelector('.answer-options-container');
-  const existingOptions = answerOptionsContainer.querySelectorAll('.answer-option-item');
-  
-  // Check min 2 options
-  if (existingOptions.length <= 2) {
-    alert('Minimal 2 opsi jawaban per pertanyaan.');
-    return;
-  }
-  
-  optionItem.remove();
-  
-  // Renumber remaining options
-  const remainingOptions = answerOptionsContainer.querySelectorAll('.answer-option-item');
-  remainingOptions.forEach((opt, index) => {
-    const newOptIdx = index;
-    opt.setAttribute('data-option-index', newOptIdx);
-    updateAnswerOptionNames(opt, moduleIdx, subIdx, quizIdx, qIdx, newOptIdx);
-  });
-}
-
-function validateCorrectAnswer(checkbox) {
-  const questionItem = checkbox.closest('.question-item');
-  const allCheckboxes = questionItem.querySelectorAll('.answer-option-correct');
-  
-  if (checkbox.checked) {
-    // Uncheck all other checkboxes
-    allCheckboxes.forEach(cb => {
-      if (cb !== checkbox) {
-        cb.checked = false;
-      }
-    });
-  } else {
-    // Ensure at least one is checked
-    const hasChecked = Array.from(allCheckboxes).some(cb => cb.checked);
-    if (!hasChecked) {
-      alert('Setidaknya satu opsi harus dipilih sebagai jawaban benar.');
-      checkbox.checked = true;
-    }
-  }
-}
-
-function updateReview() {
-  document.getElementById('reviewJudul').textContent = document.querySelector('input[name="judul"]').value;
-  document.getElementById('reviewDeskripsi').textContent = document.querySelector('textarea[name="deskripsi"]').value;
-  document.getElementById('reviewJpValue').textContent = document.querySelector('input[name="jp_value"]').value;
-  document.getElementById('reviewBidangKompetensi').textContent = document.querySelector('input[name="bidang_kompetensi"]').value;
-  
-  const startDate = document.querySelector('input[name="start_date_time"]').value;
-  const endDate = document.querySelector('input[name="end_date_time"]').value;
-  document.getElementById('reviewStartDate').textContent = startDate ? new Date(startDate).toLocaleString() : '-';
-  document.getElementById('reviewEndDate').textContent = endDate ? new Date(endDate).toLocaleString() : '-';
-  
-  const modulesContainer = document.getElementById('reviewModules');
-  modulesContainer.innerHTML = '';
-  const modules = document.querySelectorAll('.module-item');
-  modules.forEach((module, idx) => {
-    const judul = module.querySelector('.module-judul').value;
-    const subModules = module.querySelectorAll('.sub-module-item');
-    const isExisting = module.getAttribute('data-module-id') !== '';
-    const status = isExisting ? '(Existing)' : '(New)';
-    const moduleDiv = document.createElement('div');
-    moduleDiv.className = 'mb-2';
-    moduleDiv.innerHTML = `<strong>Module ${idx + 1}:</strong> ${judul} (${subModules.length} sub-modules) ${status}`;
-    modulesContainer.appendChild(moduleDiv);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  loadExistingModules();
-  
-  const form = document.getElementById('courseWizardForm');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      document.querySelectorAll('.wizard-step').forEach(step => {
-        step.style.display = 'block';
-      });
-      
-      document.querySelectorAll('.sub-modules-container, .contents-container').forEach(container => {
-        container.style.display = 'block';
-      });
-      
-      document.querySelectorAll('.content-html-field, .content-file-field, .content-url-field, .content-youtube-field, .content-required-duration-field').forEach(field => {
-        field.style.display = 'block';
-      });
-      
-      if (!validateStep1() || !validateStep2()) {
-        e.preventDefault();
-        alert('Please fill in all required fields before submitting.');
-        return false;
-      }
-    });
-  }
-});
-</script>
-
+@push('scripts')
 <style>
-.wizard-step {
-  animation: fadeIn 0.3s;
-}
+    /* Premium UI styling for inputs */
+    .form-control {
+        border-radius: 0.6rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        background-color: #fcfcfc;
+        transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .form-control:focus {
+        border-color: #21b3ca;
+        background-color: #fff;
+        box-shadow: 0 0 0 0.25rem rgba(33, 179, 202, 0.15);
+    }
+    .hover-border:hover {
+        border-color: #adb5bd;
+    }
+    .form-control-lg {
+        padding: 1rem 1.25rem;
+        font-size: 1.15rem;
+    }
+    
+    /* Input Group adjustments */
+    .input-group > .form-control {
+        border-radius: 0.6rem 0 0 0.6rem;
+    }
+    .input-group-text {
+        border-radius: 0 0.6rem 0.6rem 0;
+        border: 1px solid #ced4da;
+        border-left: 0;
+    }
+    .input-group:focus-within .input-group-text {
+        border-color: #21b3ca;
+    }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.module-item, .sub-module-item, .content-item {
-  border-left: 4px solid #007bff;
-}
-
-.sub-module-item {
-  border-left-color: #17a2b8;
-}
-
-.content-item {
-  border-left-color: #ffc107;
-}
+    /* Button styles */
+    .btn-primary {
+        background: linear-gradient(135deg, #21b3ca 0%, #003f7d 100%);
+        border: none;
+    }
+    .premium-hover {
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+    }
+    .premium-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(33, 179, 202, 0.25)!important;
+        background: linear-gradient(135deg, #29c5de 0%, #004d99 100%);
+    }
+    .premium-hover:active {
+        transform: translateY(0);
+    }
+    
+    /* Typography polish */
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+    }
 </style>
+@endpush
 @endsection
