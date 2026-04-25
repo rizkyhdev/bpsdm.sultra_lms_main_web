@@ -113,18 +113,53 @@ class CertificateService
     public function pdfHtmlData(User $user, Course $course, UserEnrollment $enrollment, string $uid): array
     {
         // Eager-load modules once for competency listing on the certificate
-        $course->loadMissing(['modules', 'quizzes.quizAttempts' => function($query) use ($user) {
+        $course->loadMissing(['modules', 'quizzes.subModule', 'quizzes.quizAttempts' => function($query) use ($user) {
             $query->where('user_id', $user->id)->whereNotNull('completed_at');
         }]);
 
-        // Find the highest score from course-level quizzes
+        // Calculate final score: average of the highest score of quizzes in each module
         $finalScore = null;
-        if ($course->quizzes->isNotEmpty()) {
-            $allScores = $course->quizzes->flatMap(function($quiz) {
-                return $quiz->quizAttempts->pluck('nilai');
-            });
-            if ($allScores->isNotEmpty()) {
-                $finalScore = $allScores->max();
+        $moduleScores = [];
+
+        if ($course->modules->isNotEmpty() && $course->quizzes->isNotEmpty()) {
+            foreach ($course->modules as $module) {
+                // Find quizzes that belong to this module (either directly or via a sub-module)
+                $moduleQuizzes = $course->quizzes->filter(function($quiz) use ($module) {
+                    if ($quiz->module_id == $module->id) {
+                        return true;
+                    }
+                    if ($quiz->subModule && $quiz->subModule->module_id == $module->id) {
+                        return true;
+                    }
+                    return false;
+                });
+
+                if ($moduleQuizzes->isNotEmpty()) {
+                    // Collect all scores from the user's attempts for these quizzes
+                    $scores = $moduleQuizzes->flatMap(function($quiz) {
+                        return $quiz->quizAttempts->pluck('nilai');
+                    });
+
+                    // If they have attempts, record their highest score for this module
+                    if ($scores->isNotEmpty()) {
+                        $moduleScores[] = $scores->max();
+                    }
+                }
+            }
+        }
+
+        if (!empty($moduleScores)) {
+            // Average the highest scores from each module
+            $finalScore = round(array_sum($moduleScores) / count($moduleScores), 2);
+        } else {
+            // Fallback: If no modules with quizzes, just get the highest score across all course quizzes
+            if ($course->quizzes->isNotEmpty()) {
+                $allScores = $course->quizzes->flatMap(function($quiz) {
+                    return $quiz->quizAttempts->pluck('nilai');
+                });
+                if ($allScores->isNotEmpty()) {
+                    $finalScore = $allScores->max();
+                }
             }
         }
 
