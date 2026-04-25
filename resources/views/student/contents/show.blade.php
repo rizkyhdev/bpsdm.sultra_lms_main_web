@@ -570,7 +570,6 @@ document.addEventListener('DOMContentLoaded', function() {
 @endif
 
 @if($content->tipe === 'youtube' && $content->youtube_embed_url)
-<script src="https://www.youtube.com/iframe_api"></script>
 <script>
 let player;
 let progressTrackingInterval;
@@ -588,9 +587,15 @@ let playStartTime = null;
 let timeSpentGlobal = {{ $progress->time_spent ?? 0 }};
 let timeTrackingInterval = null;
 
-function onYouTubeIframeAPIReady() {
+function initYouTubePlayer() {
     if (!videoId) {
         console.error('YouTube video ID tidak ditemukan');
+        return;
+    }
+    
+    // Check if the container exists
+    if (!document.getElementById('youtube-player')) {
+        console.error('YouTube player container not found');
         return;
     }
     
@@ -615,6 +620,26 @@ function onYouTubeIframeAPIReady() {
     }
 }
 
+// Handle both initial load and subsequent navigation
+if (typeof YT !== 'undefined' && YT && YT.Player) {
+    // API is already loaded
+    setTimeout(initYouTubePlayer, 100);
+} else {
+    // API is loading or not loaded yet
+    window.onYouTubeIframeAPIReady = function() {
+        initYouTubePlayer();
+    };
+    
+    // Load the IFrame Player API code asynchronously
+    if (!document.getElementById('youtube-iframe-api')) {
+        let tag = document.createElement('script');
+        tag.id = 'youtube-iframe-api';
+        tag.src = "https://www.youtube.com/iframe_api";
+        let firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+}
+
 function onPlayerError(event) {
     console.error('YouTube player error:', event.data);
     if (event.data === 100 || event.data === 101 || event.data === 150) {
@@ -626,7 +651,7 @@ function onPlayerReady(event) {
     // Get video duration
     if (videoDuration === 0) {
         videoDuration = player.getDuration();
-        updateVideoDuration(videoDuration);
+        // Removed undefined updateVideoDuration call
     }
     
     // Seek to last position if video was not completed
