@@ -12,7 +12,7 @@
     <a href="{{ route('admin.certificates.edit', $certificate) }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-edit mr-1"></i> Ubah</a>
 @endsection
 
-@section('content')
+@section('admin_content')
     <div class="card shadow-sm">
         <div class="card-body">
             <dl class="row mb-0">
@@ -23,7 +23,7 @@
                 <dt class="col-4">File</dt>
                 <dd class="col-8">
                     @if($certificate->file_path)
-                        <a href="{{ route('admin.certificates.download', $certificate->id) }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-download mr-1"></i> Unduh</a>
+                        <a href="{{ route('admin.certificates.download', $certificate->id) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-download mr-1"></i> Unduh</a>
                     @else
                         <span class="text-muted">Tidak ada</span>
                     @endif

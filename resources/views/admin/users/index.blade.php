@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Users')
+@section('title', 'Daftar Pengguna')
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Users</li>
+    <li class="breadcrumb-item active">Daftar Pengguna</li>
 @endsection
 
 @section('header-actions')
