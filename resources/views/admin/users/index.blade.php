@@ -8,14 +8,17 @@
 @endsection
 
 @section('header-actions')
+    <a href="{{ route('admin.users.export_pdf', request()->all()) }}" class="btn btn-danger mr-2" target="_blank">
+        <i class="fas fa-file-pdf mr-1"></i> Cetak PDF
+    </a>
     @can('create', App\Models\User::class)
         <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus mr-1"></i> Add
+            <i class="fas fa-plus mr-1"></i> Tambah
         </a>
     @endcan
 @endsection
 
-@section('content')
+@section('admin_content')
     {{-- Filter & Search --}}
     <form method="GET" action="{{ route('admin.users.index') }}" class="mb-3">
         <div class="card shadow-sm">

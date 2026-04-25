@@ -589,8 +589,8 @@ function renderPelatihan(date) {
         <div class="col-md-4 mb-4">
           <h6 class="text-uppercase fw-bold mb-4">Ikuti Kami</h6>
           <div class="footer-social">
-            <a href="https://www.facebook.com/bpsdm.sultra.3" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <!-- <a href="https://www.facebook.com/bpsdm.sultra.3" class="social-icon"><i class="fab fa-facebook-f"></i></a> -->
+            <a href="https://www.instagram.com/bpsdmsultra" class="social-icon"><i class="fab fa-instagram"></i></a>
           </div>
         </div>
       </div>
@@ -600,7 +600,7 @@ function renderPelatihan(date) {
 
     <!-- Copyright -->
     <section class="text-center py-2">
-      © SOBAT AURA 2025 <a href="http://bpsdmprovsultra.home.blog/" class="fw-bold">BPSDM PEMPROV SULTRA</a>
+      © SOBAT AURA 2025 <a href="https://bpsdmsultra.my.id/" class="fw-bold">BPSDM PEMPROV SULTRA</a>
     </section>
   </div>
 </footer>

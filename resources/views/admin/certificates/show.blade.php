@@ -23,7 +23,7 @@
                 <dt class="col-4">File</dt>
                 <dd class="col-8">
                     @if($certificate->file_path)
-                        <a href="{{ Storage::url($certificate->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-download mr-1"></i> Unduh</a>
+                        <a href="{{ route('admin.certificates.download', $certificate->id) }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-download mr-1"></i> Unduh</a>
                     @else
                         <span class="text-muted">Tidak ada</span>
                     @endif

@@ -390,4 +390,47 @@ class AdminCourseController extends Controller
             return back()->with('error', 'Terjadi kesalahan saat memuat laporan pendaftaran.');
         }
     }
+
+    /**
+     * Mengekspor rekapitulasi data kursus ke PDF.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportPdf(Request $request)
+    {
+        try {
+            $query = Course::withCount(['modules', 'userEnrollments']);
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('judul', 'like', "%{$search}%")
+                      ->orWhere('deskripsi', 'like', "%{$search}%")
+                      ->orWhere('bidang_kompetensi', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('jp_min')) {
+                $query->where('jp_value', '>=', $request->jp_min);
+            }
+
+            if ($request->filled('jp_max')) {
+                $query->where('jp_value', '<=', $request->jp_max);
+            }
+
+            if ($request->filled('bidang_kompetensi') && $request->bidang_kompetensi !== 'all') {
+                $query->where('bidang_kompetensi', $request->bidang_kompetensi);
+            }
+
+            $courses = $query->orderBy('created_at', 'desc')->get();
+
+            $pdf = \PDF::loadView('admin.courses.export_pdf', compact('courses'))->setPaper('a4', 'landscape');
+            $fileName = 'Rekapitulasi_Kursus_' . now()->format('Ymd_His') . '.pdf';
+            return $pdf->download($fileName);
+        } catch (\Exception $e) {
+            Log::error('Error in AdminCourseController@exportPdf: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat mengekspor data kursus.');
+        }
+    }
 }

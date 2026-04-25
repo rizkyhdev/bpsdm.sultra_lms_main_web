@@ -305,7 +305,7 @@ Route::group([
     Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     Route::post('/users/{id}/validate', [AdminUserController::class, 'validateUser'])->name('users.validate');
-    Route::get('/users-export', [AdminUserController::class, 'export'])->name('users.export');
+    Route::get('/users/export-pdf', [AdminUserController::class, 'exportPdf'])->name('users.export_pdf');
 
     // Courses
     Route::get('/courses', [AdminCourseController::class, 'index'])->name('courses.index');
@@ -317,6 +317,7 @@ Route::group([
     Route::delete('/courses/{id}', [AdminCourseController::class, 'destroy'])->name('courses.destroy');
     Route::post('/courses/{id}/duplicate', [AdminCourseController::class, 'duplicate'])->name('courses.duplicate');
     Route::get('/courses/{id}/report', [AdminCourseController::class, 'report'])->name('courses.report');
+    Route::get('/courses/export-pdf', [AdminCourseController::class, 'exportPdf'])->name('courses.export_pdf');
     
     // Certificate preview
     Route::get('/courses/{course:slug}/certificate/preview', [CertificateController::class, 'preview'])->name('certificates.preview');
@@ -395,12 +396,14 @@ Route::group([
     Route::get('/enrollments/{id}/edit', [AdminEnrollmentController::class, 'edit'])->name('enrollments.edit');
     Route::put('/enrollments/{id}', [AdminEnrollmentController::class, 'update'])->name('enrollments.update');
     Route::delete('/enrollments/{id}', [AdminEnrollmentController::class, 'destroy'])->name('enrollments.destroy');
+    Route::get('/enrollments/export-pdf', [AdminEnrollmentController::class, 'exportPdf'])->name('enrollments.export_pdf');
 
     // Certificates
     Route::get('/certificates', [AdminCertificateController::class, 'index'])->name('certificates.index');
     Route::get('/certificates/create', [AdminCertificateController::class, 'create'])->name('certificates.create');
     Route::post('/certificates', [AdminCertificateController::class, 'store'])->name('certificates.store');
     Route::get('/certificates/{id}', [AdminCertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificates/{id}/download', [AdminCertificateController::class, 'download'])->name('certificates.download');
     Route::get('/certificates/{id}/edit', [AdminCertificateController::class, 'edit'])->name('certificates.edit');
     Route::put('/certificates/{id}', [AdminCertificateController::class, 'update'])->name('certificates.update');
     Route::delete('/certificates/{id}', [AdminCertificateController::class, 'destroy'])->name('certificates.destroy');
