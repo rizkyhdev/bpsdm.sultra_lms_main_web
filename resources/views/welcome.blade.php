@@ -381,69 +381,43 @@ function renderPelatihan(date) {
 {{-- Kalender Pembelajaran --}}
 
 
-<!--  Struktur Organisasi -->
     <section class="meet-our-team py-5 py-lg-11 py-xl-12" id="pimpinan">
       <div class="container">
-        <div class="d-flex flex-column gap-5 gap-xl-11">
+        <div class="d-flex flex-column gap-4 gap-xl-5">
           <div class="row">
             <div class="col-12">
               <div class="text-center" data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000">
-                <h2 class="mb-5 fw-bold text-gradient">Struktur Pimpinan BPSDM Provinsi Sultra</h2>
+                <h2 class="mb-3 fw-bold text-gradient">Struktur Pimpinan & Organisasi</h2>
+                <p class="text-muted fs-5">Mengenal lebih dekat jajaran pimpinan dan struktur organisasi BPSDM Provinsi Sulawesi Tenggara.</p>
               </div>
             </div>
           </div>
+          
           <div class="row justify-content-center">
-            @php
-              $team = [
-                [
-                  'name' => 'Syahruddin Nurdin, SE.', 
-                  'role' => 'Kepala Badan (Kaban)', 
-                  'icon' => 'fa-user-tie',
-                  'delay' => 100
-                ],
-                [
-                  'name' => 'Ahmad Yasir', 
-                  'role' => 'Sekretaris Badan (Sekban)', 
-                  'icon' => 'fa-user-pen',
-                  'delay' => 200
-                ],
-                [
-                  'name' => 'Rahmad Dwi Anto, SSTP', 
-                  'role' => 'Kepala Bidang Pengembangan Kompetensi Teknis Umum dan Fungsional', 
-                  'icon' => 'fa-laptop-code',
-                  'delay' => 300
-                ],
-                [
-                  'name' => 'Kepala Bidang', 
-                  'role' => 'Pengembangan Kompetensi Manajerial', 
-                  'icon' => 'fa-users-gear',
-                  'delay' => 400
-                ],
-                [
-                  'name' => 'Kepala Bidang', 
-                  'role' => 'Sertifikasi Kompetensi dan Penjaminan Mutu', 
-                  'icon' => 'fa-file-shield',
-                  'delay' => 500
-                ],
-              ];
-            @endphp
-
-            @foreach($team as $member)
-            <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="{{ $member['delay'] }}">
-              <div class="pimpinan-card d-flex align-items-center gap-4 shadow-sm rounded-4 bg-white p-4 border-start border-4 border-primary h-100" 
-                   style="transition: transform 0.3s ease; cursor: default;">
-                <div class="pimpinan-icon bg-light rounded-circle hstack justify-content-center shadow-sm" style="width: 60px; height: 60px; min-width: 60px;">
-                  <i class="fas {{ $member['icon'] }} text-primary fs-4"></i>
+            <div class="col-lg-8" data-aos="zoom-in" data-aos-delay="200" data-aos-duration="800">
+              <div class="card border-0 shadow-lg rounded-4 overflow-hidden position-relative pimpinan-cta-card bg-white">
+                <!-- Background decoration -->
+                <div class="position-absolute top-0 end-0 p-5 opacity-10 pointer-events-none" style="transform: translate(20%, -20%);">
+                  <i class="fas fa-network-wired text-primary" style="font-size: 15rem;"></i>
                 </div>
-                <div>
-                  <h6 class="mb-1 fw-bold text-dark">{{ $member['name'] }}</h6>
-                  <p class="mb-0 text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.5px; line-height: 1.2;">
-                    {{ $member['role'] }}
+                
+                <div class="card-body p-5 text-center position-relative z-index-1">
+                  <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle shadow-sm" style="width: 80px; height: 80px; background: linear-gradient(135deg, #0d6efd, #0a58ca);">
+                      <i class="fas fa-sitemap fs-2"></i>
+                    </div>
+                  </div>
+                  <h3 class="fw-bold mb-3 text-dark">Struktur Organisasi BPSDM Sultra</h3>
+                  <p class="text-secondary mb-4 fs-5 mx-auto" style="max-width: 600px; line-height: 1.6;">
+                    Untuk informasi terkini mengenai bagan susunan organisasi dan profil lengkap jajaran pimpinan BPSDM Provinsi Sulawesi Tenggara, silakan kunjungi portal resmi kami.
                   </p>
+                  <a href="https://bpsdmsultra.my.id/struktur-organisasi" target="_blank" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm btn-hover-effect fw-semibold d-inline-flex align-items-center gap-2">
+                    <span>Lihat Struktur Lengkap</span>
+                    <i class="fas fa-arrow-right"></i>
+                  </a>
                 </div>
               </div>
             </div>
-            @endforeach
           </div>
         </div>
       </div>
@@ -503,21 +477,21 @@ function renderPelatihan(date) {
           </div>
         </div>
 
-        {{-- Card 3 --}}
-        <!-- <div class="swiper-slide">
+        {{-- Card 3: Majalah Insight ASN --}}
+        <div class="swiper-slide">
           <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease-in-out;"
                onmouseover="this.style.transform='scale(1.05)'"
                onmouseout="this.style.transform='scale(1)'">
-            <img src="{{ asset('image/image3.jpg') }}" class="card-img-top" alt="Artikel 3">
+            <img src="{{ asset('image/banner_insight_asn.png') }}" class="card-img-top" alt="Majalah Insight ASN">
             <div class="card-body">
-              <h5 class="card-title">Rizky Leader Falling in Love ♡</h5>
-              <p class="card-text">Rizky Leader Jatuh Cinta pada Rekrutan Anggota Terbaru</p>
+              <h5 class="card-title">Edisi Perdana: Majalah Insight ASN</h5>
+              <p class="card-text">Temukan inspirasi, panduan teknologi informasi, dan ragam inovasi layanan digital pemerintahan di Sulawesi Tenggara melalui edisi perdana Majalah Insight ASN.</p>
             </div>
             <div class="card-footer bg-white border-top-0">
-              <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
+              <a href="https://bpsdmsultra.my.id/e-journal" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
             </div>
           </div>
-        </div> -->
+        </div>
       
         {{-- Card 4 --}}
         <!-- <div class="swiper-slide">
