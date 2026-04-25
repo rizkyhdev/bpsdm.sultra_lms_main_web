@@ -341,14 +341,14 @@
                 </tbody>
             </table>
 
-            <div class="score-box">
+            <!-- <div class="score-box">
                 <div class="score-box-header">
                     Sertifikat ini Bernilai
                 </div>
                 <div class="score-box-body">
                     {{ $score !== null ? $score : '—' }}
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </body>
