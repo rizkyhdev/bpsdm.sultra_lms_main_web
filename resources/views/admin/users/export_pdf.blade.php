@@ -72,7 +72,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>BPSDM LMS</h1>
+        <h1>BPSDM LMS Sobat AURA</h1>
         <p>Laporan Rekapitulasi Data Pengguna</p>
     </div>
     

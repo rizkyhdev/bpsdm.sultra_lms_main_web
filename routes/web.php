@@ -300,24 +300,24 @@ Route::group([
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/users/export-pdf', [AdminUserController::class, 'exportPdf'])->name('users.export_pdf');
     Route::get('/users/{id}', [AdminUserController::class, 'show'])->name('users.show');
     Route::get('/users/{id}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     Route::post('/users/{id}/validate', [AdminUserController::class, 'validateUser'])->name('users.validate');
-    Route::get('/users/export-pdf', [AdminUserController::class, 'exportPdf'])->name('users.export_pdf');
 
     // Courses
     Route::get('/courses', [AdminCourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/create', [AdminCourseController::class, 'create'])->name('courses.create');
     Route::post('/courses', [AdminCourseController::class, 'store'])->name('courses.store');
+    Route::get('/courses/export-pdf', [AdminCourseController::class, 'exportPdf'])->name('courses.export_pdf');
     Route::get('/courses/{id}', [AdminCourseController::class, 'show'])->name('courses.show');
     Route::get('/courses/{id}/edit', [AdminCourseController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{id}', [AdminCourseController::class, 'update'])->name('courses.update');
     Route::delete('/courses/{id}', [AdminCourseController::class, 'destroy'])->name('courses.destroy');
     Route::post('/courses/{id}/duplicate', [AdminCourseController::class, 'duplicate'])->name('courses.duplicate');
     Route::get('/courses/{id}/report', [AdminCourseController::class, 'report'])->name('courses.report');
-    Route::get('/courses/export-pdf', [AdminCourseController::class, 'exportPdf'])->name('courses.export_pdf');
     
     // Certificate preview
     Route::get('/courses/{course:slug}/certificate/preview', [CertificateController::class, 'preview'])->name('certificates.preview');
@@ -392,11 +392,11 @@ Route::group([
     Route::get('/enrollments', [AdminEnrollmentController::class, 'index'])->name('enrollments.index');
     Route::get('/enrollments/create', [AdminEnrollmentController::class, 'create'])->name('enrollments.create');
     Route::post('/enrollments', [AdminEnrollmentController::class, 'store'])->name('enrollments.store');
+    Route::get('/enrollments/export-pdf', [AdminEnrollmentController::class, 'exportPdf'])->name('enrollments.export_pdf');
     Route::get('/enrollments/{id}', [AdminEnrollmentController::class, 'show'])->name('enrollments.show');
     Route::get('/enrollments/{id}/edit', [AdminEnrollmentController::class, 'edit'])->name('enrollments.edit');
     Route::put('/enrollments/{id}', [AdminEnrollmentController::class, 'update'])->name('enrollments.update');
     Route::delete('/enrollments/{id}', [AdminEnrollmentController::class, 'destroy'])->name('enrollments.destroy');
-    Route::get('/enrollments/export-pdf', [AdminEnrollmentController::class, 'exportPdf'])->name('enrollments.export_pdf');
 
     // Certificates
     Route::get('/certificates', [AdminCertificateController::class, 'index'])->name('certificates.index');
