@@ -278,14 +278,27 @@ class AdminCertificateController extends Controller
         try {
             $certificate = Certificate::findOrFail($id);
 
-            if (!$certificate->file_path || !Storage::disk('public')->exists($certificate->file_path)) {
+            if (!$certificate->file_path) {
                 return back()->with('error', 'File sertifikat tidak ditemukan.');
+            }
+
+            $disk = config('certificates.storage_disk', 'local');
+            
+            // Check primary configured disk first, then local, then public
+            if (!Storage::disk($disk)->exists($certificate->file_path)) {
+                if (Storage::disk('local')->exists($certificate->file_path)) {
+                    $disk = 'local';
+                } elseif (Storage::disk('public')->exists($certificate->file_path)) {
+                    $disk = 'public';
+                } else {
+                    return back()->with('error', 'File sertifikat fisik tidak ditemukan di server.');
+                }
             }
 
             $fileName = 'certificate_' . $certificate->nomor_sertifikat . '.pdf';
             
-            Log::info('Admin downloaded certificate: ' . $certificate->nomor_sertifikat);
-            return Storage::disk('public')->download($certificate->file_path, $fileName);
+            Log::info('Admin downloaded certificate: ' . $certificate->nomor_sertifikat . ' from disk: ' . $disk);
+            return Storage::disk($disk)->download($certificate->file_path, $fileName);
 
         } catch (\Exception $e) {
             Log::error('Error in AdminCertificateController@download: ' . $e->getMessage());

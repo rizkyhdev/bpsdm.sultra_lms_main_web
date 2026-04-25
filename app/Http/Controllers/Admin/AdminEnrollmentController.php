@@ -460,4 +460,55 @@ class AdminEnrollmentController extends Controller
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui status'], 500);
         }
     }
+
+    /**
+     * Mengekspor rekapitulasi data pendaftaran ke PDF.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportPdf(Request $request)
+    {
+        try {
+            $query = UserEnrollment::with(['user', 'course']);
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->whereHas('user', function($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                                 ->orWhere('nip', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('course', function($courseQuery) use ($search) {
+                        $courseQuery->where('judul', 'like', "%{$search}%");
+                    });
+                });
+            }
+
+            if ($request->filled('status') && $request->status !== 'all') {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('course_id') && $request->course_id !== 'all') {
+                $query->where('course_id', $request->course_id);
+            }
+
+            if ($request->filled('date_from')) {
+                $query->where('enrollment_date', '>=', $request->date_from);
+            }
+
+            if ($request->filled('date_to')) {
+                $query->where('enrollment_date', '<=', $request->date_to);
+            }
+
+            $enrollments = $query->orderBy('enrollment_date', 'desc')->get();
+
+            $pdf = \PDF::loadView('admin.enrollments.export_pdf', compact('enrollments'))->setPaper('a4', 'landscape');
+            $fileName = 'Rekapitulasi_Pendaftaran_' . now()->format('Ymd_His') . '.pdf';
+            return $pdf->download($fileName);
+        } catch (\Exception $e) {
+            Log::error('Error in AdminEnrollmentController@exportPdf: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat mengekspor data pendaftaran.');
+        }
+    }
 }

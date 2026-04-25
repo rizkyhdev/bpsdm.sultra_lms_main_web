@@ -286,25 +286,57 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Mengekspor daftar pengguna ke Excel.
+     * Mengekspor rekapitulasi data pengguna ke PDF.
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return \Illuminate\Http\Response
      */
-    public function exportUsers(Request $request)
+    public function exportPdf(Request $request)
     {
         try {
-            $format = $request->get('format', 'xlsx');
-            
-            if ($format === 'pdf') {
-                $users = User::all();
-                $pdf = PDF::loadView('admin.users.export-pdf', compact('users'));
-                return $pdf->download('users-list.pdf');
-            } else {
-                return Excel::download(new UsersExport, 'users-list.xlsx');
+            $query = User::query()
+                ->withCount([
+                    'userEnrollments as enrollments_count',
+                    'userEnrollments as completed_courses_count' => function ($q) {
+                        $q->where('status', 'completed');
+                    },
+                ]);
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('nip', 'like', "%{$search}%")
+                      ->orWhere('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('jabatan', 'like', "%{$search}%")
+                      ->orWhere('unit_kerja', 'like', "%{$search}%");
+                });
             }
+
+            if ($request->filled('role') && $request->role !== 'all') {
+                $query->where('role', $request->role);
+            }
+
+            if ($request->filled('is_validated')) {
+                $query->where('is_validated', $request->is_validated);
+            }
+
+            $sort = $request->get('sort', 'created_at');
+            $direction = $request->get('direction', 'desc') === 'asc' ? 'asc' : 'desc';
+
+            if (in_array($sort, ['nip', 'name', 'email', 'role', 'created_at', 'enrollments_count', 'completed_courses_count'], true)) {
+                $query->orderBy($sort, $direction);
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
+
+            $users = $query->get();
+
+            $pdf = PDF::loadView('admin.users.export_pdf', compact('users'))->setPaper('a4', 'landscape');
+            $fileName = 'Rekapitulasi_Pengguna_' . now()->format('Ymd_His') . '.pdf';
+            return $pdf->download($fileName);
         } catch (\Exception $e) {
-            Log::error('Error in AdminUserController@exportUsers: ' . $e->getMessage());
+            Log::error('Error in AdminUserController@exportPdf: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat mengekspor data.');
         }
     }

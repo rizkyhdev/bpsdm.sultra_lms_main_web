@@ -300,17 +300,18 @@ Route::group([
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/users/export-pdf', [AdminUserController::class, 'exportPdf'])->name('users.export_pdf');
     Route::get('/users/{id}', [AdminUserController::class, 'show'])->name('users.show');
     Route::get('/users/{id}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     Route::post('/users/{id}/validate', [AdminUserController::class, 'validateUser'])->name('users.validate');
-    Route::get('/users-export', [AdminUserController::class, 'export'])->name('users.export');
 
     // Courses
     Route::get('/courses', [AdminCourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/create', [AdminCourseController::class, 'create'])->name('courses.create');
     Route::post('/courses', [AdminCourseController::class, 'store'])->name('courses.store');
+    Route::get('/courses/export-pdf', [AdminCourseController::class, 'exportPdf'])->name('courses.export_pdf');
     Route::get('/courses/{id}', [AdminCourseController::class, 'show'])->name('courses.show');
     Route::get('/courses/{id}/edit', [AdminCourseController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{id}', [AdminCourseController::class, 'update'])->name('courses.update');
@@ -391,6 +392,7 @@ Route::group([
     Route::get('/enrollments', [AdminEnrollmentController::class, 'index'])->name('enrollments.index');
     Route::get('/enrollments/create', [AdminEnrollmentController::class, 'create'])->name('enrollments.create');
     Route::post('/enrollments', [AdminEnrollmentController::class, 'store'])->name('enrollments.store');
+    Route::get('/enrollments/export-pdf', [AdminEnrollmentController::class, 'exportPdf'])->name('enrollments.export_pdf');
     Route::get('/enrollments/{id}', [AdminEnrollmentController::class, 'show'])->name('enrollments.show');
     Route::get('/enrollments/{id}/edit', [AdminEnrollmentController::class, 'edit'])->name('enrollments.edit');
     Route::put('/enrollments/{id}', [AdminEnrollmentController::class, 'update'])->name('enrollments.update');
@@ -401,6 +403,7 @@ Route::group([
     Route::get('/certificates/create', [AdminCertificateController::class, 'create'])->name('certificates.create');
     Route::post('/certificates', [AdminCertificateController::class, 'store'])->name('certificates.store');
     Route::get('/certificates/{id}', [AdminCertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificates/{id}/download', [AdminCertificateController::class, 'download'])->name('certificates.download');
     Route::get('/certificates/{id}/edit', [AdminCertificateController::class, 'edit'])->name('certificates.edit');
     Route::put('/certificates/{id}', [AdminCertificateController::class, 'update'])->name('certificates.update');
     Route::delete('/certificates/{id}', [AdminCertificateController::class, 'destroy'])->name('certificates.destroy');

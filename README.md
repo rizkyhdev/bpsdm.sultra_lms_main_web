@@ -43,7 +43,7 @@ Untuk mengatur sistem komputer anda pada pengembangan LMS BPSDM Sultra, silakan 
 5. Install komponen frontend yang dibutuhkan `npm install`
 6. Inisiasi database dengan `php artisan migrate`
 7. Seed database `php artisan migrate:fresh --seed` or `php artisan db:seed`
-8. Jalankan development mode dengan `composer run dev`
+8. Jalankan development mode dengan `composer run dev` 
 
 ## Spesifikasi Utama Sistem
 

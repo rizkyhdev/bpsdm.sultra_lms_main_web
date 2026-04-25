@@ -8,12 +8,15 @@
 @endsection
 
 @section('header-actions')
+    <a href="{{ route('admin.courses.export_pdf', request()->all()) }}" class="btn btn-danger mr-2" target="_blank">
+        <i class="fas fa-file-pdf mr-1"></i> Cetak PDF
+    </a>
     @can('create', App\Models\Course::class)
         <a href="{{ route('admin.courses.create') }}" class="btn btn-primary"><i class="fas fa-plus mr-1"></i> Tambah</a>
     @endcan
 @endsection
 
-@section('content')
+@section('admin_content')
     {{-- Pencarian & Filter --}}
     <form method="GET" action="{{ route('admin.courses.index') }}" class="mb-3">
         <div class="card shadow-sm">
