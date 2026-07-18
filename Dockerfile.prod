@@ -1,0 +1,39 @@
+# Stage 1: Build Frontend Assets
+FROM node:20-alpine as frontend
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Build Production Image
+FROM serversideup/php:8.2-fpm-nginx
+
+# Switch to root to install packages
+USER root
+
+# Install PostgreSQL PHP extensions
+RUN install-php-extensions pdo_pgsql pgsql
+
+# Define environment variables for Laravel production
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    LOG_CHANNEL=stderr \
+    DB_CONNECTION=pgsql
+
+# Copy application files and set ownership to www-data
+COPY --chown=www-data:www-data . /var/www/html
+
+# Copy built frontend assets from Stage 1
+COPY --from=frontend --chown=www-data:www-data /app/public/build /var/www/html/public/build
+
+# Switch back to the www-data user to run setup commands safely
+USER www-data
+
+# Install Laravel dependencies (ignoring dev packages)
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Cache Laravel configuration for faster boot times
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache

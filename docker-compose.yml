@@ -1,0 +1,54 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lms_app
+    ports:
+      - "8000:8080"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=pgsql
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-lms}
+      - DB_USERNAME=${DB_USERNAME:-lms_user}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+    depends_on:
+      pgsql:
+        condition: service_healthy
+
+  node:
+    image: node:20-alpine
+    container_name: lms_node
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  pgsql:
+    image: postgres:15-alpine
+    container_name: lms_pgsql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-lms}
+      POSTGRES_USER: ${DB_USERNAME:-lms_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - lms-pgsql-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-lms_user} -d ${DB_DATABASE:-lms}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  lms-pgsql-data:

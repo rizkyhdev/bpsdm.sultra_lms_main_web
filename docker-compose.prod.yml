@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: lms_app_prod
+    restart: unless-stopped
+    ports:
+      # Map the container's Nginx port (8080) to host's 8000.
+      # Your Linux reverse proxy should proxy traffic to localhost:8000.
+      - "8000:8080"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=${APP_URL:-http://localhost}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=pgsql
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-lms_prod}
+      - DB_USERNAME=${DB_USERNAME:-lms_user}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      # You MUST provide a valid APP_KEY for production, typically passed via .env file or environment variable.
+      # - APP_KEY=base64:...
+    depends_on:
+      pgsql:
+        condition: service_healthy
+
+  pgsql:
+    image: postgres:15-alpine
+    container_name: lms_pgsql_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-lms_prod}
+      POSTGRES_USER: ${DB_USERNAME:-lms_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - lms-pgsql-prod-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-lms_user} -d ${DB_DATABASE:-lms_prod}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  lms-pgsql-prod-data:
