@@ -24,8 +24,8 @@ class AppServiceProvider extends ServiceProvider
         // Sehingga dapat digunakan sebagai <x-student::input>, <x-student::card>, dll
         
         Blade::anonymousComponentPath(resource_path('views/student/components'), 'student');
-        if($this->app->environment('production')) {
-            \URL::forceScheme('https');
-        }
+        // if($this->app->environment('production')) {
+        //     \URL::forceScheme('https');
+        // }
     }
 }
