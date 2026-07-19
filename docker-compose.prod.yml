@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
+    image: lms-app-prod
     container_name: lms_app_prod
     restart: unless-stopped
     ports:
@@ -20,7 +21,7 @@ services:
       - DB_USERNAME=${DB_USERNAME:-lms_user}
       - DB_PASSWORD=${DB_PASSWORD:-secret}
       # You MUST provide a valid APP_KEY for production, typically passed via .env file or environment variable.
-      # - APP_KEY=base64:...
+      - APP_KEY=base64:+9s/TnUQlHKGjmNRO2uaugb8+S7actweICLQWlqa9hI=
     depends_on:
       pgsql:
         condition: service_healthy

@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: lms-app-dev
     container_name: lms_app
     ports:
       - "8000:8080"
