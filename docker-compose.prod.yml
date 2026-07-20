@@ -3,13 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    image: lms-app-prod
-    container_name: lms_app_prod
+    image: bpsdm-lms-app-prod
+    container_name: bpsdm_lms_app_prod
     restart: unless-stopped
     ports:
       # Map the container's Nginx port (8080) to host's 8000.
       # Your Linux reverse proxy should proxy traffic to localhost:8000.
-      - "8000:8080"
+      - "3003:8080"
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
@@ -28,7 +28,7 @@ services:
 
   pgsql:
     image: postgres:15-alpine
-    container_name: lms_pgsql_prod
+    container_name: bpsdm_lms_pgsql_prod
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_DATABASE:-lms_prod}
@@ -37,10 +37,10 @@ services:
     volumes:
       - lms-pgsql-prod-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-lms_user} -d ${DB_DATABASE:-lms_prod}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-lms_user} -d ${DB_DATABASE:-lms_prod}" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  lms-pgsql-prod-data:
+  bpsdm-lms-pgsql-prod-data:
