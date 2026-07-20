@@ -35,7 +35,7 @@ services:
       POSTGRES_USER: ${DB_USERNAME:-lms_user}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
-      - lms-pgsql-prod-data:/var/lib/postgresql/data
+      - bpsdm-lms-pgsql-prod-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-lms_user} -d ${DB_DATABASE:-lms_prod}" ]
       interval: 10s
