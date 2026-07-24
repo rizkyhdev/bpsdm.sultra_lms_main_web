@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- Primary Meta Tags -->
-    <title>Sobat AURA - Portal Pengembangan Kompetensi ASN BPSDM Sultra</title>
-    <meta name="title" content="Sobat AURA - Portal Pengembangan Kompetensi ASN BPSDM Sultra">
-    <meta name="description" content="Portal resmi Sobat AURA (Aparatur Unggul Responsif Adaptif) BPSDM Sulawesi Tenggara. Platform pembelajaran mandiri terintegrasi untuk meningkatkan profesionalisme ASN secara digital.">
-    <meta name="keywords" content="BPSDM Sultra, Sobat AURA, Pelatihan ASN, Sultra, LMS ASN, Kompetensi ASN, Sulawesi Tenggara, Pengembangan Kompetensi">
+    <title>Sobat ASR - Portal Pengembangan Kompetensi ASN BPSDM Sultra</title>
+    <meta name="title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN BPSDM Sultra">
+    <meta name="description" content="Portal resmi Sobat ASR (Sistem Informasi Pengembangan Kompetensi Aparatur Sigap teRintegrasi) BPSDM Sulawesi Tenggara. Platform pembelajaran mandiri terintegrasi untuk meningkatkan profesionalisme ASN secara digital.">
+    <meta name="keywords" content="BPSDM Sultra, Sobat ASR, Pelatihan ASN, Sultra, LMS ASN, Kompetensi ASN, Sulawesi Tenggara, Pengembangan Kompetensi">
     <meta name="author" content="BPSDM Provinsi Sulawesi Tenggara">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="Sobat AURA - Portal Pengembangan Kompetensi ASN Sultra">
-    <meta property="og:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat AURA. Akses pelatihan kapan saja dan di mana saja.">
+    <meta property="og:title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN Sultra">
+    <meta property="og:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat ASR. Akses pelatihan kapan saja dan di mana saja.">
     <meta property="og:image" content="{{ asset('image/LOGO_AURA.png') }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url('/') }}">
-    <meta property="twitter:title" content="Sobat AURA - Portal Pengembangan Kompetensi ASN Sultra">
-    <meta property="twitter:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat AURA. Akses pelatihan kapan saja dan di mana saja.">
+    <meta property="twitter:title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN Sultra">
+    <meta property="twitter:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat ASR. Akses pelatihan kapan saja dan di mana saja.">
     <meta property="twitter:image" content="{{ asset('image/LOGO_AURA.png') }}">
 
     <!-- Canonical URL -->
@@ -101,8 +101,8 @@
         <div class="d-flex align-items-center justify-content-center text-white position-relative"
              style="background-image: url('{{ asset('image/slide1.jpeg') }}'); background-size: cover; background-position: center; height: 100%;">
           <div class="container text-center">
-            <h1 class="hero-title" data-splitting="chars">Selamat Datang di Sobat AURA</h1>
-            <h5 class="hero-sub" data-splitting="chars">Aparatur Unggul Responsif Adaptif</h5>
+            <h1 class="hero-title" data-splitting="chars">Selamat Datang di Sobat ASR</h1>
+            <h5 class="hero-sub" data-splitting="chars">Sistem Informasi Pengembangan Kompetensi Aparatur Sigap teRintegrasi</h5>
             <p class="mt-3 text-shadow">Platform Pengembangan Kompetensi Mandiri Terintegrasi untuk Aparatur Sipil Negara di Sulawesi Tenggara.</p>
             <a href="#calendar" class="btn btn-gradient px-4 py-2 mt-3">Lihat Pelatihan</a>
           </div>
@@ -210,7 +210,7 @@
         <div class="row gy-5 position-relative steps-container">
           @php
             $steps = [
-              ['title' => 'Registrasi Mandiri', 'desc' => 'Pendaftaran akun menggunakan NIP dan data identitas ASN yang valid di portal Sobat AURA.'],
+              ['title' => 'Registrasi Mandiri', 'desc' => 'Pendaftaran akun menggunakan NIP dan data identitas ASN yang valid di portal Sobat ASR.'],
               ['title' => 'Verifikasi Profil', 'desc' => 'Unggah Surat Tugas atau bukti status ASN untuk memvalidasi kelayakan pendaftaran pelatihan.'],
               ['title' => 'Eksplorasi Katalog', 'desc' => 'Pilih jenis pelatihan teknis yang sesuai dengan kebutuhan pengembangan kompetensi Anda.'],
               ['title' => 'Pembelajaran Digital', 'desc' => 'Pelajari materi melalui modul video dan dokumen secara mandiri sesuai jadwal yang tersedia.'],
@@ -452,8 +452,8 @@ function renderPelatihan(date) {
                onmouseout="this.style.transform='scale(1)'">
             <img src="{{ asset('image/image1.jpg') }}" class="card-img-top" alt="Artikel 1">
             <div class="card-body">
-              <h5 class="card-title">Rapat Perdana Team Sobat Aura</h5>
-              <p class="card-text">Tim Pengembang Sobat Aura Menggelar Rapat Perdana bersama Kabid Teknis Umum dan Fungsional</p>
+              <h5 class="card-title">Rapat Perdana Team Sobat ASR</h5>
+              <p class="card-text">Tim Pengembang Sobat ASR Menggelar Rapat Perdana bersama Kabid Teknis Umum dan Fungsional</p>
             </div>
             <div class="card-footer bg-white border-top-0">
               <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
@@ -468,8 +468,8 @@ function renderPelatihan(date) {
                onmouseout="this.style.transform='scale(1)'">
             <img src="{{ asset('image/image2.jpg') }}" class="card-img-top" alt="Artikel 2">
             <div class="card-body">
-              <h5 class="card-title">Hasil Rapat Perdana Team Sobat Aura</h5>
-              <p class="card-text">Hasil Rapat Perdana Team Sobat Aura tentang fitur yang digunakan dalam sistem dan Deadline Pengerjaan Sistem</p>
+              <h5 class="card-title">Hasil Rapat Perdana Team Sobat ASR</h5>
+              <p class="card-text">Hasil Rapat Perdana Team Sobat ASR tentang fitur yang digunakan dalam sistem dan Deadline Pengerjaan Sistem</p>
             </div>
             <div class="card-footer bg-white border-top-0">
               <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
@@ -574,7 +574,7 @@ function renderPelatihan(date) {
 
     <!-- Copyright -->
     <section class="text-center py-2">
-      © SOBAT AURA 2025 <a href="https://bpsdmsultra.my.id/" class="fw-bold">BPSDM PEMPROV SULTRA</a>
+      © SOBAT ASR 2025 <a href="https://bpsdmsultra.my.id/" class="fw-bold">BPSDM PEMPROV SULTRA</a>
     </section>
   </div>
 </footer>
