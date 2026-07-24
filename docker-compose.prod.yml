@@ -13,8 +13,8 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
-      - APP_URL=${APP_URL:-http://localhost}
-      - ASSET_URL=${APP_URL:-http://localhost}
+      - APP_URL=${APP_URL:-https://sobatasr.sultraprov.go.id}
+      - ASSET_URL=${APP_URL:-https://sobatasr.sultraprov.go.id}
       - DB_CONNECTION=pgsql
       - DB_HOST=pgsql
       - DB_PORT=5432
