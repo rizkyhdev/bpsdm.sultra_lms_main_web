@@ -124,7 +124,7 @@
   <!-- Preloader -->
   <!-- <div id="preloader">
     <div class="preloader-logo">
-      <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" />
+      <img src="{{ asset('image/logofont.png') }}" alt="Logo" />
     </div>
   </div> -->
 
@@ -133,8 +133,8 @@
       <!-- Kiri -->
       <div class="col-md-6 left-section">
         <div class="logo-group">
-            <img src="{{ asset('image/LOGO_AURA.png') }}" alt="Logo 1" class="logo-img">
-            <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo 2" class="logo-img">
+            <img src="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}" alt="Logo 1" class="logo-img">
+            <img src="{{ asset('image/logofont.png') }}" alt="Logo 2" class="logo-img">
         </div>
         <h2 id="typed-header"></h2>
       </div>

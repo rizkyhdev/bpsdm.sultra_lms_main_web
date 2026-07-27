@@ -16,14 +16,14 @@
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN Sultra">
     <meta property="og:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat ASR. Akses pelatihan kapan saja dan di mana saja.">
-    <meta property="og:image" content="{{ asset('image/LOGO_AURA.png') }}">
+    <meta property="og:image" content="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url('/') }}">
     <meta property="twitter:title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN Sultra">
     <meta property="twitter:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat ASR. Akses pelatihan kapan saja dan di mana saja.">
-    <meta property="twitter:image" content="{{ asset('image/LOGO_AURA.png') }}">
+    <meta property="twitter:image" content="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url('/') }}">
@@ -44,14 +44,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" 
           integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" 
           crossorigin="anonymous" referrerpolicy="no-referrer" />
-     <link rel="icon" href="{{ asset('image/LOGO_AURA_1.png') }}" type="image/png">
+     <link rel="icon" href="{{ asset('image/logofont.png') }}" type="image/png">
 </head>
 
   <body style="padding-top:80px;">
   {{-- Preload --}}
      <div id="preloader">
         <div class="preloader-logo">
-            <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" />
+            <img src="{{ asset('image/logofont.png') }}" alt="Logo" />
         </div>
     </div>
 
@@ -59,8 +59,8 @@
 <nav class="navbar navbar-expand-lg fixed-top" style="background-color:#FFFFFF;  box-shadow: 0px 5px 5px rgba(0.2, 0.2, 0.2, 0.2);">
   <div class="container">
     <div class="navbar-start" href="#" style="" alt="logo">
-      <img src="{{ asset('image/LOGO_AURA.png') }}" alt="Logo" width="80" height="80" class="logo-navbar me-3 img-fluid">
-       <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="Logo" width="80" height="80" class="logo-navbar img-fluid"> 
+      <img src="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}" alt="Logo" width="80" height="80" class="logo-navbar me-3 img-fluid">
+       <img src="{{ asset('image/logofont.png') }}" alt="Logo" width="80" height="80" class="logo-navbar img-fluid"> 
     </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>

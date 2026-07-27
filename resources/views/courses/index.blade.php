@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ __('Courses') }} - {{ config('app.name', 'Sobat AURA') }}</title>
+    <title>{{ __('Courses') }} - {{ config('app.name', 'Sobat ASR') }}</title>
     
     <!-- Bootstrap CSS (required for course-card component) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
     
     <!-- Font Awesome for Icons (via CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="icon" href="{{ asset('image/LOGO AURA 1.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('image/logofont.png') }}" type="image/png">
     
     <!-- Tailwind CSS CDN as fallback -->
     <script src="https://cdn.tailwindcss.com"></script>

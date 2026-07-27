@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>{{ config('app.name', 'AURA Dashboard') }}</title>
+  <title>{{ config('app.name', 'ASR Dashboard') }}</title>
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <!-- Bootstrap CSS (via CDN) -->
@@ -18,7 +18,7 @@
 
   <!-- Font Awesome for Icons (via CDN) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="icon" href="{{ asset('image/LOGO AURA 1.png') }}" type="image/png">
+  <link rel="icon" href="{{ asset('image/logofont.png') }}" type="image/png">
 
 
 
@@ -28,8 +28,8 @@
   <!-- Navbar -->
   <header class="d-flex justify-content-between align-items-center px-4 py-3 bg-white shadow">
     <div class="d-flex align-items-center gap-2">
-      <img src="{{ asset('image/LOGO AURA.png') }}" alt="Logo" height="50" class="ms-3">
-      <img src="{{ asset('image/LOGO AURA 1.png') }}" alt="Logo Font" height="50">
+      <img src="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}" alt="Logo" height="50" class="ms-3">
+      <img src="{{ asset('image/logofont.png') }}" alt="Logo Font" height="50">
       <button id="menu-toggle" class="btn btn-link ms-5">
         <i class="fas fa-bars fs-4" style="color:#21b3ca;"></i>
       </button>

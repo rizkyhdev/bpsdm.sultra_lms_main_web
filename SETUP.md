@@ -1,6 +1,6 @@
 # 🚀 System Setup Guide
 
-Welcome to the Sobat AURA LMS platform! This guide covers the essential steps required to get your application fully functional **after** you have run `docker compose` for the first time. 
+Welcome to the Sobat ASR LMS platform! This guide covers the essential steps required to get your application fully functional **after** you have run `docker compose` for the first time. 
 
 ---
 
