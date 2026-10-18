@@ -80,7 +80,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>BPSDM LMS Sobat AURA</h1>
+        <h1>BPSDM LMS Sobat ASR</h1>
         <p>Laporan Rekapitulasi Data Pendaftaran</p>
     </div>
     

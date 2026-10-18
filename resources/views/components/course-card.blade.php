@@ -2,7 +2,7 @@
 
 @php
     $hasRoute = Route::has('courses.show');
-    $instructorEmail = 'admin@sobataura.com';
+    $instructorEmail = 'admin@sobatasr.com';
     $instructorName = 'Pengajar BPSDM';
     
     if (isset($course->owner) && $course->owner) {
@@ -88,7 +88,7 @@
         text-overflow: ellipsis;
     }
     .course-meta-icon {
-        color: #21b3ca; /* AURA Brand color */
+        color: #21b3ca; /* ASR Brand color */
     }
     .premium-course-card .btn-premium {
         background-color: transparent;

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $course->judul . ' - Sobat AURA')
+@section('title', $course->judul . ' - Sobat ASR')
 
 @section('content')
 <div class="course-detail-wrapper bg-light min-vh-100">

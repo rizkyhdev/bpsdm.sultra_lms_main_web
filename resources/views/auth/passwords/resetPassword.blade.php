@@ -21,7 +21,7 @@
                     <div class="panel panel-default">
                          <div class="panel-body">
                                 <div class="text-center">
-                                    <img src="{{ asset('image/LOGO_AURA_1.png') }}" alt="car-key">
+                                    <img src="{{ asset('image/logofont.png') }}" alt="car-key">
                                     <h2 class="text-center">Lupa Password?</h2>
                                     <p>Anda bisa mereset Password anda disini.</p>
                                     <form id="register-form" role="form" autocomplete="off" class="form" method="post">
