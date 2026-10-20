@@ -31,6 +31,11 @@
               <i class="fas fa-question-circle me-2"></i>Kuis Saya
           </a>
       </li>
+      <li class="nav-item {{ Route::is('student.simulasi.*') ? 'active' : '' }}">
+          <a class="nav-link text-black" href="{{ route('student.simulasi.index') }}">
+              <i class="fas fa-laptop-code me-2"></i>Simulasi Ujian
+          </a>
+      </li>
       <li class="nav-item {{ Route::is('student.certificates.*') ? 'active' : '' }}">
           <a class="nav-link text-black" href="{{ route('student.certificates.index') }}">
               <i class="fas fa-certificate me-2"></i>Sertifikat Saya

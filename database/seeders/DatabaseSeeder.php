@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             EnrollmentAndProgressSeeder::class,
             QuizAttemptsSeeder::class,
             CertificatesAndJpRecordsSeeder::class,
+            SimulationQuestionSeeder::class,
         ]);
     }
 }

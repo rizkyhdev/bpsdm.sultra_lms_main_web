@@ -6,7 +6,7 @@
                 @include('student.partials.svg.bars-3')
             </button>
             <a href="{{ route('student.dashboard') }}" class="hidden sm:flex items-center gap-2" aria-label="{{ __('Home') }}">
-                <img src="{{ asset('favicon.ico') }}" alt="{{ __('App Logo') }}" class="h-6 w-6" />
+                <img src="{{ asset('image/brand/jalur-asn-mark.png') }}" alt="" width="24" height="24" class="h-6 w-6 dark:rounded dark:bg-white dark:p-0.5" />
                 <span class="font-semibold">{{ config('app.name', 'LMS') }}</span>
             </a>
         </div>

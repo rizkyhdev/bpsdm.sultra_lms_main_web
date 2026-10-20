@@ -45,6 +45,11 @@
                        aria-current="{{ request()->routeIs('student.wishlist') ? 'page' : null }}">
                         Daftar Keinginan
                     </a>
+                    <a href="{{ route('student.simulasi.index') }}"
+                       class="px-4 py-2 rounded-md text-sm font-medium transition-colors {{ request()->routeIs('student.simulasi.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-slate-600 hover:bg-slate-100' }}"
+                       aria-current="{{ request()->routeIs('student.simulasi.*') ? 'page' : null }}">
+                        Simulasi Ujian
+                    </a>
                 </div>
                 
                 <div class="flex items-center space-x-4">

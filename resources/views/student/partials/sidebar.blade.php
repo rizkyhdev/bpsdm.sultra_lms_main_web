@@ -2,7 +2,7 @@
 <aside class="hidden lg:flex lg:flex-col w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700" aria-label="{{ __('Sidebar') }}">
     <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
         <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2" aria-label="{{ __('Home') }}">
-            <img src="{{ asset('favicon.ico') }}" alt="{{ __('App Logo') }}" class="h-6 w-6" />
+            <img src="{{ asset('image/brand/jalur-asn-mark.png') }}" alt="" width="24" height="24" class="h-6 w-6 dark:rounded dark:bg-white dark:p-0.5" />
             <span class="font-semibold">{{ config('app.name', 'LMS') }}</span>
         </a>
     </div>
@@ -54,7 +54,7 @@
         <div class="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-800 p-4 overflow-y-auto">
             <div class="flex items-center justify-between mb-4">
                 <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('favicon.ico') }}" alt="{{ __('App Logo') }}" class="h-6 w-6" />
+                    <img src="{{ asset('image/brand/jalur-asn-mark.png') }}" alt="" width="24" height="24" class="h-6 w-6 dark:rounded dark:bg-white dark:p-0.5" />
                     <span class="font-semibold">{{ config('app.name', 'LMS') }}</span>
                 </a>
                 <button class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700" @click="open=false" aria-label="{{ __('Close menu') }}">

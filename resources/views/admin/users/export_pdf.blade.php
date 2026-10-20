@@ -72,7 +72,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>BPSDM LMS Sobat ASR</h1>
+        <h1>BPSDM LMS Jalur ASN</h1>
         <p>Laporan Rekapitulasi Data Pengguna</p>
     </div>
     

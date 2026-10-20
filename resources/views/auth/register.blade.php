@@ -36,8 +36,13 @@
       margin-bottom: 20px;
     }
     .logo-img {
-      width: 130px;
+      width: 240px;
       height: auto;
+      /* full-colour logo needs a light surface on the blue gradient */
+      background: #fff;
+      padding: 20px 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
     .left-section h2 {
       font-weight: bold;
@@ -115,7 +120,7 @@
         padding: 20px;
       }
       .logo-img {
-        width: 90px;
+        width: 180px;
       }
     }
   </style>
@@ -124,7 +129,7 @@
   <!-- Preloader -->
   <!-- <div id="preloader">
     <div class="preloader-logo">
-      <img src="{{ asset('image/logofont.png') }}" alt="Logo" />
+      <img src="{{ asset('image/brand/jalur-asn-logo-stacked.png') }}" alt="Jalur ASN" width="200" height="128" />
     </div>
   </div> -->
 
@@ -133,8 +138,7 @@
       <!-- Kiri -->
       <div class="col-md-6 left-section">
         <div class="logo-group">
-            <img src="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}" alt="Logo 1" class="logo-img">
-            <img src="{{ asset('image/logofont.png') }}" alt="Logo 2" class="logo-img">
+            <img src="{{ asset('image/brand/jalur-asn-logo-stacked.png') }}" alt="Jalur ASN" width="240" height="154" class="logo-img">
         </div>
         <h2 id="typed-header"></h2>
       </div>

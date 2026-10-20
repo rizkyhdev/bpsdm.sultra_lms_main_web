@@ -51,6 +51,11 @@
           <i class="fas fa-question-circle me-2"></i>Kuis
         </a>
       </li>
+      <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.simulasi') ? 'active' : '' }}">
+        <a class="nav-link text-black" href="{{ route('admin.simulasi.index') }}">
+          <i class="fas fa-laptop-code me-2"></i>Simulasi &amp; Bank Soal
+        </a>
+      </li>
       <!-- <li class="nav-item {{ str_starts_with(Route::currentRouteName(), 'admin.questions') ? 'active' : '' }}">
         <a class="nav-link text-black" href="{{ route('admin.enrollments.index') }}">
           <i class="fas fa-list-ol me-2"></i>Questions

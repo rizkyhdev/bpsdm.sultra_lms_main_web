@@ -5,25 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- Primary Meta Tags -->
-    <title>Sobat ASR - Portal Pengembangan Kompetensi ASN BPSDM Sultra</title>
-    <meta name="title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN BPSDM Sultra">
-    <meta name="description" content="Portal resmi Sobat ASR (Sistem Informasi Pengembangan Kompetensi Aparatur Sigap teRintegrasi) BPSDM Sulawesi Tenggara. Platform pembelajaran mandiri terintegrasi untuk meningkatkan profesionalisme ASN secara digital.">
-    <meta name="keywords" content="BPSDM Sultra, Sobat ASR, Pelatihan ASN, Sultra, LMS ASN, Kompetensi ASN, Sulawesi Tenggara, Pengembangan Kompetensi">
+    <title>Jalur ASN - Portal Pengembangan Kompetensi ASN BPSDM Sultra</title>
+    <meta name="title" content="Jalur ASN - Portal Pengembangan Kompetensi ASN BPSDM Sultra">
+    <meta name="description" content="Portal resmi Jalur ASN BPSDM Sulawesi Tenggara. Platform pembelajaran mandiri terintegrasi untuk meningkatkan profesionalisme ASN secara digital.">
+    <meta name="keywords" content="BPSDM Sultra, Jalur ASN, Pelatihan ASN, Sultra, LMS ASN, Kompetensi ASN, Sulawesi Tenggara, Pengembangan Kompetensi">
     <meta name="author" content="BPSDM Provinsi Sulawesi Tenggara">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN Sultra">
-    <meta property="og:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat ASR. Akses pelatihan kapan saja dan di mana saja.">
-    <meta property="og:image" content="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}">
+    <meta property="og:title" content="Jalur ASN - Portal Pengembangan Kompetensi ASN Sultra">
+    <meta property="og:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Jalur ASN. Akses pelatihan kapan saja dan di mana saja.">
+    <meta property="og:image" content="{{ asset('image/brand/jalur-asn-og.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Jalur ASN">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url('/') }}">
-    <meta property="twitter:title" content="Sobat ASR - Portal Pengembangan Kompetensi ASN Sultra">
-    <meta property="twitter:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Sobat ASR. Akses pelatihan kapan saja dan di mana saja.">
-    <meta property="twitter:image" content="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}">
+    <meta property="twitter:title" content="Jalur ASN - Portal Pengembangan Kompetensi ASN Sultra">
+    <meta property="twitter:description" content="Tingkatkan kompetensi ASN Sultra melalui platform pembelajaran mandiri terintegrasi Jalur ASN. Akses pelatihan kapan saja dan di mana saja.">
+    <meta property="twitter:image" content="{{ asset('image/brand/jalur-asn-og.png') }}">
+    <meta property="twitter:image:alt" content="Jalur ASN">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url('/') }}">
@@ -44,14 +48,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" 
           integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" 
           crossorigin="anonymous" referrerpolicy="no-referrer" />
-     <link rel="icon" href="{{ asset('image/logofont.png') }}" type="image/png">
+    @include('layouts.partials.favicon')
 </head>
 
   <body style="padding-top:80px;">
   {{-- Preload --}}
      <div id="preloader">
         <div class="preloader-logo">
-            <img src="{{ asset('image/logofont.png') }}" alt="Logo" />
+            <img src="{{ asset('image/brand/jalur-asn-logo-stacked.png') }}" alt="Jalur ASN" width="200" height="128" />
         </div>
     </div>
 
@@ -59,8 +63,7 @@
 <nav class="navbar navbar-expand-lg fixed-top" style="background-color:#FFFFFF;  box-shadow: 0px 5px 5px rgba(0.2, 0.2, 0.2, 0.2);">
   <div class="container">
     <div class="navbar-start" href="#" style="" alt="logo">
-      <img src="{{ asset('image/LOGOGRAM SOBAT ASR.png') }}" alt="Logo" width="80" height="80" class="logo-navbar me-3 img-fluid">
-       <img src="{{ asset('image/logofont.png') }}" alt="Logo" width="80" height="80" class="logo-navbar img-fluid"> 
+      <img src="{{ asset('image/brand/jalur-asn-logo-horizontal.png') }}" alt="Jalur ASN" width="160" height="60" class="logo-navbar img-fluid">
     </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -75,6 +78,9 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ route('courses.index') }}">Pelatihan</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#simulasi">Simulasi</a>
         </li>
          <li class="nav-item">
           <a class="nav-link" href="#article">Artikel</a>
@@ -101,8 +107,8 @@
         <div class="d-flex align-items-center justify-content-center text-white position-relative"
              style="background-image: url('{{ asset('image/slide1.jpeg') }}'); background-size: cover; background-position: center; height: 100%;">
           <div class="container text-center">
-            <h1 class="hero-title" data-splitting="chars">Selamat Datang di Sobat ASR</h1>
-            <h5 class="hero-sub" data-splitting="chars">Sistem Informasi Pengembangan Kompetensi Aparatur Sigap teRintegrasi</h5>
+            <h1 class="hero-title" data-splitting="chars">Selamat Datang di Jalur ASN</h1>
+            <h5 class="hero-sub" data-splitting="chars">Sistem Informasi Pengembangan Kompetensi Aparatur Sigap Terintegrasi</h5>
             <p class="mt-3 text-shadow">Platform Pengembangan Kompetensi Mandiri Terintegrasi untuk Aparatur Sipil Negara di Sulawesi Tenggara.</p>
             <a href="#calendar" class="btn btn-gradient px-4 py-2 mt-3">Lihat Pelatihan</a>
           </div>
@@ -210,7 +216,7 @@
         <div class="row gy-5 position-relative steps-container">
           @php
             $steps = [
-              ['title' => 'Registrasi Mandiri', 'desc' => 'Pendaftaran akun menggunakan NIP dan data identitas ASN yang valid di portal Sobat ASR.'],
+              ['title' => 'Registrasi Mandiri', 'desc' => 'Pendaftaran akun menggunakan NIP dan data identitas ASN yang valid di portal Jalur ASN.'],
               ['title' => 'Verifikasi Profil', 'desc' => 'Unggah Surat Tugas atau bukti status ASN untuk memvalidasi kelayakan pendaftaran pelatihan.'],
               ['title' => 'Eksplorasi Katalog', 'desc' => 'Pilih jenis pelatihan teknis yang sesuai dengan kebutuhan pengembangan kompetensi Anda.'],
               ['title' => 'Pembelajaran Digital', 'desc' => 'Pelajari materi melalui modul video dan dokumen secara mandiri sesuai jadwal yang tersedia.'],
@@ -237,6 +243,93 @@
   </div>
 </div>
 {{-- Akhir Panduan Alur Sistem --}}
+
+
+{{-- Simulasi Uji Kompetensi (Bank Soal) --}}
+<section class="py-5 bg-light" id="simulasi" aria-labelledby="simulasi-title">
+  <div class="container py-lg-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5" data-aos="fade-right" data-aos-duration="1000">
+        <span class="badge rounded-pill text-bg-info mb-3">Fitur Baru</span>
+        <h2 id="simulasi-title" class="fw-bold mb-3">Simulasi Uji Kompetensi Berbasis CAT</h2>
+        <p class="text-muted mb-4">
+          Ukur kesiapan Anda sebelum mengikuti uji kompetensi. Kerjakan soal pilihan ganda dari bank soal
+          BPSDM Provinsi Sulawesi Tenggara dengan suasana seperti ujian sesungguhnya: soal acak, waktu terbatas,
+          dan skor yang langsung tersedia.
+        </p>
+
+        <h3 class="h6 fw-bold mb-3">Cara Mengikuti Simulasi</h3>
+        <ol class="list-unstyled mb-4">
+          @foreach ([
+            'Masuk ke akun Anda, atau daftar terlebih dahulu.',
+            'Buka menu Simulasi Ujian pada dasbor peserta.',
+            'Masukkan token ujian yang dibagikan panitia/admin.',
+            'Kerjakan soal, lalu lihat skor Anda.',
+          ] as $index => $langkah)
+            <li class="d-flex align-items-center gap-3 mb-2">
+              <span class="step-number flex-shrink-0">{{ $index + 1 }}</span>
+              <span>{{ $langkah }}</span>
+            </li>
+          @endforeach
+        </ol>
+
+        @auth
+          @if (auth()->user()->role === 'admin')
+            <a href="{{ route('admin.simulasi.index') }}" class="btn btn-gradient px-4 py-2">Kelola Simulasi</a>
+          @elseif (auth()->user()->role === 'student')
+            <a href="{{ route('student.simulasi.index') }}" class="btn btn-gradient px-4 py-2">Mulai Simulasi</a>
+          @else
+            <a href="{{ route('dashboard') }}" class="btn btn-gradient px-4 py-2">Buka Dasbor</a>
+          @endif
+        @else
+          <a href="{{ route('login') }}" class="btn btn-gradient px-4 py-2 me-2">Masuk untuk Memulai</a>
+          <a href="{{ route('register') }}" class="btn btn-outline-info px-4 py-2">Daftar Akun</a>
+        @endauth
+      </div>
+
+      <div class="col-lg-7">
+        <div class="row g-3">
+          @foreach ([
+            [
+              'icon' => 'fa-database',
+              'judul' => 'Bank Soal Terkurasi',
+              'teks' => ($simulasi['bank_soal'] > 0 ? number_format($simulasi['bank_soal'], 0, ',', '.') . ' soal pilihan ganda' : 'Soal pilihan ganda') . ' yang disusun dan dikelola oleh BPSDM.',
+            ],
+            [
+              'icon' => 'fa-shuffle',
+              'judul' => 'Soal Acak',
+              'teks' => $simulasi['jumlah_soal'] . ' soal diacak untuk setiap peserta, sehingga setiap simulasi berbeda.',
+            ],
+            [
+              'icon' => 'fa-stopwatch',
+              'judul' => 'Waktu Terukur',
+              'teks' => $simulasi['durasi_menit'] . ' menit pengerjaan dengan penghitung waktu, navigasi nomor soal, dan simpan otomatis.',
+            ],
+            [
+              'icon' => 'fa-chart-line',
+              'judul' => 'Skor Langsung',
+              'teks' => 'Skor beserta jumlah jawaban benar tampil segera setelah selesai, lengkap dengan riwayat simulasi.',
+            ],
+          ] as $index => $fitur)
+            <div class="col-sm-6" data-aos="fade-up" data-aos-delay="{{ $index * 150 }}" data-aos-duration="800">
+              <div class="card h-100 border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="card-body p-4">
+                  <div class="rounded-circle bg-info bg-opacity-10 text-info d-inline-flex align-items-center justify-content-center mb-3"
+                       style="width: 52px; height: 52px;">
+                    <i class="fas {{ $fitur['icon'] }} fs-4" aria-hidden="true"></i>
+                  </div>
+                  <h3 class="h6 fw-bold">{{ $fitur['judul'] }}</h3>
+                  <p class="small text-muted mb-0">{{ $fitur['teks'] }}</p>
+                </div>
+              </div>
+            </div>
+          @endforeach
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{{-- Akhir Simulasi Uji Kompetensi --}}
 
 
 {{-- Kalender Pembelajaran --}}
@@ -452,8 +545,8 @@ function renderPelatihan(date) {
                onmouseout="this.style.transform='scale(1)'">
             <img src="{{ asset('image/image1.jpg') }}" class="card-img-top" alt="Artikel 1">
             <div class="card-body">
-              <h5 class="card-title">Rapat Perdana Team Sobat ASR</h5>
-              <p class="card-text">Tim Pengembang Sobat ASR Menggelar Rapat Perdana bersama Kabid Teknis Umum dan Fungsional</p>
+              <h5 class="card-title">Rapat Perdana Team Jalur ASN</h5>
+              <p class="card-text">Tim Pengembang Jalur ASN Menggelar Rapat Perdana bersama Kabid Teknis Umum dan Fungsional</p>
             </div>
             <div class="card-footer bg-white border-top-0">
               <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
@@ -468,8 +561,8 @@ function renderPelatihan(date) {
                onmouseout="this.style.transform='scale(1)'">
             <img src="{{ asset('image/image2.jpg') }}" class="card-img-top" alt="Artikel 2">
             <div class="card-body">
-              <h5 class="card-title">Hasil Rapat Perdana Team Sobat ASR</h5>
-              <p class="card-text">Hasil Rapat Perdana Team Sobat ASR tentang fitur yang digunakan dalam sistem dan Deadline Pengerjaan Sistem</p>
+              <h5 class="card-title">Hasil Rapat Perdana Team Jalur ASN</h5>
+              <p class="card-text">Hasil Rapat Perdana Team Jalur ASN tentang fitur yang digunakan dalam sistem dan Deadline Pengerjaan Sistem</p>
             </div>
             <div class="card-footer bg-white border-top-0">
               <a href="#" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
@@ -574,7 +667,7 @@ function renderPelatihan(date) {
 
     <!-- Copyright -->
     <section class="text-center py-2">
-      © SOBAT ASR 2025 <a href="https://bpsdmsultra.my.id/" class="fw-bold">BPSDM PEMPROV SULTRA</a>
+      © JALUR ASN 2025<a href="https://bpsdmsultra.my.id/" class="fw-bold">BPSDM PEMPROV SULTRA</a>
     </section>
   </div>
 </footer>

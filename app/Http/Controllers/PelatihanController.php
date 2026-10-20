@@ -29,6 +29,12 @@ class PelatihanController extends Controller
             ];
         })->toArray();
 
-        return view('welcome', compact('pelatihan'));
+        $simulasi = [
+            'bank_soal' => \App\Models\SimulationQuestion::count(),
+            'jumlah_soal' => config('simulasi.jumlah_soal'),
+            'durasi_menit' => config('simulasi.durasi_menit'),
+        ];
+
+        return view('welcome', compact('pelatihan', 'simulasi'));
     }
 }

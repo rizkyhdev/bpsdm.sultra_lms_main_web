@@ -26,6 +26,8 @@ use App\Http\Controllers\Admin\AdminQuestionController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\Admin\AdminCertificateController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminSimulationController;
+use App\Http\Controllers\Admin\AdminSimulationQuestionController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\Student\StudentDashboardController;
 use App\Http\Controllers\Student\StudentPelatihanController;
@@ -34,6 +36,7 @@ use App\Http\Controllers\Student\EnrollmentController;
 use App\Http\Controllers\Student\StudentCalendarPageController;
 use App\Http\Controllers\Student\StudentCalendarController;
 use App\Http\Controllers\Student\ProfileController;
+use App\Http\Controllers\Student\StudentSimulationController;
 use App\Http\Controllers\CertificateController;
 use App\Models\Course;
 
@@ -141,6 +144,14 @@ Route::group([
     Route::get('/quizzes/attempts/{attempt}/review', [\App\Http\Controllers\Student\StudentQuizController::class, 'reviewAttempt'])->name('quizzes.review');
     Route::get('/quizzes/{quiz}/questions', [\App\Http\Controllers\Student\StudentQuizController::class, 'getQuestions'])->name('quizzes.questions');
     Route::post('/quizzes/{quiz}/save-progress', [\App\Http\Controllers\Student\StudentQuizController::class, 'saveProgress'])->name('quizzes.save-progress');
+
+    // Simulasi Uji Kompetensi (CAT)
+    Route::get('/simulasi', [StudentSimulationController::class, 'index'])->name('simulasi.index');
+    Route::post('/simulasi/mulai', [StudentSimulationController::class, 'start'])->middleware('throttle:10,1')->name('simulasi.start');
+    Route::get('/simulasi/{attempt}/soal/{nomor?}', [StudentSimulationController::class, 'exam'])->whereNumber('nomor')->name('simulasi.exam');
+    Route::post('/simulasi/{attempt}/jawaban', [StudentSimulationController::class, 'answer'])->name('simulasi.answer');
+    Route::post('/simulasi/{attempt}/selesai', [StudentSimulationController::class, 'finish'])->name('simulasi.finish');
+    Route::get('/simulasi/{attempt}/hasil', [StudentSimulationController::class, 'result'])->name('simulasi.result');
 
     // Progress
     Route::get('/progress', function () {
@@ -422,6 +433,15 @@ Route::group([
     Route::get('/reports/courses/export', [AdminReportController::class, 'exportCourses'])->name('reports.courses.export');
     Route::get('/reports/jp/export', [AdminReportController::class, 'exportJp'])->name('reports.jp.export');
     Route::get('/reports/quizzes/export', [AdminReportController::class, 'exportQuizzes'])->name('reports.quizzes.export');
+
+    // Simulasi Uji Kompetensi (CAT) & Bank Soal
+    Route::get('/simulasi', [AdminSimulationController::class, 'index'])->name('simulasi.index');
+    Route::post('/simulasi/token', [AdminSimulationController::class, 'storeToken'])->name('simulasi.token.store');
+    Route::get('/simulasi/live', [AdminSimulationController::class, 'live'])->name('simulasi.live');
+    Route::resource('simulasi/soal', AdminSimulationQuestionController::class)
+        ->except('show')
+        ->parameters(['soal' => 'question'])
+        ->names('simulasi.soal');
 
     // Profile
     Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'show'])->name('profile.show');

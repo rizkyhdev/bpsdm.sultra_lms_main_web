@@ -85,6 +85,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the CAT simulation attempts for the user.
+     */
+    public function simulationAttempts(): HasMany
+    {
+        return $this->hasMany(SimulationAttempt::class);
+    }
+
+    /**
      * Get the certificates for the user.
      */
     public function certificates(): HasMany
