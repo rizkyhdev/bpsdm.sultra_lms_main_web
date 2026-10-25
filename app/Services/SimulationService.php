@@ -20,14 +20,16 @@ class SimulationService
     /**
      * Buat token sesi baru dan nonaktifkan token sebelumnya (hanya satu token aktif).
      */
-    public function generateToken(string $sesi): SimulationToken
+    public function generateToken(string $sesi, int $jumlahSoal, int $durasiMenit): SimulationToken
     {
-        return DB::transaction(function () use ($sesi) {
+        return DB::transaction(function () use ($sesi, $jumlahSoal, $durasiMenit) {
             SimulationToken::active()->update(['is_active' => false]);
 
             return SimulationToken::create([
                 'kode' => $this->uniqueTokenCode(),
                 'sesi' => $sesi,
+                'jumlah_soal' => $jumlahSoal,
+                'durasi_menit' => $durasiMenit,
                 'is_active' => true,
             ]);
         });
@@ -50,16 +52,16 @@ class SimulationService
     }
 
     /**
-     * Mulai percobaan baru dengan soal acak dari bank soal.
+     * Mulai percobaan baru dengan soal acak dari bank soal, sesuai jumlah soal dan batas waktu token.
      */
     public function start(User $user, SimulationToken $token): SimulationAttempt
     {
         $questionIds = SimulationQuestion::inRandomOrder()
-            ->limit(config('simulasi.jumlah_soal'))
+            ->limit($token->jumlah_soal)
             ->pluck('id')
             ->all();
 
-        $durasi = config('simulasi.durasi_menit');
+        $durasi = $token->durasi_menit;
         $now = now();
 
         return $user->simulationAttempts()->create([

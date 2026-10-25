@@ -36,10 +36,10 @@ class SimulationTest extends TestCase
         ]);
     }
 
-    private function startAttempt(User $student, int $bankSize = 3): SimulationAttempt
+    private function startAttempt(User $student, int $bankSize = 3, int $jumlahSoal = 70, int $durasiMenit = 90): SimulationAttempt
     {
         SimulationQuestion::factory()->count($bankSize)->create();
-        $token = app(SimulationService::class)->generateToken('Sesi Uji');
+        $token = app(SimulationService::class)->generateToken('Sesi Uji', $jumlahSoal, $durasiMenit);
 
         $this->actingAs($student)
             ->post(route('student.simulasi.start'), ['token' => strtolower($token->kode)])
@@ -117,9 +117,12 @@ class SimulationTest extends TestCase
 
     public function test_generating_a_token_deactivates_the_previous_one(): void
     {
+        SimulationQuestion::factory()->count(3)->create();
+        $settings = ['jumlah_soal' => 3, 'durasi_menit' => 90];
+
         $this->actingAs($this->admin());
-        $this->post(route('admin.simulasi.token.store'), ['sesi' => 'Sesi 1'])->assertRedirect(route('admin.simulasi.index'));
-        $this->post(route('admin.simulasi.token.store'), ['sesi' => 'Sesi 2']);
+        $this->post(route('admin.simulasi.token.store'), ['sesi' => 'Sesi 1'] + $settings)->assertRedirect(route('admin.simulasi.index'));
+        $this->post(route('admin.simulasi.token.store'), ['sesi' => 'Sesi 2'] + $settings);
 
         $active = SimulationToken::active()->sole();
         $this->assertSame('Sesi 2', $active->sesi);
@@ -127,6 +130,57 @@ class SimulationTest extends TestCase
         $this->assertSame(2, SimulationToken::count());
 
         $this->get(route('admin.simulasi.index'))->assertOk()->assertSee($active->kode);
+    }
+
+    public function test_admin_sets_question_count_and_time_limit_per_token(): void
+    {
+        SimulationQuestion::factory()->count(5)->create();
+        $admin = $this->admin();
+        $student = $this->student();
+
+        $this->actingAs($admin)
+            ->post(route('admin.simulasi.token.store'), ['sesi' => 'Sesi Singkat', 'jumlah_soal' => 2, 'durasi_menit' => 15])
+            ->assertRedirect(route('admin.simulasi.index'));
+
+        $token = SimulationToken::active()->sole();
+        $this->assertSame(2, $token->jumlah_soal);
+        $this->assertSame(15, $token->durasi_menit);
+        $this->get(route('admin.simulasi.index'))->assertSee('mendapat 2 soal acak dari bank soal');
+
+        $this->actingAs($student)
+            ->get(route('student.simulasi.index'))
+            ->assertSee('2 Soal Acak')
+            ->assertSee('15 Menit');
+
+        $this->post(route('student.simulasi.start'), ['token' => $token->kode]);
+        $attempt = $student->simulationAttempts()->sole();
+        $this->assertSame(2, $attempt->jumlah_soal);
+        $this->assertCount(2, $attempt->question_ids);
+        $this->assertSame(15, $attempt->durasi_menit);
+        $this->assertTrue($attempt->ends_at->equalTo($attempt->started_at->copy()->addMinutes(15)));
+
+        // Token baru dengan ketentuan lain tidak mengubah simulasi yang sedang berjalan.
+        $this->actingAs($admin)
+            ->post(route('admin.simulasi.token.store'), ['sesi' => 'Sesi Panjang', 'jumlah_soal' => 5, 'durasi_menit' => 120]);
+
+        $attempt->refresh();
+        $this->assertSame(2, $attempt->jumlah_soal);
+        $this->assertSame(15, $attempt->durasi_menit);
+    }
+
+    public function test_token_settings_must_fit_the_question_bank_and_time_limit(): void
+    {
+        SimulationQuestion::factory()->count(3)->create();
+        $this->actingAs($this->admin());
+        $store = fn (array $data) => $this->post(route('admin.simulasi.token.store'), ['sesi' => 'Sesi'] + $data);
+
+        $store([])->assertSessionHasErrors(['jumlah_soal', 'durasi_menit']);
+        $store(['jumlah_soal' => 4, 'durasi_menit' => 90])->assertSessionHasErrors('jumlah_soal');
+        $store(['jumlah_soal' => 0, 'durasi_menit' => 0])->assertSessionHasErrors(['jumlah_soal', 'durasi_menit']);
+        $store(['jumlah_soal' => 'abc', 'durasi_menit' => SimulationToken::MAX_DURASI_MENIT + 1])
+            ->assertSessionHasErrors(['jumlah_soal', 'durasi_menit']);
+
+        $this->assertSame(0, SimulationToken::count());
     }
 
     public function test_live_score_lists_participants_of_the_active_session(): void
@@ -168,8 +222,8 @@ class SimulationTest extends TestCase
     {
         SimulationQuestion::factory()->create();
         $service = app(SimulationService::class);
-        $old = $service->generateToken('Sesi Lama');
-        $service->generateToken('Sesi Baru');
+        $old = $service->generateToken('Sesi Lama', 1, 90);
+        $service->generateToken('Sesi Baru', 1, 90);
 
         $this->actingAs($this->student());
         $this->post(route('student.simulasi.start'), ['token' => 'XXXXXX'])->assertSessionHasErrors('token');
@@ -180,12 +234,11 @@ class SimulationTest extends TestCase
 
     public function test_student_takes_a_simulation_and_is_scored(): void
     {
-        config(['simulasi.jumlah_soal' => 3]);
         $student = $this->student();
 
         $this->actingAs($student)->get(route('student.simulasi.index'))->assertOk()->assertSee($student->nip);
 
-        $attempt = $this->startAttempt($student, 5);
+        $attempt = $this->startAttempt($student, 5, 3);
         $this->assertSame(3, $attempt->jumlah_soal);
         $this->assertCount(3, array_unique($attempt->question_ids));
 
@@ -253,7 +306,7 @@ class SimulationTest extends TestCase
         $question = SimulationQuestion::findOrFail($attempt->question_ids[0]);
         $this->answer($attempt, $question, $question->kunci_jawaban)->assertOk();
 
-        $this->travel(config('simulasi.durasi_menit') + 1)->minutes();
+        $this->travel($attempt->durasi_menit + 1)->minutes();
 
         $this->answer($attempt, $question, $this->wrongOption($question))->assertStatus(409);
         $this->get(route('student.simulasi.exam', $attempt))->assertRedirect(route('student.simulasi.result', $attempt));

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SimulationTokenRequest;
 use App\Models\SimulationAttempt;
 use App\Models\SimulationQuestion;
 use App\Models\SimulationToken;
@@ -48,18 +49,17 @@ class AdminSimulationController extends Controller
         ]);
     }
 
-    public function storeToken(Request $request)
+    public function storeToken(SimulationTokenRequest $request)
     {
-        $data = $request->validate(
-            ['sesi' => ['required', 'string', 'max:100']],
-            ['sesi.required' => 'Nama sesi wajib diisi.', 'sesi.max' => 'Nama sesi maksimal 100 karakter.'],
+        $token = $this->simulation->generateToken(
+            $request->validated('sesi'),
+            $request->integer('jumlah_soal'),
+            $request->integer('durasi_menit'),
         );
-
-        $token = $this->simulation->generateToken($data['sesi']);
 
         return redirect()
             ->route('admin.simulasi.index')
-            ->with('success', "Token baru berhasil dibuat: {$token->kode}");
+            ->with('success', "Token baru berhasil dibuat: {$token->kode} ({$token->jumlah_soal} soal, {$token->durasi_menit} menit)");
     }
 
     /**

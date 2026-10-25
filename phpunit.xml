@@ -24,6 +24,10 @@
         <env name="CACHE_STORE" value="array"/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
+        <!-- The dev container sets DB_CONNECTION/DB_DATABASE as real environment variables, and Laravel reads $_SERVER
+             before $_ENV, so the <env> lines alone leave tests on the dev database (RefreshDatabase would wipe it). -->
+        <server name="DB_CONNECTION" value="sqlite"/>
+        <server name="DB_DATABASE" value=":memory:"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

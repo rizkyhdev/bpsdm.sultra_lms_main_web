@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SimulationToken extends Model
 {
     /**
+     * Batas waktu pengerjaan terpanjang yang dapat diatur admin (5 jam).
+     */
+    public const MAX_DURASI_MENIT = 300;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -16,6 +21,8 @@ class SimulationToken extends Model
     protected $fillable = [
         'kode',
         'sesi',
+        'jumlah_soal',
+        'durasi_menit',
         'is_active',
     ];
 
@@ -27,6 +34,8 @@ class SimulationToken extends Model
     protected function casts(): array
     {
         return [
+            'jumlah_soal' => 'integer',
+            'durasi_menit' => 'integer',
             'is_active' => 'boolean',
         ];
     }

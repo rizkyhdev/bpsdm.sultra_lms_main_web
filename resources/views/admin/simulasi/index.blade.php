@@ -58,15 +58,15 @@
                             Sesi: <strong class="text-body">{{ $activeToken->sesi }}</strong>
                             &middot; dibuat {{ $activeToken->created_at->format('d M Y H:i') }}
                         </p>
+                        <hr>
+                        <p class="small text-muted mb-0">
+                            <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+                            Setiap peserta sesi ini mendapat {{ $activeToken->jumlah_soal }} soal acak dari bank soal
+                            dengan waktu pengerjaan {{ $activeToken->durasi_menit }} menit.
+                        </p>
                     @else
                         <p class="text-muted mb-0">Belum ada token aktif. Buat token baru agar peserta dapat memulai simulasi.</p>
                     @endif
-                    <hr>
-                    <p class="small text-muted mb-0">
-                        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
-                        Setiap simulasi berisi {{ config('simulasi.jumlah_soal') }} soal acak dari bank soal
-                        dengan waktu pengerjaan {{ config('simulasi.durasi_menit') }} menit.
-                    </p>
                 </div>
             </div>
         </div>
@@ -79,14 +79,48 @@
                     <p class="text-muted small">
                         Token baru langsung aktif dan menonaktifkan token sebelumnya.
                         Bagikan token kepada peserta pada sesi simulasi.
+                        Peserta yang sedang mengerjakan tetap memakai ketentuan token saat mereka mulai.
                     </p>
-                    <form action="{{ route('admin.simulasi.token.store') }}" method="POST" class="d-flex gap-2">
+                    <form action="{{ route('admin.simulasi.token.store') }}" method="POST" class="row g-2">
                         @csrf
-                        <label for="sesi" class="visually-hidden">Nama sesi</label>
-                        <input type="text" id="sesi" name="sesi" value="{{ old('sesi') }}" maxlength="100" required
-                               class="form-control @error('sesi') is-invalid @enderror"
-                               placeholder="Nama sesi, mis. Simulasi PBJ Gelombang 1">
-                        <button type="submit" class="btn btn-primary text-nowrap">Buat Token</button>
+                        <div class="col-12">
+                            <label for="sesi" class="form-label small text-muted mb-1">Nama sesi</label>
+                            <input type="text" id="sesi" name="sesi" value="{{ old('sesi') }}" maxlength="100" required
+                                   class="form-control @error('sesi') is-invalid @enderror"
+                                   placeholder="Mis. Simulasi PBJ Gelombang 1">
+                            @error('sesi')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="jumlah_soal" class="form-label small text-muted mb-1">Jumlah soal</label>
+                            <div class="input-group has-validation">
+                                <input type="number" id="jumlah_soal" name="jumlah_soal" min="1" max="{{ $stats['soal'] }}" step="1" required
+                                       value="{{ old('jumlah_soal', min(config('simulasi.jumlah_soal'), $stats['soal'])) }}"
+                                       class="form-control @error('jumlah_soal') is-invalid @enderror" aria-describedby="jumlah_soal_help">
+                                <span class="input-group-text">soal</span>
+                                @error('jumlah_soal')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div id="jumlah_soal_help" class="form-text">
+                                @if ($stats['soal'] > 0)
+                                    Maksimal {{ number_format($stats['soal'], 0, ',', '.') }} soal (isi bank soal).
+                                @else
+                                    Bank soal masih kosong. Tambahkan soal terlebih dahulu.
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="durasi_menit" class="form-label small text-muted mb-1">Batas waktu pengerjaan</label>
+                            <div class="input-group has-validation">
+                                <input type="number" id="durasi_menit" name="durasi_menit" min="1" max="{{ \App\Models\SimulationToken::MAX_DURASI_MENIT }}" step="1" required
+                                       value="{{ old('durasi_menit', config('simulasi.durasi_menit')) }}"
+                                       class="form-control @error('durasi_menit') is-invalid @enderror" aria-describedby="durasi_menit_help">
+                                <span class="input-group-text">menit</span>
+                                @error('durasi_menit')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div id="durasi_menit_help" class="form-text">Maksimal {{ \App\Models\SimulationToken::MAX_DURASI_MENIT }} menit.</div>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary text-nowrap" @disabled($stats['soal'] === 0)>Buat Token</button>
+                        </div>
                     </form>
                 </div>
             </div>

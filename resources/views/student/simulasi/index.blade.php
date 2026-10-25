@@ -24,8 +24,10 @@
                         dengan soal-soal dari bank soal BPSDM Provinsi Sulawesi Tenggara.
                     </p>
                     <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="badge bg-primary"><i class="bi bi-question-circle me-1"></i>{{ $jumlahSoal }} Soal Acak</span>
-                        <span class="badge bg-info"><i class="bi bi-clock me-1"></i>{{ $durasiMenit }} Menit</span>
+                        @if ($jumlahSoal)
+                            <span class="badge bg-primary"><i class="bi bi-question-circle me-1"></i>{{ $jumlahSoal }} Soal Acak</span>
+                            <span class="badge bg-info"><i class="bi bi-clock me-1"></i>{{ $durasiMenit }} Menit</span>
+                        @endif
                         <span class="badge bg-secondary"><i class="bi bi-ui-radios me-1"></i>Pilihan Ganda A&ndash;D</span>
                     </div>
                     <h2 class="h6 fw-semibold">Ketentuan</h2>
@@ -51,7 +53,7 @@
                         <a href="{{ route('student.simulasi.exam', $ongoing) }}" class="btn btn-primary w-100">
                             <i class="bi bi-play-circle me-1"></i>Lanjutkan Simulasi
                         </a>
-                    @elseif ($jumlahSoal === 0)
+                    @elseif ($bankSoal === 0)
                         <div class="alert alert-info mb-0">
                             <i class="bi bi-info-circle me-2"></i>Bank soal belum tersedia. Silakan hubungi admin.
                         </div>

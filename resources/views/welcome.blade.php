@@ -298,12 +298,12 @@
             [
               'icon' => 'fa-shuffle',
               'judul' => 'Soal Acak',
-              'teks' => $simulasi['jumlah_soal'] . ' soal diacak untuk setiap peserta, sehingga setiap simulasi berbeda.',
+              'teks' => 'Soal diacak dari bank soal untuk setiap peserta, sehingga setiap simulasi berbeda.',
             ],
             [
               'icon' => 'fa-stopwatch',
               'judul' => 'Waktu Terukur',
-              'teks' => $simulasi['durasi_menit'] . ' menit pengerjaan dengan penghitung waktu, navigasi nomor soal, dan simpan otomatis.',
+              'teks' => 'Batas waktu sesuai ketentuan setiap sesi, dengan penghitung waktu, navigasi nomor soal, dan simpan otomatis.',
             ],
             [
               'icon' => 'fa-chart-line',

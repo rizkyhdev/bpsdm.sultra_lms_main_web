@@ -22,6 +22,9 @@ class StudentSimulationController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        // Hanya pengaturannya yang dibutuhkan; kode token tidak boleh sampai ke halaman peserta.
+        $sesi = SimulationToken::active()->latest('id')->first(['jumlah_soal', 'durasi_menit']);
+        $bankSoal = SimulationQuestion::count();
 
         return view('student.simulasi.index', [
             'user' => $user,
@@ -31,8 +34,10 @@ class StudentSimulationController extends Controller
                 ->with('token:id,sesi')
                 ->latest('id')
                 ->paginate(10),
-            'jumlahSoal' => min(config('simulasi.jumlah_soal'), SimulationQuestion::count()),
-            'durasiMenit' => config('simulasi.durasi_menit'),
+            'bankSoal' => $bankSoal,
+            // Ketentuan sesi yang sedang dibuka admin; null bila belum ada token aktif.
+            'jumlahSoal' => $sesi ? min($sesi->jumlah_soal, $bankSoal) : null,
+            'durasiMenit' => $sesi?->durasi_menit,
         ]);
     }
 
